@@ -1,0 +1,7 @@
+setuptools>=5.7
+bottle>=0.12.7
+WSME==0.6.1
+peewee>=2.3.0
+Pyro4==4.27
+serpent==1.7
+wxPython==3.0.0.0
