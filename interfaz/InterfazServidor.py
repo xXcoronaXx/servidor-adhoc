@@ -14,26 +14,6 @@ from ServicioPyro import *
 # begin wxGlade: extracode
 # end wxGlade
 
-"""
-COPIAR LOS OBJETOS DE LOS ARCHIVOS INDIVIDUALES A ESTE
-"""
-# CAMBIAR ###############################################
-KEY='the_same_string_for_server_and_client'
-print 'Conectando ...'
-Pyro4.config.HMAC_KEY=KEY
-servicio = Pyro4.Proxy('PYRONAME:servidor1.configura')
-print 'Conectado al servicio !'
-#variables globales
-Menus = []
-Ofertas = []
-Items = []
-#fin de variables  globales
-
-servicio.online()
-Menus = serpent.loads(servicio.getMenus())
-Ofertas = serpent.loads(servicio.getOfertas())
-Items = serpent.loads(servicio.getItems())
-# CAMBIAR ###############################################
 
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -66,13 +46,13 @@ class MyFrame(wx.Frame):
         self.list_ctrl_1.InsertColumn(1,"Precio")
         self.list_ctrl_1.InsertColumn(2,"Disponible")
 
-        for data in Menus:
+        for data in servicio.Menus:
             # 0 will insert at the start of the list
             pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
             # add values in the other columns on the same row
             self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
             self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
-        for data in Ofertas:
+        for data in servicio.Ofertas:
             # 0 will insert at the start of the list
             pos = self.list_ctrl_2.InsertStringItem(0,data['nombre'])
             # add values in the other columns on the same row
@@ -206,7 +186,7 @@ class ver_editar(wx.Frame):
         self.list_ctrl_5abc.InsertColumn(0,"Nombre")
         self.list_ctrl_5abc.InsertColumn(1,"Disponible")
 
-        # for data in Items:
+        # for data in servicio.Items:
         #     # 0 will insert at the start of the list
         #     pos = self.list_ctrl_3.InsertStringItem(0,data['nombre'])
         #     # add values in the other columns on the same row
@@ -613,6 +593,9 @@ class InterfazServidor(wx.App):
 # end of class InterfazServidor
 
 if __name__ == "__main__":
+    servicio = ServicioPyro()
+    servicio.isOnline()
+
     gettext.install("Servidor") # replace with the appropriate catalog name
 
     Servidor = InterfazServidor(0)

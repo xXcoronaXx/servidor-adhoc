@@ -15,7 +15,7 @@ import serpent
 KEY='the_same_string_for_server_and_client'
 
 class ServicioPyro(object):
-	"""docstring for Servicio"""
+	"""docstring for ServicioPyro"""
 	#variables
 	Menus = []
 	Ofertas = []
@@ -24,7 +24,7 @@ class ServicioPyro(object):
 	servicio = 0
 	#fin de variables 
 	def __init__(self):
-		super(Servicio, self).__init__()
+		super(ServicioPyro, self).__init__()
 		print 'Conectando ...'
 		Pyro4.config.HMAC_KEY=KEY
 		self.servicio = Pyro4.Proxy('PYRONAME:servidor1.configura')
