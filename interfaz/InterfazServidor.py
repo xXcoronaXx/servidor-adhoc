@@ -10,13 +10,30 @@ import wx.calendar
 # begin wxGlade: dependencies
 import gettext
 # end wxGlade
-
+from ServicioPyro import *
 # begin wxGlade: extracode
 # end wxGlade
 
 """
 COPIAR LOS OBJETOS DE LOS ARCHIVOS INDIVIDUALES A ESTE
 """
+# CAMBIAR ###############################################
+KEY='the_same_string_for_server_and_client'
+print 'Conectando ...'
+Pyro4.config.HMAC_KEY=KEY
+servicio = Pyro4.Proxy('PYRONAME:servidor1.configura')
+print 'Conectado al servicio !'
+#variables globales
+Menus = []
+Ofertas = []
+Items = []
+#fin de variables  globales
+
+servicio.online()
+Menus = serpent.loads(servicio.getMenus())
+Ofertas = serpent.loads(servicio.getOfertas())
+Items = serpent.loads(servicio.getItems())
+# CAMBIAR ###############################################
 
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
@@ -45,6 +62,27 @@ class MyFrame(wx.Frame):
         self.list_ctrl_1 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         self.list_ctrl_2 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
+        self.list_ctrl_1.InsertColumn(0,"Nombre")
+        self.list_ctrl_1.InsertColumn(1,"Precio")
+        self.list_ctrl_1.InsertColumn(2,"Disponible")
+
+        for data in Menus:
+            # 0 will insert at the start of the list
+            pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
+            # add values in the other columns on the same row
+            self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
+            self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
+        for data in Ofertas:
+            # 0 will insert at the start of the list
+            pos = self.list_ctrl_2.InsertStringItem(0,data['nombre'])
+            # add values in the other columns on the same row
+            self.list_ctrl_2.SetStringItem(pos,1,str(data['precio']))
+            self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
+
+        self.list_ctrl_2.InsertColumn(0,"Nombre")
+        self.list_ctrl_2.InsertColumn(1,"Precio")
+        self.list_ctrl_2.InsertColumn(2,"Disponible")
+        
         self.__set_properties()
         self.__do_layout()
 
@@ -93,41 +131,27 @@ class MyFrame(wx.Frame):
         self.Layout()
         # end wxGlade
 
-    # hilo para la ejecucion del servidor
-    def run(self):
-        #servicio soap
-        self.root.addprotocol('soap',
-        tns='http://127.0.0.1:8000',
-        typenamespace='http://127.0.0.1:8000/ws',
-        baseURL='http://127.0.0.1:8000/ws/',
-        servicename ='ServicioWeb',
-        )
-        #servicio rest
-        self.root.addprotocol('restjson')
-        bottle.mount('/ws/', self.root.wsgiapp())
-
-        logging.basicConfig(level=logging.DEBUG)
-        bottle.run(host='127.0.0.1', port=8000, reloader=False)
 
     def crear_menu(self, event):  # wxGlade: MyFrame.<event_handler>
         print "Event handler 'crear_menu'"
-        verEditar = ver_editar(self)
-        verEditar.Show()
+        crearMenu = ver_editar(self)
+        crearMenu.Show()
+
 
     def ver_edit_menu(self, event):  # wxGlade: MyFrame.<event_handler>
         print "Event handler 'ver_edit_menu'"
-        verEditar = ver_editar(self)
-        verEditar.Show()
+        editarMenu = ver_editar(self)
+        editarMenu.Show()
 
     def crear_oferta(self, event):  # wxGlade: MyFrame.<event_handler>
-        print "Event handler 'crear_oferta' "
+        print "Event handler 'crear_oferta'"
         crearOferta = crear_oferta(self)
         crearOferta.Show()
 
     def ver_edit_oferta(self, event):  # wxGlade: MyFrame.<event_handler>
         print "Event handler 'ver_edit_oferta'"
-        verEditar = ver_editar(self)
-        verEditar.Show()
+        verOferta = crear_oferta(self)
+        verOferta.Show()
 
     def menu_selected(self, event):  # wxGlade: MyFrame.<event_handler>
         print "Event handler 'menu_selected' not implemented!"
@@ -144,23 +168,22 @@ class ver_editar(wx.Frame):
         # begin wxGlade: ver_editar.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
-        #wx.MDIChildFrame.__init__(self, *args, **kwds)
         self.calendar_ctrl_3 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
+        self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "")
+        self.sizer_34_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_1 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_12_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duracion"))
         self.text_ctrl_2 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_13_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Precio"))
-        self.text_ctrl_2a = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.sizer_13_staticboxa = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.checkbox_1 = wx.CheckBox(self, wx.ID_ANY, "")
         self.sizer_14_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Activo"))
         self.Guardar = wx.Button(self, wx.ID_ANY, _("Guardar"))
         self.button_14 = wx.Button(self, wx.ID_ANY, _("img"))
-        self.list_box_1 = wx.ListBox(self, wx.ID_ANY, choices=[])
+        self.list_ctrl_5a = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         self.sizer_15_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Primeros"))
-        self.list_box_2 = wx.ListBox(self, wx.ID_ANY, choices=[])
+        self.list_ctrl_5ab = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         self.sizer_16_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Segundos"))
-        self.list_box_3 = wx.ListBox(self, wx.ID_ANY, choices=[])
+        self.list_ctrl_5abc = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         self.sizer_17_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Postres"))
         self.button_5 = wx.Button(self, wx.ID_ANY, _("<<"))
         self.button_7 = wx.Button(self, wx.ID_ANY, _(">>"))
@@ -171,17 +194,37 @@ class ver_editar(wx.Frame):
         self.button_11 = wx.Button(self, wx.ID_ANY, _(">>"))
         self.list_ctrl_3 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
+        self.list_ctrl_3.InsertColumn(0,"Nombre")
+        self.list_ctrl_3.InsertColumn(1,"Disponible")
+
+        self.list_ctrl_5ab.InsertColumn(0,"Nombre")
+        self.list_ctrl_5ab.InsertColumn(1,"Disponible")
+
+        self.list_ctrl_5a.InsertColumn(0,"Nombre")
+        self.list_ctrl_5a.InsertColumn(1,"Disponible")
+
+        self.list_ctrl_5abc.InsertColumn(0,"Nombre")
+        self.list_ctrl_5abc.InsertColumn(1,"Disponible")
+
+        # for data in Items:
+        #     # 0 will insert at the start of the list
+        #     pos = self.list_ctrl_3.InsertStringItem(0,data['nombre'])
+        #     # add values in the other columns on the same row
+        #     self.list_ctrl_3.SetStringItem(pos,1,str(data['precio']))
+        #     self.list_ctrl_3.SetStringItem(pos,2,str(data['disponible']))
+
         self.__set_properties()
         self.__do_layout()
 
-        self.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED, self.dia_selec, self.calendar_ctrl_3)
+        self.Bind(wx.calendar.EVT_CALENDAR, self.calendario, self.calendar_ctrl_3)
         self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_1)
         self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_2)
+        self.Bind(wx.EVT_CHECKBOX, self.activo, self.checkbox_1)
         self.Bind(wx.EVT_BUTTON, self.save_menu, self.Guardar)
         self.Bind(wx.EVT_BUTTON, self.load_img, self.button_14)
-        self.Bind(wx.EVT_LISTBOX_DCLICK, self.primero_selec, self.list_box_1)
-        self.Bind(wx.EVT_LISTBOX_DCLICK, self.segundo_selec, self.list_box_2)
-        self.Bind(wx.EVT_LISTBOX_DCLICK, self.postre_selec, self.list_box_2)
+        self.Bind(wx.EVT_LISTBOX_DCLICK, self.primero_selec, self.list_ctrl_5a)
+        self.Bind(wx.EVT_LISTBOX_DCLICK, self.segundo_selec, self.list_ctrl_5ab)
+        self.Bind(wx.EVT_LISTBOX_DCLICK, self.postre_selec, self.list_ctrl_5abc)
         self.Bind(wx.EVT_BUTTON, self.add_prim, self.button_5)
         self.Bind(wx.EVT_BUTTON, self.left_prim, self.button_7)
         self.Bind(wx.EVT_BUTTON, self.crear_item, self.button_6)
@@ -198,6 +241,11 @@ class ver_editar(wx.Frame):
         self.SetSize((650, 531))
         self.checkbox_1.SetValue(1)
         self.list_ctrl_3.SetMinSize((164, 500))
+        self.calendar_ctrl_3.SetMinSize((215, 140))
+        # primeros segundos y postre
+        self.list_ctrl_5a.SetMinSize((164, 140))
+        self.list_ctrl_5ab.SetMinSize((164, 140))
+        self.list_ctrl_5abc.SetMinSize((164, 140))
         # end wxGlade
 
     def __do_layout(self):
@@ -217,20 +265,20 @@ class ver_editar(wx.Frame):
         sizer_16 = wx.StaticBoxSizer(self.sizer_16_staticbox, wx.HORIZONTAL)
         self.sizer_15_staticbox.Lower()
         sizer_15 = wx.StaticBoxSizer(self.sizer_15_staticbox, wx.HORIZONTAL)
-        grid_sizer_7 = wx.FlexGridSizer(8, 1, 0, 0)
+        grid_sizer_7 = wx.FlexGridSizer(7, 1, 0, 0)
         self.sizer_14_staticbox.Lower()
         sizer_14 = wx.StaticBoxSizer(self.sizer_14_staticbox, wx.HORIZONTAL)
         self.sizer_13_staticbox.Lower()
         sizer_13 = wx.StaticBoxSizer(self.sizer_13_staticbox, wx.HORIZONTAL)
         self.sizer_12_staticbox.Lower()
         sizer_12 = wx.StaticBoxSizer(self.sizer_12_staticbox, wx.HORIZONTAL)
-        self.sizer_12a_staticbox.Lower()
-        sizer_12a = wx.StaticBoxSizer(self.sizer_12a_staticbox, wx.HORIZONTAL)
+        self.sizer_34_staticbox.Lower()
+        sizer_34 = wx.StaticBoxSizer(self.sizer_34_staticbox, wx.HORIZONTAL)
         grid_sizer_7.Add(self.calendar_ctrl_3, 0, 0, 0)
+        sizer_34.Add(self.text_ctrl_3, 0, 0, 0)
+        grid_sizer_7.Add(sizer_34, 1, wx.EXPAND, 0)
         sizer_12.Add(self.text_ctrl_1, 0, 0, 0)
         grid_sizer_7.Add(sizer_12, 1, wx.EXPAND, 0)
-        sizer_12a.Add(self.text_ctrl_1, 0, 0, 0)
-        grid_sizer_7.Add(sizer_12a, 1, wx.EXPAND, 0)
         sizer_13.Add(self.text_ctrl_2, 0, 0, 0)
         grid_sizer_7.Add(sizer_13, 1, wx.EXPAND, 0)
         sizer_14.Add(self.checkbox_1, 0, 0, 0)
@@ -238,19 +286,21 @@ class ver_editar(wx.Frame):
         grid_sizer_7.Add(self.Guardar, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
         grid_sizer_7.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         sizer_5.Add(grid_sizer_7, 1, wx.EXPAND, 0)
-        sizer_15.Add(self.list_box_1, 0, wx.EXPAND, 0)
-        sizer_6.Add(sizer_15, 1, wx.EXPAND, 0)
-        sizer_16.Add(self.list_box_2, 0, wx.EXPAND, 0)
-        sizer_6.Add(sizer_16, 1, wx.EXPAND, 0)
-        sizer_17.Add(self.list_box_3, 0, wx.EXPAND, 0)
-        sizer_6.Add(sizer_17, 1, wx.EXPAND, 0)
+        sizer_15.Add(self.list_ctrl_5a, 1, wx.EXPAND, 0)
+        sizer_6.Add(sizer_15, 1, wx.EXPAND | wx.ALIGN_RIGHT , 0)
+        sizer_16.Add(self.list_ctrl_5ab, 1, wx.EXPAND , 0)
+        sizer_6.Add(sizer_16, 1, wx.EXPAND | wx.ALIGN_RIGHT, 0)
+        sizer_17.Add(self.list_ctrl_5abc, 1, wx.EXPAND, 0)
+        sizer_6.Add(sizer_17, 1, wx.EXPAND | wx.ALIGN_RIGHT, 0)
         sizer_5.Add(sizer_6, 1, wx.EXPAND, 0)
         sizer_7.Add(self.button_5, 0, 0, 0)
         sizer_7.Add(self.button_7, 0, 0, 0)
         sizer_7.Add(self.button_6, 0, 0, 0)
+        sizer_7.Add((85, 150), 0, 0, 0)
         sizer_9.Add(self.button_8, 0, 0, 0)
         sizer_9.Add(self.button_9, 0, 0, 0)
         sizer_8.Add(sizer_9, 1, wx.EXPAND, 0)
+        sizer_8.Add((86, 120), 0, 0, 0)
         sizer_7.Add(sizer_8, 1, wx.EXPAND, 0)
         sizer_11.Add(self.button_10, 0, 0, 0)
         sizer_11.Add(self.button_11, 0, 0, 0)
@@ -264,12 +314,16 @@ class ver_editar(wx.Frame):
         self.Layout()
         # end wxGlade
 
-    def dia_selec(self, event):  # wxGlade: ver_editar.<event_handler>
-        print "Event handler 'dia_selec' not implemented!"
+    def calendario(self, event):  # wxGlade: ver_editar.<event_handler>
+        print "Event handler 'calendario' not implemented!"
         event.Skip()
 
     def solo_num(self, event):  # wxGlade: ver_editar.<event_handler>
         print "Event handler 'solo_num' not implemented!"
+        event.Skip()
+
+    def activo(self, event):  # wxGlade: ver_editar.<event_handler>
+        print "Event handler 'activo' not implemented!"
         event.Skip()
 
     def save_menu(self, event):  # wxGlade: ver_editar.<event_handler>
@@ -301,6 +355,7 @@ class ver_editar(wx.Frame):
         event.Skip()
 
     def crear_item(self, event):  # wxGlade: ver_editar.<event_handler>
+        print "Event handler 'crear_item'"
         crearItem = crear_item(self)
         crearItem.Show()
 
@@ -348,6 +403,7 @@ class crear_item(wx.Frame):
         self.__set_properties()
         self.__do_layout()
 
+        self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_9)
         self.Bind(wx.EVT_BUTTON, self.load_img_item, self.button_13)
         self.Bind(wx.EVT_CHECKBOX, self.item_disp, self.checkbox_2)
         self.Bind(wx.EVT_BUTTON, self.crear_item_go, self.button_12)
@@ -398,6 +454,10 @@ class crear_item(wx.Frame):
         self.Layout()
         # end wxGlade
 
+    def solo_num(self, event):  # wxGlade: crear_item.<event_handler>
+        print "Event handler 'solo_num' not implemented!"
+        event.Skip()
+
     def load_img_item(self, event):  # wxGlade: crear_item.<event_handler>
         print "Event handler 'load_img_item' not implemented!"
         event.Skip()
@@ -418,6 +478,8 @@ class crear_oferta(wx.Frame):
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
         self.calendar_ctrl_4 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
+        self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "")
+        self.sizer_35_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_5 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_26_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duracion"))
         self.text_ctrl_6 = wx.TextCtrl(self, wx.ID_ANY, "")
@@ -426,14 +488,30 @@ class crear_oferta(wx.Frame):
         self.sizer_28_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Activo"))
         self.button_15 = wx.Button(self, wx.ID_ANY, _("img"))
         self.button_16 = wx.Button(self, wx.ID_ANY, _("Guardar"))
-        self.text_ctrl_7 = wx.TextCtrl(self, wx.ID_ANY, "")
+        self.list_ctrl_5 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         self.sizer_29_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Items"))
         self.button_17 = wx.Button(self, wx.ID_ANY, _("<<"))
         self.button_18 = wx.Button(self, wx.ID_ANY, _(">>"))
         self.list_ctrl_4 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
+        self.list_ctrl_4.InsertColumn(0,"Nombre")
+        self.list_ctrl_4.InsertColumn(1,"Disponible")
+
+        self.list_ctrl_5.InsertColumn(0,"Nombre")
+        self.list_ctrl_5.InsertColumn(1,"Disponible")
+
         self.__set_properties()
         self.__do_layout()
+
+        self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_5)
+        self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_6)
+        self.Bind(wx.EVT_CHECKBOX, self.activo, self.checkbox_3)
+        self.Bind(wx.EVT_BUTTON, self.load_img_oferta, self.button_15)
+        self.Bind(wx.EVT_BUTTON, self.guardar_oferta, self.button_16)
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.item_selec2, self.list_ctrl_5)
+        self.Bind(wx.EVT_BUTTON, self.pasar_izq, self.button_17)
+        self.Bind(wx.EVT_BUTTON, self.pasar_der, self.button_18)
+        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.item_select, self.list_ctrl_4)
         # end wxGlade
 
     def __set_properties(self):
@@ -441,7 +519,9 @@ class crear_oferta(wx.Frame):
         self.SetTitle(_("frame_2"))
         self.SetSize((648, 529))
         self.checkbox_3.SetValue(1)
+        self.list_ctrl_5.SetMinSize((160, 469))
         self.list_ctrl_4.SetMinSize((164, 500))
+        self.calendar_ctrl_4.SetMinSize((215, 140))
         # end wxGlade
 
     def __do_layout(self):
@@ -453,14 +533,18 @@ class crear_oferta(wx.Frame):
         sizer_31 = wx.BoxSizer(wx.VERTICAL)
         self.sizer_29_staticbox.Lower()
         sizer_29 = wx.StaticBoxSizer(self.sizer_29_staticbox, wx.HORIZONTAL)
-        grid_sizer_9 = wx.FlexGridSizer(6, 1, 0, 0)
+        grid_sizer_9 = wx.FlexGridSizer(7, 1, 0, 0)
         self.sizer_28_staticbox.Lower()
         sizer_28 = wx.StaticBoxSizer(self.sizer_28_staticbox, wx.HORIZONTAL)
         self.sizer_27_staticbox.Lower()
         sizer_27 = wx.StaticBoxSizer(self.sizer_27_staticbox, wx.HORIZONTAL)
         self.sizer_26_staticbox.Lower()
         sizer_26 = wx.StaticBoxSizer(self.sizer_26_staticbox, wx.HORIZONTAL)
+        self.sizer_35_staticbox.Lower()
+        sizer_35 = wx.StaticBoxSizer(self.sizer_35_staticbox, wx.HORIZONTAL)
         grid_sizer_9.Add(self.calendar_ctrl_4, 0, 0, 0)
+        sizer_35.Add(self.text_ctrl_10, 0, 0, 0)
+        grid_sizer_9.Add(sizer_35, 1, wx.EXPAND, 0)
         sizer_26.Add(self.text_ctrl_5, 0, 0, 0)
         grid_sizer_9.Add(sizer_26, 1, wx.EXPAND, 0)
         sizer_27.Add(self.text_ctrl_6, 0, 0, 0)
@@ -470,8 +554,9 @@ class crear_oferta(wx.Frame):
         grid_sizer_9.Add(self.button_15, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_9.Add(self.button_16, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         sizer_25.Add(grid_sizer_9, 1, wx.EXPAND, 0)
-        sizer_29.Add(self.text_ctrl_7, 0, wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer_29.Add(self.list_ctrl_5, 1, wx.EXPAND, 0)
         sizer_25.Add(sizer_29, 1, wx.EXPAND, 0)
+        sizer_30.Add((80, 200), 0, 0, 0)
         sizer_31.Add(self.button_17, 0, 0, 0)
         sizer_31.Add(self.button_18, 0, 0, 0)
         sizer_30.Add(sizer_31, 1, wx.EXPAND, 0)
@@ -483,7 +568,40 @@ class crear_oferta(wx.Frame):
         self.Layout()
         # end wxGlade
 
+    def solo_num(self, event):  # wxGlade: crear_oferta.<event_handler>
+        print "Event handler 'solo_num' not implemented!"
+        event.Skip()
+
+    def activo(self, event):  # wxGlade: crear_oferta.<event_handler>
+        print "Event handler 'activo' not implemented!"
+        event.Skip()
+
+    def load_img_oferta(self, event):  # wxGlade: crear_oferta.<event_handler>
+        print "Event handler 'load_img_oferta' not implemented!"
+        event.Skip()
+
+    def guardar_oferta(self, event):  # wxGlade: crear_oferta.<event_handler>
+        print "Event handler 'guardar_oferta' not implemented!"
+        event.Skip()
+
+    def item_selec2(self, event):  # wxGlade: crear_oferta.<event_handler>
+        print "Event handler 'item_selec2' not implemented!"
+        event.Skip()
+
+    def pasar_izq(self, event):  # wxGlade: crear_oferta.<event_handler>
+        print "Event handler 'pasar_izq' not implemented!"
+        event.Skip()
+
+    def pasar_der(self, event):  # wxGlade: crear_oferta.<event_handler>
+        print "Event handler 'pasar_der' not implemented!"
+        event.Skip()
+
+    def item_select(self, event):  # wxGlade: crear_oferta.<event_handler>
+        print "Event handler 'item_select' not implemented!"
+        event.Skip()
+
 # end of class crear_oferta
+
 class InterfazServidor(wx.App):
     def OnInit(self):
         wx.InitAllImageHandlers()
