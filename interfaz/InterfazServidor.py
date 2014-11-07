@@ -14,6 +14,9 @@ import gettext
 # begin wxGlade: extracode
 # end wxGlade
 
+"""
+COPIAR LOS OBJETOS DE LOS ARCHIVOS INDIVIDUALES A ESTE
+"""
 
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
