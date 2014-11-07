@@ -32,11 +32,11 @@ class MyFrame(wx.Frame):
         self.SetMenuBar(self.main_menubar)
         # Menu Bar end
         self.button_1 = wx.Button(self, wx.ID_ANY, _("Crear"))
-        self.button_2 = wx.Button(self, wx.ID_ANY, _("Ver / Editar"))
+        #self.button_2 = wx.Button(self, wx.ID_ANY, _("Ver / Editar"))
         self.sizer_2_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Menu"))
         self.calendar_ctrl_1 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
         self.button_3 = wx.Button(self, wx.ID_ANY, _("Crear"))
-        self.button_4 = wx.Button(self, wx.ID_ANY, _("Ver / Editar"))
+        #self.button_4 = wx.Button(self, wx.ID_ANY, _("Ver / Editar"))
         self.sizer_3_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Ofertas"))
         self.calendar_ctrl_2 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
         self.list_ctrl_1 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
@@ -67,9 +67,9 @@ class MyFrame(wx.Frame):
         self.__do_layout()
 
         self.Bind(wx.EVT_BUTTON, self.crear_menu, self.button_1)
-        self.Bind(wx.EVT_BUTTON, self.ver_edit_menu, self.button_2)
+        #self.Bind(wx.EVT_BUTTON, self.ver_edit_menu, self.button_2)
         self.Bind(wx.EVT_BUTTON, self.crear_oferta, self.button_3)
-        self.Bind(wx.EVT_BUTTON, self.ver_edit_oferta, self.button_4)
+        #self.Bind(wx.EVT_BUTTON, self.ver_edit_oferta, self.button_4)
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.menu_selected, self.list_ctrl_1)
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.oferta_selected, self.list_ctrl_2)
         # end wxGlade
@@ -87,19 +87,19 @@ class MyFrame(wx.Frame):
         grid_sizer_3 = wx.GridSizer(2, 1, 0, 0)
         self.sizer_3_staticbox.Lower()
         sizer_3 = wx.StaticBoxSizer(self.sizer_3_staticbox, wx.HORIZONTAL)
-        grid_sizer_5 = wx.GridSizer(1, 2, 0, 0)
+        grid_sizer_5 = wx.GridSizer(1, 1, 0, 0) # cambiado
         grid_sizer_2 = wx.GridSizer(2, 1, 0, 0)
         self.sizer_2_staticbox.Lower()
         sizer_2 = wx.StaticBoxSizer(self.sizer_2_staticbox, wx.HORIZONTAL)
-        grid_sizer_4 = wx.GridSizer(1, 2, 0, 0)
+        grid_sizer_4 = wx.GridSizer(1, 1, 0, 0) # cambiado
         grid_sizer_4.Add(self.button_1, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
-        grid_sizer_4.Add(self.button_2, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
+        #grid_sizer_4.Add(self.button_2, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
         sizer_2.Add(grid_sizer_4, 1, wx.EXPAND, 0)
         grid_sizer_2.Add(sizer_2, 1, wx.EXPAND | wx.SHAPED, 0)
         grid_sizer_2.Add(self.calendar_ctrl_1, 0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL, 5)
         grid_sizer_1.Add(grid_sizer_2, 1, wx.EXPAND, 0)
         grid_sizer_5.Add(self.button_3, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
-        grid_sizer_5.Add(self.button_4, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
+        #grid_sizer_5.Add(self.button_4, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
         sizer_3.Add(grid_sizer_5, 1, wx.EXPAND, 0)
         grid_sizer_3.Add(sizer_3, 1, wx.EXPAND | wx.SHAPED, 0)
         grid_sizer_3.Add(self.calendar_ctrl_2, 0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL, 5)
@@ -175,23 +175,27 @@ class ver_editar(wx.Frame):
         self.list_ctrl_3 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
         self.list_ctrl_3.InsertColumn(0,"Nombre")
-        self.list_ctrl_3.InsertColumn(1,"Disponible")
+        self.list_ctrl_3.InsertColumn(1,"Precio")
+        self.list_ctrl_3.InsertColumn(2,"Disponible")
 
         self.list_ctrl_5ab.InsertColumn(0,"Nombre")
-        self.list_ctrl_5ab.InsertColumn(1,"Disponible")
+        self.list_ctrl_5ab.InsertColumn(1,"Precio")
+        self.list_ctrl_5ab.InsertColumn(2,"Disponible")
 
         self.list_ctrl_5a.InsertColumn(0,"Nombre")
-        self.list_ctrl_5a.InsertColumn(1,"Disponible")
+        self.list_ctrl_5a.InsertColumn(1,"Precio")
+        self.list_ctrl_5a.InsertColumn(2,"Disponible")
 
         self.list_ctrl_5abc.InsertColumn(0,"Nombre")
-        self.list_ctrl_5abc.InsertColumn(1,"Disponible")
+        self.list_ctrl_5abc.InsertColumn(1,"Precio")
+        self.list_ctrl_5abc.InsertColumn(2,"Disponible")
 
-        # for data in servicio.Items:
-        #     # 0 will insert at the start of the list
-        #     pos = self.list_ctrl_3.InsertStringItem(0,data['nombre'])
-        #     # add values in the other columns on the same row
-        #     self.list_ctrl_3.SetStringItem(pos,1,str(data['precio']))
-        #     self.list_ctrl_3.SetStringItem(pos,2,str(data['disponible']))
+        for data in servicio.Items:
+            # 0 will insert at the start of the list
+            pos = self.list_ctrl_3.InsertStringItem(0,data['_data']['nombre'])
+            # add values in the other columns on the same row
+            self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['precio']))
+            self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['disponible']))
 
         self.__set_properties()
         self.__do_layout()
@@ -475,10 +479,19 @@ class crear_oferta(wx.Frame):
         self.list_ctrl_4 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
         self.list_ctrl_4.InsertColumn(0,"Nombre")
-        self.list_ctrl_4.InsertColumn(1,"Disponible")
+        self.list_ctrl_4.InsertColumn(1,"Precio")
+        self.list_ctrl_4.InsertColumn(2,"Disponible")
 
         self.list_ctrl_5.InsertColumn(0,"Nombre")
-        self.list_ctrl_5.InsertColumn(1,"Disponible")
+        self.list_ctrl_5.InsertColumn(1,"Precio")
+        self.list_ctrl_5.InsertColumn(2,"Disponible")
+
+        for data in servicio.Items:
+            # 0 will insert at the start of the list
+            pos = self.list_ctrl_4.InsertStringItem(0,data['_data']['nombre'])
+            # add values in the other columns on the same row
+            self.list_ctrl_4.SetStringItem(pos,1,str(data['_data']['precio']))
+            self.list_ctrl_4.SetStringItem(pos,2,str(data['_data']['disponible']))
 
         self.__set_properties()
         self.__do_layout()
