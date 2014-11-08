@@ -217,6 +217,8 @@ class ver_editar(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.add_postre, self.button_10)
         self.Bind(wx.EVT_BUTTON, self.left_postre, self.button_11)
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.item_selec, self.list_ctrl_3)
+
+        self.crearItem = None
         # end wxGlade
 
     def __set_properties(self):
@@ -342,6 +344,24 @@ class ver_editar(wx.Frame):
         print "Event handler 'crear_item'"
         crearItem = crear_item(self)
         crearItem.Show()
+        self.Hide()
+        crearItem.Bind(wx.EVT_CLOSE, self.on_close)
+        self.crearItem = crearItem
+        event.Skip()
+
+    def on_close(self, event):
+        """
+        CAMBACK
+        """
+        print '-----------'
+        # Actualizar la lista de items
+        closed_window = event.EventObject
+        if closed_window == self.crearItem:
+            self.crearItem = None
+            self.Show()
+        elif closed_window == self:
+            print 'Carry out your code for when Main window closes'
+        event.Skip()
 
     def add_seg(self, event):  # wxGlade: ver_editar.<event_handler>
         print "Event handler 'add_seg' not implemented!"
@@ -366,6 +386,9 @@ class ver_editar(wx.Frame):
 # end of class ver_editar
 
 class crear_item(wx.Frame):
+    #variables para guardar la imagen codificada en base64
+    img = 0
+
     def __init__(self, *args, **kwds):
         # begin wxGlade: crear_item.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -374,8 +397,8 @@ class crear_item(wx.Frame):
         self.sizer_32_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_9 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_33_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Precio"))
-        self.combo_box_1 = wx.ComboBox(self, wx.ID_ANY, choices=[_("Primero"), _("Segundo"), _("Postre")], style=wx.CB_DROPDOWN)
-        self.sizer_20_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Tipo"))
+        #self.combo_box_1 = wx.ComboBox(self, wx.ID_ANY, choices=[_("Primero"), _("Segundo"), _("Postre")], style=wx.CB_DROPDOWN)
+        self.sizer_20_staticbox = wx.StaticBox(self, wx.ID_ANY, _(""))
         self.text_ctrl_4 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_MULTILINE)
         self.sizer_21_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Descripcion"))
         self.button_13 = wx.Button(self, wx.ID_ANY, _("img"))
@@ -396,7 +419,7 @@ class crear_item(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: crear_item.__set_properties
         self.SetTitle(_("frame_1"))
-        self.combo_box_1.SetSelection(-1)
+        #self.combo_box_1.SetSelection(0)
         self.text_ctrl_4.SetMinSize((200, 100))
         self.checkbox_2.SetValue(1)
         # end wxGlade
@@ -423,7 +446,7 @@ class crear_item(wx.Frame):
         sizer_33.Add(self.text_ctrl_9, 0, wx.EXPAND, 0)
         sizer_19.Add(sizer_33, 1, wx.EXPAND, 0)
         grid_sizer_8.Add(sizer_19, 1, wx.EXPAND, 0)
-        sizer_20.Add(self.combo_box_1, 0, 0, 0)
+        #sizer_20.Add(self.combo_box_1, 0, 0, 0)
         grid_sizer_8.Add(sizer_20, 1, wx.EXPAND, 0)
         sizer_21.Add(self.text_ctrl_4, 0, wx.EXPAND, 0)
         grid_sizer_8.Add(sizer_21, 1, wx.EXPAND, 0)
@@ -439,11 +462,32 @@ class crear_item(wx.Frame):
         # end wxGlade
 
     def solo_num(self, event):  # wxGlade: crear_item.<event_handler>
-        print "Event handler 'solo_num' not implemented!"
+        print "solo_num"
+        raw_value = self.text_ctrl_9.GetValue().strip()
+        # numeric check
+        if all(x in '0123456789.' for x in raw_value):
+            pass
+        else:
+            self.text_ctrl_9.ChangeValue('')
         event.Skip()
 
     def load_img_item(self, event):  # wxGlade: crear_item.<event_handler>
-        print "Event handler 'load_img_item' not implemented!"
+        print "load_img_item"
+        img = self.img
+        openFileDialog = wx.FileDialog(self, "Selecionar imagen del artículo", "", "", "pictures (*.jpeg,*.jpg,*.png)|*.jpeg;*.jpg;*.png", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+
+        if openFileDialog.ShowModal() == wx.ID_CANCEL:
+            return     # the user changed idea...
+
+        print openFileDialog.GetPath()
+        # pasar a base64 y guardar en variable
+        with open(openFileDialog.GetPath(), "rb") as imageFile:
+            img = base64.b64encode(imageFile.read())
+        if img!=self.img:
+            msgbox = wx.MessageBox('!Imágen guardada!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+            self.img = img
+        else:
+            msgbox = wx.MessageBox('¡La imágen no se guardo, o elegiste la misma que ya estaba guardada!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     def item_disp(self, event):  # wxGlade: crear_item.<event_handler>
@@ -451,7 +495,17 @@ class crear_item(wx.Frame):
         event.Skip()
 
     def crear_item_go(self, event):  # wxGlade: crear_item.<event_handler>
-        print "Event handler 'crear_item_go' not implemented!"
+        print "crear_item_go"
+        if len(self.text_ctrl_9.GetValue()) and len(self.text_ctrl_8.GetValue()) and len(self.text_ctrl_4.GetValue()):
+            if servicio.createItem(self.checkbox_2.GetValue(), self.text_ctrl_9.GetValue(), self.text_ctrl_8.GetValue(), self.text_ctrl_4.GetValue(), self.img, 0, 0, 0, 0):
+                print 'item creado'
+                msgbox = wx.MessageBox('!Item creado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+            else:
+                print 'no se creo!'
+                msgbox = wx.MessageBox('¡El item no se pudo crear!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            self.Close(True)
+        else:
+            msgbox = wx.MessageBox('¡Rellena los campos!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
 # end of class crear_item
