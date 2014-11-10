@@ -350,13 +350,9 @@ class ver_editar(wx.Frame):
         event.Skip()
 
     def on_close_crear_item(self, event):
-        self.list_ctrl_3.ClearAll() # limpiamos la lista
-        servicio.updateItems()      # actualizamos los items del servidor
-        # añadimos los nombres de las columnas
-        self.list_ctrl_3.InsertColumn(0,"Nombre")
-        self.list_ctrl_3.InsertColumn(1,"Precio")
-        self.list_ctrl_3.InsertColumn(2,"Disponible")
-        for data in servicio.Items: # y actualizamos la lista
+        self.list_ctrl_3.DeleteAllItems() # limpiamos la lista
+        servicio.updateItems()            # actualizamos los items del servidor
+        for data in servicio.Items:       # y actualizamos la lista
             pos = self.list_ctrl_3.InsertStringItem(0,data['_data']['nombre'])
             self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['precio']))
             self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['disponible']))
