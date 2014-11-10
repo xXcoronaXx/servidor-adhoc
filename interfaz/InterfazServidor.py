@@ -345,16 +345,21 @@ class ver_editar(wx.Frame):
         crearItem = crear_item(self)
         crearItem.Show()
         self.Hide()
-        crearItem.Bind(wx.EVT_CLOSE, self.on_close)
+        crearItem.Bind(wx.EVT_CLOSE, self.on_close_crear_item)
         self.crearItem = crearItem
         event.Skip()
 
-    def on_close(self, event):
-        """
-        CAMBACK
-        """
-        print '-----------'
-        # Actualizar la lista de items
+    def on_close_crear_item(self, event):
+        self.list_ctrl_3.ClearAll() # limpiamos la lista
+        servicio.updateItems()      # actualizamos los items del servidor
+        # añadimos los nombres de las columnas
+        self.list_ctrl_3.InsertColumn(0,"Nombre")
+        self.list_ctrl_3.InsertColumn(1,"Precio")
+        self.list_ctrl_3.InsertColumn(2,"Disponible")
+        for data in servicio.Items: # y actualizamos la lista
+            pos = self.list_ctrl_3.InsertStringItem(0,data['_data']['nombre'])
+            self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['precio']))
+            self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['disponible']))
         closed_window = event.EventObject
         if closed_window == self.crearItem:
             self.crearItem = None
