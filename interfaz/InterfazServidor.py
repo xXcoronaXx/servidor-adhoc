@@ -392,16 +392,16 @@ class crear_item(wx.Frame):
 
     def __init__(self, *args, **kwds):
         # begin wxGlade: crear_item.__init__
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        kwds["style"] = wx.CLOSE_BOX
         wx.Frame.__init__(self, *args, **kwds)
         self.text_ctrl_8 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_32_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_9 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_33_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Precio"))
         #self.combo_box_1 = wx.ComboBox(self, wx.ID_ANY, choices=[_("Primero"), _("Segundo"), _("Postre")], style=wx.CB_DROPDOWN)
-        self.sizer_20_staticbox = wx.StaticBox(self, wx.ID_ANY, _(""))
+        self.sizer_20_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Descripcion"))
         self.text_ctrl_4 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_MULTILINE)
-        self.sizer_21_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Descripcion"))
+        #self.sizer_21_staticbox = wx.StaticBox(self, wx.ID_ANY, _(""))
         self.button_13 = wx.Button(self, wx.ID_ANY, _("img"))
         self.sizer_22_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Imagen"))
         self.checkbox_2 = wx.CheckBox(self, wx.ID_ANY, "")
@@ -419,7 +419,7 @@ class crear_item(wx.Frame):
 
     def __set_properties(self):
         # begin wxGlade: crear_item.__set_properties
-        self.SetTitle(_("frame_1"))
+        self.SetTitle(_("Item"))
         #self.combo_box_1.SetSelection(0)
         self.text_ctrl_4.SetMinSize((200, 100))
         self.checkbox_2.SetValue(1)
@@ -428,34 +428,39 @@ class crear_item(wx.Frame):
     def __do_layout(self):
         # begin wxGlade: crear_item.__do_layout
         sizer_18 = wx.BoxSizer(wx.VERTICAL)
-        grid_sizer_8 = wx.GridSizer(2, 3, 0, 0)
+        grid_sizer_8 = wx.GridSizer(2, 2, 0, 0)
         self.sizer_23_staticbox.Lower()
         sizer_23 = wx.StaticBoxSizer(self.sizer_23_staticbox, wx.HORIZONTAL)
         self.sizer_22_staticbox.Lower()
         sizer_22 = wx.StaticBoxSizer(self.sizer_22_staticbox, wx.HORIZONTAL)
-        self.sizer_21_staticbox.Lower()
-        sizer_21 = wx.StaticBoxSizer(self.sizer_21_staticbox, wx.HORIZONTAL)
+        #self.sizer_21_staticbox.Lower()
+        #sizer_21 = wx.StaticBoxSizer(self.sizer_21_staticbox, wx.HORIZONTAL)
         self.sizer_20_staticbox.Lower()
         sizer_20 = wx.StaticBoxSizer(self.sizer_20_staticbox, wx.HORIZONTAL)
+        
         sizer_19 = wx.BoxSizer(wx.VERTICAL)
+        sizer_sal = wx.BoxSizer(wx.VERTICAL)
         self.sizer_33_staticbox.Lower()
         sizer_33 = wx.StaticBoxSizer(self.sizer_33_staticbox, wx.HORIZONTAL)
         self.sizer_32_staticbox.Lower()
         sizer_32 = wx.StaticBoxSizer(self.sizer_32_staticbox, wx.HORIZONTAL)
         sizer_32.Add(self.text_ctrl_8, 0, wx.EXPAND, 0)
+        
         sizer_19.Add(sizer_32, 1, wx.EXPAND, 0)
         sizer_33.Add(self.text_ctrl_9, 0, wx.EXPAND, 0)
         sizer_19.Add(sizer_33, 1, wx.EXPAND, 0)
         grid_sizer_8.Add(sizer_19, 1, wx.EXPAND, 0)
-        #sizer_20.Add(self.combo_box_1, 0, 0, 0)
+        #sizer_21.Add(self.combo_box_1, 0, 0, 0)
         grid_sizer_8.Add(sizer_20, 1, wx.EXPAND, 0)
-        sizer_21.Add(self.text_ctrl_4, 0, wx.EXPAND, 0)
-        grid_sizer_8.Add(sizer_21, 1, wx.EXPAND, 0)
+        sizer_20.Add(self.text_ctrl_4, 0, wx.EXPAND, 0)
+        #grid_sizer_8.Add(sizer_21, 1, wx.EXPAND, 0)
         sizer_22.Add(self.button_13, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_8.Add(sizer_22, 1, wx.EXPAND, 0)
         sizer_23.Add(self.checkbox_2, 0, 0, 0)
-        grid_sizer_8.Add(sizer_23, 1, wx.EXPAND, 0)
-        grid_sizer_8.Add(self.button_12, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
+        sizer_sal.Add(sizer_23,0, wx.EXPAND, 0)
+        sizer_sal.Add(self.button_12,0,wx.EXPAND,0)
+        grid_sizer_8.Add(sizer_sal, 1, wx.EXPAND, 0)
+        #grid_sizer_8.Add(self.button_12, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
         sizer_18.Add(grid_sizer_8, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_18)
         sizer_18.Fit(self)
