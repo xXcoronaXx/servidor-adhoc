@@ -49,5 +49,9 @@ class ServicioPyro(object):
 		except Exception, e:
 			self.Online = False
 		return self.Online
+	
 	def createItem(self,disponible, precio, nombre,descripcion, imagen, primeros_id, segundos_id, postres_id, ofertas_id):
 		return self.servicio.createItem(disponible, precio, nombre,descripcion, imagen, primeros_id, segundos_id, postres_id, ofertas_id)
+
+	def delItem(self,item):
+		return self.servicio.delItem(item)
