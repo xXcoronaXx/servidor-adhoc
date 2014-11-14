@@ -37,15 +37,18 @@ class ControladorPyro(object):
 			return False
 
 	# update item
-	def updateItem(self,disponible, precio, nombre,descripcion, imagen):
+	def updateItem(self, nomAnt, disponible, precio, nombre, descripcion, imagen):
 		try:
 			print 'Update Item'
-			items = Item_db.select().where(nombre==nombre)
+			items = Item_db.select().where(Item_db.nombre==nomAnt)
+			print items
 			for i in items:
+				print i
 				i.disponible = disponible
 				i.precio = precio
 				i.descripcion = descripcion
 				i.imagen = imagen
+				i.nombre = nombre
 				i.save()
 			return True
 		except Exception, e:
@@ -69,7 +72,7 @@ class ControladorPyro(object):
 	def updateMenu(self, disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen):
 		try:
 			print 'Update menu'
-			menu = Menu_db.select().where(nombre==nombre).get()
+			menu = Menu_db.get(Menu_db.nombre==nombre)
 			menu.disponible = disponible
 			menu.precio = predio
 			menu.descripcion = descripcion
@@ -99,7 +102,7 @@ class ControladorPyro(object):
 	def updateOferta(self, disponible, codigo, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen):
 		try:
 			print 'Update oferta'
-			oferta = Oferta_db.select().where(nombre==nombre).get()
+			oferta = Oferta_db.get(Oferta_db.nombre==nombre)
 			oferta.disponible = disponible
 			oferta.codigo = codigo
 			oferta.precio = precio

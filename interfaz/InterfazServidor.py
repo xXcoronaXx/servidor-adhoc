@@ -456,6 +456,7 @@ class ver_editar(wx.Frame):
 class crear_item(wx.Frame):
     #variables para guardar la imagen codificada en base64
     img = 0
+    itemMod = -1
 
     def __init__(self, parent, item=-1, *args, **kwds):
         # begin wxGlade: crear_item.__init__
@@ -473,7 +474,7 @@ class crear_item(wx.Frame):
         self.sizer_22_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Imagen"))
         self.checkbox_2 = wx.CheckBox(self, wx.ID_ANY, "")
         self.sizer_23_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Disponible"))
-        self.button_12 = wx.Button(self, wx.ID_ANY, _("Crear"))
+        self.button_12 = wx.Button(self, wx.ID_ANY, _("Guardar"))
 
         self.__set_properties()
         self.__do_layout()
@@ -481,14 +482,40 @@ class crear_item(wx.Frame):
         self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_9)
         self.Bind(wx.EVT_BUTTON, self.load_img_item, self.button_13)
         self.Bind(wx.EVT_CHECKBOX, self.item_disp, self.checkbox_2)
-        self.Bind(wx.EVT_BUTTON, self.crear_item_go, self.button_12)
 
         if item != -1:
             print 'Editando '+item
-            # metodo para buscar item en la lista por su id
-            # cambiar el bind de crear_item_go por ACTUALIZAR ITEM
+            self.itemMod = self.searchItem(item,servicio.Items)
+            self.text_ctrl_8.AppendText(self.itemMod['_data']['nombre'])
+            self.text_ctrl_9.AppendText(self.itemMod['_data']['precio'])
+            self.text_ctrl_4.AppendText(self.itemMod['_data']['descripcion'])
+            if self.itemMod['_data']['disponible'] == False:
+                self.checkbox_2.SetValue(0)
+            self.img = self.itemMod['_data']['imagen']
+            self.Bind(wx.EVT_BUTTON, self.modificar_item, self.button_12)
+        else:
+            self.Bind(wx.EVT_BUTTON, self.crear_item_go, self.button_12)
 
         # end wxGlade
+
+    def modificar_item(self, event):  # wxGlade: crear_item.<event_handler>
+        print "modificar_item"
+        if len(self.text_ctrl_9.GetValue()) and len(self.text_ctrl_8.GetValue()) and len(self.text_ctrl_4.GetValue()):
+            if servicio.updateItem(self.itemMod['_data']['nombre'],self.checkbox_2.GetValue(), self.text_ctrl_9.GetValue(), self.text_ctrl_8.GetValue(), self.text_ctrl_4.GetValue(), self.img):
+                print 'item modificado'
+                msgbox = wx.MessageBox('!Item guardado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+            else:
+                print 'no se modifico!'
+                msgbox = wx.MessageBox('¡El item no se pudo guardar!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            self.Close(True)
+        else:
+            msgbox = wx.MessageBox('¡Rellena los campos!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+        event.Skip()
+
+    def searchItem(self,iditem, items):
+        for element in items:
+            if str(element['_data']['id']) == iditem:
+                return element
 
     def __set_properties(self):
         # begin wxGlade: crear_item.__set_properties

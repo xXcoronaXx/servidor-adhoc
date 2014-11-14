@@ -55,3 +55,8 @@ class ServicioPyro(object):
 
 	def delItem(self,item):
 		return self.servicio.delItem(item)
+
+	def updateItem(self, nomAnt, disponible, precio, nombre, descripcion, imagen):
+		return self.servicio.updateItem(nomAnt, disponible, precio, nombre, descripcion, imagen)
+
+
