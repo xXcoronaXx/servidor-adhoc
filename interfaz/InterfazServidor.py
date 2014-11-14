@@ -174,31 +174,45 @@ class ver_editar(wx.Frame):
         self.button_11 = wx.Button(self, wx.ID_ANY, _(">>"))
         self.list_ctrl_3 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
-        self.list_ctrl_3.InsertColumn(0,"Nombre")
-        self.list_ctrl_3.InsertColumn(1,"Precio")
-        self.list_ctrl_3.InsertColumn(2,"Disponible")
+        self.list_ctrl_3.InsertColumn(0,"ID")
+        self.list_ctrl_3.SetColumnWidth(0,0) # para que no se visualize
+        self.list_ctrl_3.InsertColumn(1,"Nombre")
+        self.list_ctrl_3.InsertColumn(2,"Precio")
+        self.list_ctrl_3.InsertColumn(3,"Disponible")
 
-        self.list_ctrl_5ab.InsertColumn(0,"Nombre")
-        self.list_ctrl_5ab.InsertColumn(1,"Precio")
-        self.list_ctrl_5ab.InsertColumn(2,"Disponible")
+        self.list_ctrl_5ab.InsertColumn(0,"ID")
+        self.list_ctrl_5ab.SetColumnWidth(0,0) # para que no se visualize
+        self.list_ctrl_5ab.InsertColumn(1,"Nombre")
+        self.list_ctrl_5ab.InsertColumn(2,"Precio")
+        self.list_ctrl_5ab.InsertColumn(3,"Disponible")
 
-        self.list_ctrl_5a.InsertColumn(0,"Nombre")
-        self.list_ctrl_5a.InsertColumn(1,"Precio")
-        self.list_ctrl_5a.InsertColumn(2,"Disponible")
+        self.list_ctrl_5a.InsertColumn(0,"ID")
+        self.list_ctrl_5a.SetColumnWidth(0,0) # para que no se visualize
+        self.list_ctrl_5a.InsertColumn(1,"Nombre")
+        self.list_ctrl_5a.InsertColumn(2,"Precio")
+        self.list_ctrl_5a.InsertColumn(3,"Disponible")
 
-        self.list_ctrl_5abc.InsertColumn(0,"Nombre")
-        self.list_ctrl_5abc.InsertColumn(1,"Precio")
-        self.list_ctrl_5abc.InsertColumn(2,"Disponible")
+        self.list_ctrl_5abc.InsertColumn(0,"ID")
+        self.list_ctrl_5abc.SetColumnWidth(0,0) # para que no se visualize
+        self.list_ctrl_5abc.InsertColumn(1,"Nombre")
+        self.list_ctrl_5abc.InsertColumn(2,"Precio")
+        self.list_ctrl_5abc.InsertColumn(3,"Disponible")
 
         for data in servicio.Items:
             # 0 will insert at the start of the list
-            pos = self.list_ctrl_3.InsertStringItem(0,data['_data']['nombre'])
+            pos = self.list_ctrl_3.InsertStringItem(0,str(data['_data']['id']))
             # add values in the other columns on the same row
-            self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['precio']))
-            self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['disponible']))
+            self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['nombre']))
+            self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['precio']))
+            self.list_ctrl_3.SetStringItem(pos,3,str(data['_data']['disponible']))
+            
 
         self.__set_properties()
         self.__do_layout()
+        
+        self.list_ctrl_3.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
+        self.createMenu()
+
 
         self.Bind(wx.calendar.EVT_CALENDAR, self.calendario, self.calendar_ctrl_3)
         self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_1)
@@ -221,12 +235,59 @@ class ver_editar(wx.Frame):
         self.crearItem = None
         # end wxGlade
 
+    #######################
+    def createMenu(self):
+        self.menu = wx.Menu()
+        item1 = self.menu.Append(-1,'Editar')
+        item2 = self.menu.Append(-1,'Borrar')
+        self.Bind(wx.EVT_MENU, self.editarItem, item1)
+        self.Bind(wx.EVT_MENU, self.borrarItem, item2)
+
+    def borrarItem(self,event):
+        print 'Borrando item'
+        item = self.list_ctrl_3.GetItemText(self.item_seleccionado)
+        print item
+        if servicio.delItem(item):
+            print 'item borrado'
+            self.list_ctrl_3.DeleteAllItems() # limpiamos la lista
+            servicio.updateItems()            # actualizamos los items del servidor
+            for data in servicio.Items:       # y actualizamos la lista
+                # 0 will insert at the start of the list
+                pos = self.list_ctrl_3.InsertStringItem(0,str(data['_data']['id']))
+                # add values in the other columns on the same row
+                self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_3.SetStringItem(pos,3,str(data['_data']['disponible']))
+        else:
+            print 'ERROR al borrar el item'
+
+    def editarItem(self,event):
+        #comeback
+        print 'Editando item'
+        item = self.list_ctrl_3.GetItemText(self.item_seleccionado)
+        print item
+        crearItem = crear_item(self,item=item)
+        crearItem.Show()
+        self.Hide()
+        crearItem.Bind(wx.EVT_CLOSE, self.on_close_crear_item)
+        self.crearItem = crearItem # comentar esto creo que sobra
+        event.Skip()
+
+    
+    def showPopupMenu(self,event):
+        print 'boton derecho'
+        position = self.ScreenToClient(wx.GetMousePosition())
+        item = self.list_ctrl_3.HitTest(event.GetPosition())
+        if item[0]!=-1: # para que solo aparezca el menu cuando pincha en un item
+            self.PopupMenu(self.menu,position)
+    ########################
+
     def __set_properties(self):
         # begin wxGlade: ver_editar.__set_properties
-        self.SetTitle(_("frame_1"))
-        self.SetSize((650, 531))
+        self.SetTitle(_("Menu"))
+        self.SetSize((700, 531))
         self.checkbox_1.SetValue(1)
-        self.list_ctrl_3.SetMinSize((164, 500))
+        self.list_ctrl_3.SetMinSize((250, 510))
         self.calendar_ctrl_3.SetMinSize((215, 140))
         # primeros segundos y postre
         self.list_ctrl_5a.SetMinSize((164, 140))
@@ -346,16 +407,20 @@ class ver_editar(wx.Frame):
         crearItem.Show()
         self.Hide()
         crearItem.Bind(wx.EVT_CLOSE, self.on_close_crear_item)
-        self.crearItem = crearItem
+        self.crearItem = crearItem # comentar esto creo que sobra
         event.Skip()
 
     def on_close_crear_item(self, event):
         self.list_ctrl_3.DeleteAllItems() # limpiamos la lista
         servicio.updateItems()            # actualizamos los items del servidor
         for data in servicio.Items:       # y actualizamos la lista
-            pos = self.list_ctrl_3.InsertStringItem(0,data['_data']['nombre'])
-            self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['precio']))
-            self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['disponible']))
+            # 0 will insert at the start of the list
+            pos = self.list_ctrl_3.InsertStringItem(0,str(data['_data']['id']))
+            # add values in the other columns on the same row
+            self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['nombre']))
+            self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['precio']))
+            self.list_ctrl_3.SetStringItem(pos,3,str(data['_data']['disponible']))
+
         closed_window = event.EventObject
         if closed_window == self.crearItem:
             self.crearItem = None
@@ -382,6 +447,8 @@ class ver_editar(wx.Frame):
 
     def item_selec(self, event):  # wxGlade: ver_editar.<event_handler>
         print "Event handler 'item_selec' not implemented!"
+        print self.list_ctrl_3.GetFocusedItem()
+        self.item_seleccionado = self.list_ctrl_3.GetFocusedItem()
         event.Skip()
 
 # end of class ver_editar
@@ -390,10 +457,10 @@ class crear_item(wx.Frame):
     #variables para guardar la imagen codificada en base64
     img = 0
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, parent, item=-1, *args, **kwds):
         # begin wxGlade: crear_item.__init__
         kwds["style"] = wx.CLOSE_BOX
-        wx.Frame.__init__(self, *args, **kwds)
+        wx.Frame.__init__(self,parent, *args, **kwds)
         self.text_ctrl_8 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_32_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_9 = wx.TextCtrl(self, wx.ID_ANY, "")
@@ -415,6 +482,12 @@ class crear_item(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.load_img_item, self.button_13)
         self.Bind(wx.EVT_CHECKBOX, self.item_disp, self.checkbox_2)
         self.Bind(wx.EVT_BUTTON, self.crear_item_go, self.button_12)
+
+        if item != -1:
+            print 'Editando '+item
+            # metodo para buscar item en la lista por su id
+            # cambiar el bind de crear_item_go por ACTUALIZAR ITEM
+
         # end wxGlade
 
     def __set_properties(self):
