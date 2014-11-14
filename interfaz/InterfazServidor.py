@@ -47,15 +47,11 @@ class MyFrame(wx.Frame):
         self.list_ctrl_1.InsertColumn(2,"Disponible")
 
         for data in servicio.Menus:
-            # 0 will insert at the start of the list
             pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
-            # add values in the other columns on the same row
             self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
             self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
         for data in servicio.Ofertas:
-            # 0 will insert at the start of the list
             pos = self.list_ctrl_2.InsertStringItem(0,data['nombre'])
-            # add values in the other columns on the same row
             self.list_ctrl_2.SetStringItem(pos,1,str(data['precio']))
             self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
 
@@ -146,13 +142,13 @@ class MyFrame(wx.Frame):
 class ver_editar(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: ver_editar.__init__
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        kwds["style"] = wx.CLOSE_BOX
         wx.Frame.__init__(self, *args, **kwds)
         self.calendar_ctrl_3 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
         self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_34_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_1 = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.sizer_12_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duracion"))
+        self.sizer_12_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duracion en dias"))
         self.text_ctrl_2 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_13_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Precio"))
         self.checkbox_1 = wx.CheckBox(self, wx.ID_ANY, "")
@@ -183,20 +179,29 @@ class ver_editar(wx.Frame):
         self.list_ctrl_5ab.InsertColumn(0,"ID")
         self.list_ctrl_5ab.SetColumnWidth(0,0) # para que no se visualize
         self.list_ctrl_5ab.InsertColumn(1,"Nombre")
+        self.list_ctrl_5ab.SetColumnWidth(1,100)
         self.list_ctrl_5ab.InsertColumn(2,"Precio")
+        self.list_ctrl_5ab.SetColumnWidth(2,60)
         self.list_ctrl_5ab.InsertColumn(3,"Disponible")
+        self.list_ctrl_5ab.SetColumnWidth(3,45)
 
         self.list_ctrl_5a.InsertColumn(0,"ID")
         self.list_ctrl_5a.SetColumnWidth(0,0) # para que no se visualize
         self.list_ctrl_5a.InsertColumn(1,"Nombre")
+        self.list_ctrl_5a.SetColumnWidth(1,100)
         self.list_ctrl_5a.InsertColumn(2,"Precio")
+        self.list_ctrl_5a.SetColumnWidth(2,60)
         self.list_ctrl_5a.InsertColumn(3,"Disponible")
+        self.list_ctrl_5a.SetColumnWidth(3,45)
 
         self.list_ctrl_5abc.InsertColumn(0,"ID")
         self.list_ctrl_5abc.SetColumnWidth(0,0) # para que no se visualize
         self.list_ctrl_5abc.InsertColumn(1,"Nombre")
+        self.list_ctrl_5abc.SetColumnWidth(1,100)
         self.list_ctrl_5abc.InsertColumn(2,"Precio")
+        self.list_ctrl_5abc.SetColumnWidth(2,60)
         self.list_ctrl_5abc.InsertColumn(3,"Disponible")
+        self.list_ctrl_5abc.SetColumnWidth(3,45)
 
         for data in servicio.Items:
             # 0 will insert at the start of the list
@@ -285,7 +290,7 @@ class ver_editar(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: ver_editar.__set_properties
         self.SetTitle(_("Menu"))
-        self.SetSize((700, 531))
+        self.SetSize((800, 531))
         self.checkbox_1.SetValue(1)
         self.list_ctrl_3.SetMinSize((250, 510))
         self.calendar_ctrl_3.SetMinSize((215, 140))
@@ -306,6 +311,7 @@ class ver_editar(wx.Frame):
         sizer_8 = wx.BoxSizer(wx.VERTICAL)
         sizer_9 = wx.BoxSizer(wx.VERTICAL)
         sizer_6 = wx.BoxSizer(wx.VERTICAL)
+        sizer_guardar = wx.BoxSizer(wx.VERTICAL)
         self.sizer_17_staticbox.Lower()
         sizer_17 = wx.StaticBoxSizer(self.sizer_17_staticbox, wx.HORIZONTAL)
         self.sizer_16_staticbox.Lower()
@@ -330,8 +336,14 @@ class ver_editar(wx.Frame):
         grid_sizer_7.Add(sizer_13, 1, wx.EXPAND, 0)
         sizer_14.Add(self.checkbox_1, 0, 0, 0)
         grid_sizer_7.Add(sizer_14, 1, wx.EXPAND, 0)
-        grid_sizer_7.Add(self.Guardar, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        grid_sizer_7.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
+        sizer_guardar.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        sizer_guardar.Add((50,50),0,0,0)
+        sizer_guardar.Add(self.Guardar, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
+        
+        grid_sizer_7.Add(sizer_guardar,0,wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL,0)
+        #grid_sizer_7.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        #grid_sizer_7.Add(self.Guardar, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
+        
         sizer_5.Add(grid_sizer_7, 1, wx.EXPAND, 0)
         sizer_15.Add(self.list_ctrl_5a, 1, wx.EXPAND, 0)
         sizer_6.Add(sizer_15, 1, wx.EXPAND | wx.ALIGN_RIGHT , 0)
@@ -340,9 +352,11 @@ class ver_editar(wx.Frame):
         sizer_17.Add(self.list_ctrl_5abc, 1, wx.EXPAND, 0)
         sizer_6.Add(sizer_17, 1, wx.EXPAND | wx.ALIGN_RIGHT, 0)
         sizer_5.Add(sizer_6, 1, wx.EXPAND, 0)
+        sizer_7.Add((85, 20), 0, 0, 0)
+        sizer_7.Add(self.button_6, 0, 0, 0)
+        sizer_7.Add((85, 20), 0, 0, 0)
         sizer_7.Add(self.button_5, 0, 0, 0)
         sizer_7.Add(self.button_7, 0, 0, 0)
-        sizer_7.Add(self.button_6, 0, 0, 0)
         sizer_7.Add((85, 150), 0, 0, 0)
         sizer_9.Add(self.button_8, 0, 0, 0)
         sizer_9.Add(self.button_9, 0, 0, 0)
