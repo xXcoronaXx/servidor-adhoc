@@ -119,7 +119,7 @@ class ControladorPyro(object):
 	def addItemMenuP(self, item, menu):
 		try:
 			print 'añadiendo primero'
-			i = Item_db.select().where(Item_db.nombre==item).get()
+			i = Item_db.select().where(Item_db.id==item).get()
 			m = Menu_db.select().where(Menu_db.nombre==menu).get()
 			print i.nombre+' '+m.nombre
 			nuevoItemA = Item_db(disponible=i.disponible, precio=i.precio, nombre=i.nombre,descripcion=i.descripcion, imagen=i.imagen, primeros=m.id, segundos=0, postres=0, ofertas=0)
@@ -132,7 +132,7 @@ class ControladorPyro(object):
 	def addItemMenuS(self, item, menu):
 		try:
 			print 'añadiendo segundo'
-			i = Item_db.select().where(Item_db.nombre==item).get()
+			i = Item_db.select().where(Item_db.id==item).get()
 			m = Menu_db.select().where(Menu_db.nombre==menu).get()
 			print i.nombre+' '+m.nombre
 			nuevoItemA = Item_db(disponible=i.disponible, precio=i.precio, nombre=i.nombre,descripcion=i.descripcion, imagen=i.imagen, primeros=0, segundos=m.id, postres=0, ofertas=0)
@@ -145,7 +145,7 @@ class ControladorPyro(object):
 	def addItemMenuD(self, item, menu):
 		try:
 			print 'añadiendo postre'
-			i = Item_db.select().where(Item_db.nombre==item).get()
+			i = Item_db.select().where(Item_db.id==item).get()
 			m = Menu_db.select().where(Menu_db.nombre==menu).get()
 			print i.nombre+' '+m.nombre
 			nuevoItemA = Item_db(disponible=i.disponible, precio=i.precio, nombre=i.nombre,descripcion=i.descripcion, imagen=i.imagen, primeros=0, segundos=0, postres=m.id, ofertas=0)
@@ -158,7 +158,7 @@ class ControladorPyro(object):
 	def addItemOferta(self, item, oferta):
 		try:
 			print 'añadiendo item a oferta'
-			i = Item_db.select().where(Item_db.nombre==item).get()
+			i = Item_db.select().where(Item_db.id==item).get()
 			m = Oferta_db.select().where(Oferta_db.nombre==oferta).get()
 			print i.nombre+' '+m.nombre
 			nuevoItemA = Item_db(disponible=i.disponible, precio=i.precio, nombre=i.nombre,descripcion=i.descripcion, imagen=i.imagen, primeros=0, segundos=0, postres=0, ofertas=m.id)

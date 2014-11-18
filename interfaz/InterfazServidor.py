@@ -148,7 +148,7 @@ class ver_editar(wx.Frame):
         self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_34_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_1 = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.sizer_12_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duracion en dias"))
+        self.sizer_12_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duración en dias"))
         self.text_ctrl_2 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_13_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Precio"))
         self.checkbox_1 = wx.CheckBox(self, wx.ID_ANY, "")
@@ -169,6 +169,11 @@ class ver_editar(wx.Frame):
         self.button_10 = wx.Button(self, wx.ID_ANY, _("<<"))
         self.button_11 = wx.Button(self, wx.ID_ANY, _(">>"))
         self.list_ctrl_3 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
+
+        self.primeros = []
+        self.segundos = []
+        self.postres = []
+        self.img = 0
 
         self.list_ctrl_3.InsertColumn(0,"ID")
         self.list_ctrl_3.SetColumnWidth(0,0) # para que no se visualize
@@ -221,7 +226,7 @@ class ver_editar(wx.Frame):
 
         self.Bind(wx.calendar.EVT_CALENDAR, self.calendario, self.calendar_ctrl_3)
         self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_1)
-        self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_2)
+        self.Bind(wx.EVT_TEXT, self.solo_num2, self.text_ctrl_2)
         self.Bind(wx.EVT_CHECKBOX, self.activo, self.checkbox_1)
         self.Bind(wx.EVT_BUTTON, self.save_menu, self.Guardar)
         self.Bind(wx.EVT_BUTTON, self.load_img, self.button_14)
@@ -255,6 +260,7 @@ class ver_editar(wx.Frame):
         if servicio.delItem(item):
             print 'item borrado'
             self.list_ctrl_3.DeleteAllItems() # limpiamos la lista
+            self.comprobarItemsBorrado(item) 
             servicio.updateItems()            # actualizamos los items del servidor
             for data in servicio.Items:       # y actualizamos la lista
                 # 0 will insert at the start of the list
@@ -338,12 +344,8 @@ class ver_editar(wx.Frame):
         grid_sizer_7.Add(sizer_14, 1, wx.EXPAND, 0)
         sizer_guardar.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
         sizer_guardar.Add((50,50),0,0,0)
-        sizer_guardar.Add(self.Guardar, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
-        
+        sizer_guardar.Add(self.Guardar, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0) 
         grid_sizer_7.Add(sizer_guardar,0,wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL,0)
-        #grid_sizer_7.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        #grid_sizer_7.Add(self.Guardar, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
-        
         sizer_5.Add(grid_sizer_7, 1, wx.EXPAND, 0)
         sizer_15.Add(self.list_ctrl_5a, 1, wx.EXPAND, 0)
         sizer_6.Add(sizer_15, 1, wx.EXPAND | wx.ALIGN_RIGHT , 0)
@@ -375,12 +377,57 @@ class ver_editar(wx.Frame):
         self.Layout()
         # end wxGlade
 
+    def comprobarItemsBorrado(self,itemBorrado):
+        count = self.list_ctrl_5a.GetItemCount()
+        i=0
+        for row in range(count):
+            item = self.list_ctrl_5a.GetItem(itemId=row, col=0)
+            if item.GetText() == itemBorrado:
+                self.list_ctrl_5a.DeleteItem(i)
+                self.primeros.pop(self.primeros.index(int(itemBorrado)))
+                break
+            i+=1
+        count = self.list_ctrl_5ab.GetItemCount()
+        i=0
+        for row in range(count):
+            item = self.list_ctrl_5ab.GetItem(itemId=row, col=0)
+            if item.GetText() == itemBorrado:
+                self.list_ctrl_5ab.DeleteItem(i)
+                self.segundos.pop(self.segundos.index(int(itemBorrado)))
+                break
+            i+=1
+        count = self.list_ctrl_5abc.GetItemCount()
+        i=0
+        for row in range(count):
+            item = self.list_ctrl_5abc.GetItem(itemId=row, col=0)
+            if item.GetText() == itemBorrado:
+                self.list_ctrl_5abc.DeleteItem(i)
+                self.postres.pop(self.postres.index(int(itemBorrado)))
+                break
+            i+=1
+
     def calendario(self, event):  # wxGlade: ver_editar.<event_handler>
         print "Event handler 'calendario' not implemented!"
         event.Skip()
 
     def solo_num(self, event):  # wxGlade: ver_editar.<event_handler>
-        print "Event handler 'solo_num' not implemented!"
+        print "solo_num"
+        raw_value = self.text_ctrl_1.GetValue().strip()
+        # numeric check
+        if all(x in '0123456789.' for x in raw_value):
+            pass
+        else:
+            self.text_ctrl_1.ChangeValue('')
+        event.Skip()
+
+    def solo_num2(self, event):  # wxGlade: ver_editar.<event_handler>
+        print "solo_num2"
+        raw_value = self.text_ctrl_2.GetValue().strip()
+        # numeric check
+        if all(x in '0123456789.' for x in raw_value):
+            pass
+        else:
+            self.text_ctrl_2.ChangeValue('')
         event.Skip()
 
     def activo(self, event):  # wxGlade: ver_editar.<event_handler>
@@ -389,11 +436,29 @@ class ver_editar(wx.Frame):
 
     def save_menu(self, event):  # wxGlade: ver_editar.<event_handler>
         print "Event handler 'save_menu' not implemented!"
+        print self.calendar_ctrl_3.GetDate().FormatISODate()
+        #self.getColumnPrimeros()
         event.Skip()
 
     def load_img(self, event):  # wxGlade: ver_editar.<event_handler>
-        print "Event handler 'load_img' not implemented!"
+        print "load_img"
+        img = self.img
+        openFileDialog = wx.FileDialog(self, "Selecionar imagen del menu", "", "", "pictures (*.jpeg,*.jpg,*.png)|*.jpeg;*.jpg;*.png", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+
+        if openFileDialog.ShowModal() == wx.ID_CANCEL:
+            return     # the user changed idea...
+
+        print openFileDialog.GetPath()
+        # pasar a base64 y guardar en variable
+        with open(openFileDialog.GetPath(), "rb") as imageFile:
+            img = base64.b64encode(imageFile.read())
+        if img!=self.img:
+            msgbox = wx.MessageBox('!Imágen guardada!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+            self.img = img
+        else:
+            msgbox = wx.MessageBox('¡La imágen no se guardo, o elegiste la misma que ya estaba guardada!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
+
 
     def primero_selec(self, event):  # wxGlade: ver_editar.<event_handler>
         print "Event handler 'primero_selec' not implemented!"
@@ -408,12 +473,42 @@ class ver_editar(wx.Frame):
         event.Skip()
 
     def add_prim(self, event):  # wxGlade: ver_editar.<event_handler>
-        print "Event handler 'add_prim' not implemented!"
+        print "add_prim"
+        # comprobar si el item existe en la lista para no añadirlo dos veces
+        if self.list_ctrl_3.GetFocusedItem()!=-1:
+            item = self.searchItem(self.list_ctrl_3.GetItemText(self.list_ctrl_3.GetFocusedItem()),servicio.Items)
+            try:
+                self.primeros.index(item['_data']['id'])
+                # el item existe
+            except Exception, e:
+                # el item no esta en la lista primeros
+                if self.list_ctrl_3.GetFirstSelected()!=-1:
+                    pos = self.list_ctrl_5a.InsertStringItem(0,str(item['_data']['id']))
+                    # add values in the other columns on the same row
+                    self.list_ctrl_5a.SetStringItem(pos,1,str(item['_data']['nombre']))
+                    self.list_ctrl_5a.SetStringItem(pos,2,str(item['_data']['precio']))
+                    self.list_ctrl_5a.SetStringItem(pos,3,str(item['_data']['disponible']))
+                    self.primeros.append(item['_data']['id'])
         event.Skip()
 
     def left_prim(self, event):  # wxGlade: ver_editar.<event_handler>
-        print "Event handler 'left_prim' not implemented!"
+        print "left_prim"
+        if self.list_ctrl_5a.GetFirstSelected()!=-1:
+            item = self.searchItem(self.list_ctrl_5a.GetItemText(self.list_ctrl_5a.GetFirstSelected()),servicio.Items)
+            self.list_ctrl_5a.DeleteItem(self.list_ctrl_5a.GetFirstSelected())
+            self.primeros.pop(self.primeros.index(item['_data']['id']))
+        else:
+            try:
+                self.primeros.pop(self.primeros.index(int(self.list_ctrl_5a.GetItem(itemId=0, col=0).GetText())))
+                self.list_ctrl_5a.DeleteItem(0)
+            except Exception, e:
+                pass
         event.Skip()
+
+    def searchItem(self,iditem, items):
+        for element in items:
+            if str(element['_data']['id']) == iditem:
+                return element
 
     def crear_item(self, event):  # wxGlade: ver_editar.<event_handler>
         print "Event handler 'crear_item'"
@@ -445,18 +540,67 @@ class ver_editar(wx.Frame):
 
     def add_seg(self, event):  # wxGlade: ver_editar.<event_handler>
         print "Event handler 'add_seg' not implemented!"
+        # comprobar si el item existe en la lista para no añadirlo dos veces
+        if self.list_ctrl_3.GetFocusedItem()!=-1:
+            item = self.searchItem(self.list_ctrl_3.GetItemText(self.list_ctrl_3.GetFocusedItem()),servicio.Items)
+            try:
+                self.segundos.index(item['_data']['id'])
+                # el item existe
+            except Exception, e:
+                # el item no esta en la lista segundos
+                if self.list_ctrl_3.GetFirstSelected()!=-1:
+                    pos = self.list_ctrl_5ab.InsertStringItem(0,str(item['_data']['id']))
+                    # add values in the other columns on the same row
+                    self.list_ctrl_5ab.SetStringItem(pos,1,str(item['_data']['nombre']))
+                    self.list_ctrl_5ab.SetStringItem(pos,2,str(item['_data']['precio']))
+                    self.list_ctrl_5ab.SetStringItem(pos,3,str(item['_data']['disponible']))
+                    self.segundos.append(item['_data']['id'])
         event.Skip()
 
     def left_seg(self, event):  # wxGlade: ver_editar.<event_handler>
         print "Event handler 'left_seg' not implemented!"
+        if self.list_ctrl_5ab.GetFirstSelected()!=-1:
+            item = self.searchItem(self.list_ctrl_5ab.GetItemText(self.list_ctrl_5ab.GetFirstSelected()),servicio.Items)
+            self.list_ctrl_5ab.DeleteItem(self.list_ctrl_5ab.GetFirstSelected())
+            self.segundos.pop(self.segundos.index(item['_data']['id']))
+        else:
+            try:
+                self.segundos.pop(self.segundos.index(int(self.list_ctrl_5ab.GetItem(itemId=0, col=0).GetText())))
+                self.list_ctrl_5ab.DeleteItem(0)
+            except Exception, e:
+                pass
         event.Skip()
 
     def add_postre(self, event):  # wxGlade: ver_editar.<event_handler>
-        print "Event handler 'add_postre' not implemented!"
+        # comprobar si el item existe en la lista para no añadirlo dos veces
+        if self.list_ctrl_3.GetFocusedItem()!=-1:
+            item = self.searchItem(self.list_ctrl_3.GetItemText(self.list_ctrl_3.GetFocusedItem()),servicio.Items)
+            try:
+                self.postres.index(item['_data']['id'])
+                # el item existe
+            except Exception, e:
+                # el item no esta en la lista postres
+                if self.list_ctrl_3.GetFirstSelected()!=-1:
+                    pos = self.list_ctrl_5abc.InsertStringItem(0,str(item['_data']['id']))
+                    # add values in the other columns on the same row
+                    self.list_ctrl_5abc.SetStringItem(pos,1,str(item['_data']['nombre']))
+                    self.list_ctrl_5abc.SetStringItem(pos,2,str(item['_data']['precio']))
+                    self.list_ctrl_5abc.SetStringItem(pos,3,str(item['_data']['disponible']))
+                    self.postres.append(item['_data']['id'])
         event.Skip()
 
     def left_postre(self, event):  # wxGlade: ver_editar.<event_handler>
         print "Event handler 'left_postre' not implemented!"
+        if self.list_ctrl_5abc.GetFirstSelected()!=-1:
+            item = self.searchItem(self.list_ctrl_5abc.GetItemText(self.list_ctrl_5abc.GetFirstSelected()),servicio.Items)
+            self.list_ctrl_5abc.DeleteItem(self.list_ctrl_5abc.GetFirstSelected())
+            self.postres.pop(self.postres.index(item['_data']['id']))
+        else:
+            try:
+                self.postres.pop(self.postres.index(int(self.list_ctrl_5abc.GetItem(itemId=0, col=0).GetText())))
+                self.list_ctrl_5abc.DeleteItem(0)
+            except Exception, e:
+                pass
         event.Skip()
 
     def item_selec(self, event):  # wxGlade: ver_editar.<event_handler>
@@ -469,8 +613,6 @@ class ver_editar(wx.Frame):
 
 class crear_item(wx.Frame):
     #variables para guardar la imagen codificada en base64
-    img = 0
-    itemMod = -1
 
     def __init__(self, parent, item=-1, *args, **kwds):
         # begin wxGlade: crear_item.__init__
@@ -496,6 +638,9 @@ class crear_item(wx.Frame):
         self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_9)
         self.Bind(wx.EVT_BUTTON, self.load_img_item, self.button_13)
         self.Bind(wx.EVT_CHECKBOX, self.item_disp, self.checkbox_2)
+
+        self.img = 0
+        self.itemMod = -1
 
         if item != -1:
             print 'Editando '+item
@@ -639,7 +784,7 @@ class crear_oferta(wx.Frame):
         self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_35_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_5 = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.sizer_26_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duracion"))
+        self.sizer_26_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duración en dias"))
         self.text_ctrl_6 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_27_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Precio"))
         self.checkbox_3 = wx.CheckBox(self, wx.ID_ANY, "")
