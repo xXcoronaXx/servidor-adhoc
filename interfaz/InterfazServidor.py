@@ -45,6 +45,7 @@ class MyFrame(wx.Frame):
         self.list_ctrl_2 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
         self.list_ctrl_1.InsertColumn(0,"Nombre")
+        self.list_ctrl_1.SetColumnWidth(0,180)
         self.list_ctrl_1.InsertColumn(1,"Precio")
         self.list_ctrl_1.InsertColumn(2,"Disponible")
 
@@ -58,6 +59,7 @@ class MyFrame(wx.Frame):
             self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
 
         self.list_ctrl_2.InsertColumn(0,"Nombre")
+        self.list_ctrl_2.SetColumnWidth(0,180)
         self.list_ctrl_2.InsertColumn(1,"Precio")
         self.list_ctrl_2.InsertColumn(2,"Disponible")
         
@@ -110,10 +112,22 @@ class MyFrame(wx.Frame):
         # end wxGlade
 
 
+    def on_close_crear_menu(self, event):
+        self.list_ctrl_1.DeleteAllItems() # limpiamos la lista
+        servicio.updateMenus()            # actualizamos los items del servidor
+        for data in servicio.Menus:
+            pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
+            self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
+            self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
+        event.Skip()
+
     def crear_menu(self, event):  # wxGlade: MyFrame.<event_handler>
         print "Event handler 'crear_menu'"
         crearMenu = ver_editar(self)
         crearMenu.Show()
+        crearMenu.Bind(wx.EVT_CLOSE, self.on_close_crear_menu)
+        self.crearMenu = crearMenu # comentar esto creo que sobra
+        event.Skip()
 
 
     def ver_edit_menu(self, event):  # wxGlade: MyFrame.<event_handler>
