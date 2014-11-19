@@ -195,8 +195,9 @@ class MyFrame(wx.Frame):
 class crear_menu(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: crear_menu.__init__
-        kwds["style"] = wx.CLOSE_BOX
+        kwds["style"] = wx.CLOSE_BOX    # creando la ventana solo con el aspa de cierre y tamaño fijo
         wx.Frame.__init__(self, *args, **kwds)
+        # creando los elementos que vamos a necesitar en la interfaz
         self.calendar_ctrl_3 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
         self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_34_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
@@ -225,11 +226,14 @@ class crear_menu(wx.Frame):
         self.button_11 = wx.Button(self, wx.ID_ANY, _(">>"))
         self.list_ctrl_3 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
+        # variables para guardar los items asignados y la codificacion en base64 de la imagen
+        # en ellos se listan las id de la base de datos
         self.primeros = []
         self.segundos = []
         self.postres = []
         self.img = 0
 
+        # Dando estilo a las listas de items
         self.list_ctrl_3.InsertColumn(0,"ID")
         self.list_ctrl_3.SetColumnWidth(0,0) # para que no se visualize
         self.list_ctrl_3.InsertColumn(1,"Nombre")
@@ -263,10 +267,9 @@ class crear_menu(wx.Frame):
         self.list_ctrl_5abc.InsertColumn(3,"Disponible")
         self.list_ctrl_5abc.SetColumnWidth(3,45)
 
+        # Rellenando la lista de items disponibles
         for data in servicio.Items:
-            # 0 will insert at the start of the list
             pos = self.list_ctrl_3.InsertStringItem(0,str(data['_data']['id']))
-            # add values in the other columns on the same row
             self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['nombre']))
             self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['precio']))
             self.list_ctrl_3.SetStringItem(pos,3,str(data['_data']['disponible']))
@@ -275,10 +278,11 @@ class crear_menu(wx.Frame):
         self.__set_properties()
         self.__do_layout()
         
-        self.list_ctrl_3.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
+        # creamos el menu del click derecho para poder mostrarlo cuando queramos
         self.createMenu()
 
-
+        # bindeamos los eventos a los diferentes objetos que hemos creado mas arriba
+        self.list_ctrl_3.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
         self.Bind(wx.calendar.EVT_CALENDAR, self.calendario, self.calendar_ctrl_3)
         self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_1)
         self.Bind(wx.EVT_TEXT, self.solo_num2, self.text_ctrl_2)
@@ -300,56 +304,9 @@ class crear_menu(wx.Frame):
         self.crearItem = None
         # end wxGlade
 
-    #######################
-    def createMenu(self):
-        self.menu = wx.Menu()
-        item1 = self.menu.Append(-1,'Editar')
-        item2 = self.menu.Append(-1,'Borrar')
-        self.Bind(wx.EVT_MENU, self.editarItem, item1)
-        self.Bind(wx.EVT_MENU, self.borrarItem, item2)
-
-    def borrarItem(self,event):
-        print 'Borrando item'
-        item = self.list_ctrl_3.GetItemText(self.item_seleccionado)
-        print item
-        if servicio.delItem(item):
-            print 'item borrado'
-            self.list_ctrl_3.DeleteAllItems() # limpiamos la lista
-            self.comprobarItemsBorrado(item) 
-            servicio.updateItems()            # actualizamos los items del servidor
-            for data in servicio.Items:       # y actualizamos la lista
-                # 0 will insert at the start of the list
-                pos = self.list_ctrl_3.InsertStringItem(0,str(data['_data']['id']))
-                # add values in the other columns on the same row
-                self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['nombre']))
-                self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['precio']))
-                self.list_ctrl_3.SetStringItem(pos,3,str(data['_data']['disponible']))
-        else:
-            print 'ERROR al borrar el item'
-
-    def editarItem(self,event):
-        #comeback
-        print 'Editando item'
-        item = self.list_ctrl_3.GetItemText(self.item_seleccionado)
-        print item
-        crearItem = crear_item(self,item=item)
-        crearItem.Show()
-        self.Hide()
-        crearItem.Bind(wx.EVT_CLOSE, self.on_close_crear_item)
-        self.crearItem = crearItem # comentar esto creo que sobra
-        event.Skip()
-
-    
-    def showPopupMenu(self,event):
-        print 'boton derecho'
-        position = self.ScreenToClient(wx.GetMousePosition())
-        item = self.list_ctrl_3.HitTest(event.GetPosition())
-        if item[0]!=-1: # para que solo aparezca el menu cuando pincha en un item
-            self.PopupMenu(self.menu,position)
-    ########################
-
     def __set_properties(self):
         # begin wxGlade: crear_menu.__set_properties
+        # definimos el titulo de la ventana y los tamaños de los elementos de la interfaz
         self.SetTitle(_("Menu"))
         self.SetSize((800, 535))
         self.checkbox_1.SetValue(1)
@@ -364,6 +321,7 @@ class crear_menu(wx.Frame):
 
     def __do_layout(self):
         # begin wxGlade: crear_menu.__do_layout
+        # definimos el layout en el que se colocaran los elementos de la interfaz
         sizer_4 = wx.BoxSizer(wx.VERTICAL)
         sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_activo = wx.BoxSizer(wx.HORIZONTAL)
@@ -444,6 +402,54 @@ class crear_menu(wx.Frame):
         self.Layout()
         # end wxGlade
 
+    # funcion para crear el context menu del click izquierdo
+    def createMenu(self):
+        self.menu = wx.Menu()
+        item1 = self.menu.Append(-1,'Editar')           # añadimos los items
+        item2 = self.menu.Append(-1,'Borrar')
+        self.Bind(wx.EVT_MENU, self.editarItem, item1)  # bindeamos sus acciones
+        self.Bind(wx.EVT_MENU, self.borrarItem, item2)
+
+    def borrarItem(self,event):
+        print 'Borrando item'
+        item = self.list_ctrl_3.GetItemText(self.item_seleccionado)
+        print item
+        if servicio.delItem(item):
+            print 'item borrado'
+            self.list_ctrl_3.DeleteAllItems() # limpiamos la lista
+            self.comprobarItemsBorrado(item) 
+            servicio.updateItems()            # actualizamos los items del servidor
+            for data in servicio.Items:       # y actualizamos la lista
+                pos = self.list_ctrl_3.InsertStringItem(0,str(data['_data']['id']))
+                self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_3.SetStringItem(pos,3,str(data['_data']['disponible']))
+        else:
+            print 'ERROR al borrar el item'
+        event.Skip()
+
+    # muestra el la ventana de editar item con los datos del item que estamos editando
+    # tambien se bindea el evento para que se actualicen los items cuando se cierre la ventana de editar item
+    def editarItem(self,event):
+        print 'Editando item'
+        item = self.list_ctrl_3.GetItemText(self.item_seleccionado)
+        crearItem = crear_item(self,item=item)
+        crearItem.Show()
+        self.Hide()
+        crearItem.Bind(wx.EVT_CLOSE, self.on_close_crear_item)
+        self.crearItem = crearItem # comentar esto creo que sobra
+        event.Skip()
+
+    # muestra el menu del click derecho
+    def showPopupMenu(self,event):
+        print 'boton derecho'
+        position = self.ScreenToClient(wx.GetMousePosition())
+        item = self.list_ctrl_3.HitTest(event.GetPosition())
+        if item[0]!=-1: # para que solo aparezca el menu cuando pincha en un item
+            self.PopupMenu(self.menu,position)
+        event.Skip()
+
+    # cuando se borra un item actualiza las listas de primeros, segundos y postres quitando el item borrado de ellas
     def comprobarItemsBorrado(self,itemBorrado):
         count = self.list_ctrl_5a.GetItemCount()
         i=0
@@ -477,6 +483,7 @@ class crear_menu(wx.Frame):
         print "Event handler 'calendario' not implemented!"
         event.Skip()
 
+    # solo deja escribir numeros
     def solo_num(self, event):  # wxGlade: crear_menu.<event_handler>
         print "solo_num"
         raw_value = self.text_ctrl_1.GetValue().strip()
@@ -487,6 +494,7 @@ class crear_menu(wx.Frame):
             self.text_ctrl_1.ChangeValue('')
         event.Skip()
 
+    # solo deja escribir numeros y puntos
     def solo_num2(self, event):  # wxGlade: crear_menu.<event_handler>
         print "solo_num2"
         raw_value = self.text_ctrl_2.GetValue().strip()
@@ -501,10 +509,13 @@ class crear_menu(wx.Frame):
         print "Event handler 'activo' not implemented!"
         event.Skip()
 
+    # Crea el menu con los datos introducidos
     def save_menu(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'save_menu' not implemented!"
         # comprobar que no hay campos vacios
         if self.text_ctrl_2.GetValue()!='' and self.text_ctrl_1.GetValue()!='' and self.text_ctrl_3.GetValue()!='' and self.text_ctrl_descripcion.GetValue()!='':
+            # generando fechas de inicio y fin del menu el objeto que encapsula el sevicio en el interfaz
+            # recibe las fechas en formato %Y-%m-%d en una string
             fechaini = self.calendar_ctrl_3.GetDate().FormatISODate()
             fechaini2 = datetime.datetime.strptime(fechaini, "%Y-%m-%d")
 
@@ -512,7 +523,7 @@ class crear_menu(wx.Frame):
             fechafin = fechafin.date().isoformat()
             # crear menu
             if servicio.createMenu(self.checkbox_1.GetValue(), self.text_ctrl_2.GetValue(), self.text_ctrl_3.GetValue(), self.text_ctrl_descripcion.GetValue(), fechaini, fechafin, self.img):
-                # crear asignar items
+                # asignando items
                 if servicio.addItemMenuP(self.primeros, self.text_ctrl_3.GetValue()):
                     print 'Primeros asignados'
                 if servicio.addItemMenuS(self.segundos, self.text_ctrl_3.GetValue()):
@@ -525,6 +536,7 @@ class crear_menu(wx.Frame):
             msgbox = wx.MessageBox('¡Rellena los campos!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
+    # muestra selector de archivos nativo para seleccionar la imagen que queremos y genera el base64 de la misma
     def load_img(self, event):  # wxGlade: crear_menu.<event_handler>
         print "load_img"
         img = self.img
@@ -557,6 +569,7 @@ class crear_menu(wx.Frame):
         print "Event handler 'postre_selec' not implemented!"
         event.Skip()
 
+    # Añade un item a la lista de los primeros
     def add_prim(self, event):  # wxGlade: crear_menu.<event_handler>
         print "add_prim"
         # comprobar si el item existe en la lista para no añadirlo dos veces
@@ -569,13 +582,13 @@ class crear_menu(wx.Frame):
                 # el item no esta en la lista primeros
                 if self.list_ctrl_3.GetFirstSelected()!=-1:
                     pos = self.list_ctrl_5a.InsertStringItem(0,str(item['_data']['id']))
-                    # add values in the other columns on the same row
                     self.list_ctrl_5a.SetStringItem(pos,1,str(item['_data']['nombre']))
                     self.list_ctrl_5a.SetStringItem(pos,2,str(item['_data']['precio']))
                     self.list_ctrl_5a.SetStringItem(pos,3,str(item['_data']['disponible']))
                     self.primeros.append(item['_data']['id'])
         event.Skip()
 
+    # Elimina el item seleccionado o el primero en caso de no estar ninguno seleccionado de la lista de primeros
     def left_prim(self, event):  # wxGlade: crear_menu.<event_handler>
         print "left_prim"
         if self.list_ctrl_5a.GetFirstSelected()!=-1:
@@ -590,20 +603,23 @@ class crear_menu(wx.Frame):
                 pass
         event.Skip()
 
+    # Busta iditem en la lista de items
     def searchItem(self,iditem, items):
         for element in items:
             if str(element['_data']['id']) == iditem:
                 return element
 
+    # Abre la ventana de crear item y bindea un evento para que al cerrarse se actualice la lista de items
     def crear_item(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'crear_item'"
         crearItem = crear_item(self)
         crearItem.Show()
-        self.Hide()
+        self.Hide()                 # oculta la ventana de crear menu
         crearItem.Bind(wx.EVT_CLOSE, self.on_close_crear_item)
         self.crearItem = crearItem # comentar esto creo que sobra
         event.Skip()
 
+    # Actualiza la lista de items
     def on_close_crear_item(self, event):
         self.list_ctrl_3.DeleteAllItems() # limpiamos la lista
         servicio.updateItems()            # actualizamos los items del servidor
@@ -623,6 +639,7 @@ class crear_menu(wx.Frame):
             print 'Carry out your code for when Main window closes'
         event.Skip()
 
+    # Añade el item seleccionado a la lista de segundos
     def add_seg(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'add_seg' not implemented!"
         # comprobar si el item existe en la lista para no añadirlo dos veces
@@ -635,13 +652,13 @@ class crear_menu(wx.Frame):
                 # el item no esta en la lista segundos
                 if self.list_ctrl_3.GetFirstSelected()!=-1:
                     pos = self.list_ctrl_5ab.InsertStringItem(0,str(item['_data']['id']))
-                    # add values in the other columns on the same row
                     self.list_ctrl_5ab.SetStringItem(pos,1,str(item['_data']['nombre']))
                     self.list_ctrl_5ab.SetStringItem(pos,2,str(item['_data']['precio']))
                     self.list_ctrl_5ab.SetStringItem(pos,3,str(item['_data']['disponible']))
                     self.segundos.append(item['_data']['id'])
         event.Skip()
 
+    # igual que left_prim pero con la lista de segundos
     def left_seg(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'left_seg' not implemented!"
         if self.list_ctrl_5ab.GetFirstSelected()!=-1:
@@ -656,6 +673,7 @@ class crear_menu(wx.Frame):
                 pass
         event.Skip()
 
+    # igual que add_prim pero con la lista de postres
     def add_postre(self, event):  # wxGlade: crear_menu.<event_handler>
         # comprobar si el item existe en la lista para no añadirlo dos veces
         if self.list_ctrl_3.GetFocusedItem()!=-1:
@@ -667,13 +685,13 @@ class crear_menu(wx.Frame):
                 # el item no esta en la lista postres
                 if self.list_ctrl_3.GetFirstSelected()!=-1:
                     pos = self.list_ctrl_5abc.InsertStringItem(0,str(item['_data']['id']))
-                    # add values in the other columns on the same row
                     self.list_ctrl_5abc.SetStringItem(pos,1,str(item['_data']['nombre']))
                     self.list_ctrl_5abc.SetStringItem(pos,2,str(item['_data']['precio']))
                     self.list_ctrl_5abc.SetStringItem(pos,3,str(item['_data']['disponible']))
                     self.postres.append(item['_data']['id'])
         event.Skip()
 
+    # igual que lef_prim pero con los postres
     def left_postre(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'left_postre' not implemented!"
         if self.list_ctrl_5abc.GetFirstSelected()!=-1:
