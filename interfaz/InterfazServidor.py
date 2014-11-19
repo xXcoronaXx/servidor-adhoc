@@ -126,18 +126,16 @@ class MyFrame(wx.Frame):
     def borrarMenu(self,event):
         print 'Borrando menu'
         menu = self.list_ctrl_1.GetFocusedItem()
-        print menu
         if menu !=-1:
             if servicio.delMenu(self.list_ctrl_1.GetItemText(menu)):
                 print 'Menu borrado!'
-            # Actualizamos la lista de menus
-            servicio.updateMenus()
-            self.list_ctrl_1.DeleteAllItems()
-            for data in servicio.Menus:
-                pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
-                self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
-                self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
-
+                # Actualizamos la lista de menus
+                servicio.updateMenus()
+                self.list_ctrl_1.DeleteAllItems()
+                for data in servicio.Menus:
+                    pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
+                    self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
+                    self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
             else:
                 print 'No se pudo borrar el menu'
 
