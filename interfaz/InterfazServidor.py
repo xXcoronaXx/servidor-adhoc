@@ -160,7 +160,7 @@ class MyFrame(wx.Frame):
 
     def crear_menu(self, event):  # wxGlade: MyFrame.<event_handler>
         print "Event handler 'crear_menu'"
-        crearMenu = ver_editar(self)
+        crearMenu = crear_menu(self)
         crearMenu.Show()
         crearMenu.Bind(wx.EVT_CLOSE, self.on_close_crear_menu)
         self.crearMenu = crearMenu # comentar esto creo que sobra
@@ -169,7 +169,7 @@ class MyFrame(wx.Frame):
 
     def ver_edit_menu(self, event):  # wxGlade: MyFrame.<event_handler>
         print "Event handler 'ver_edit_menu'"
-        editarMenu = ver_editar(self)
+        editarMenu = crear_menu(self)
         editarMenu.Show()
 
     def crear_oferta(self, event):  # wxGlade: MyFrame.<event_handler>
@@ -192,9 +192,9 @@ class MyFrame(wx.Frame):
 
 # end of class MyFrame
 
-class ver_editar(wx.Frame):
+class crear_menu(wx.Frame):
     def __init__(self, *args, **kwds):
-        # begin wxGlade: ver_editar.__init__
+        # begin wxGlade: crear_menu.__init__
         kwds["style"] = wx.CLOSE_BOX
         wx.Frame.__init__(self, *args, **kwds)
         self.calendar_ctrl_3 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
@@ -349,7 +349,7 @@ class ver_editar(wx.Frame):
     ########################
 
     def __set_properties(self):
-        # begin wxGlade: ver_editar.__set_properties
+        # begin wxGlade: crear_menu.__set_properties
         self.SetTitle(_("Menu"))
         self.SetSize((800, 535))
         self.checkbox_1.SetValue(1)
@@ -363,7 +363,7 @@ class ver_editar(wx.Frame):
         # end wxGlade
 
     def __do_layout(self):
-        # begin wxGlade: ver_editar.__do_layout
+        # begin wxGlade: crear_menu.__do_layout
         sizer_4 = wx.BoxSizer(wx.VERTICAL)
         sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_activo = wx.BoxSizer(wx.HORIZONTAL)
@@ -473,11 +473,11 @@ class ver_editar(wx.Frame):
                 break
             i+=1
 
-    def calendario(self, event):  # wxGlade: ver_editar.<event_handler>
+    def calendario(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'calendario' not implemented!"
         event.Skip()
 
-    def solo_num(self, event):  # wxGlade: ver_editar.<event_handler>
+    def solo_num(self, event):  # wxGlade: crear_menu.<event_handler>
         print "solo_num"
         raw_value = self.text_ctrl_1.GetValue().strip()
         # numeric check
@@ -487,7 +487,7 @@ class ver_editar(wx.Frame):
             self.text_ctrl_1.ChangeValue('')
         event.Skip()
 
-    def solo_num2(self, event):  # wxGlade: ver_editar.<event_handler>
+    def solo_num2(self, event):  # wxGlade: crear_menu.<event_handler>
         print "solo_num2"
         raw_value = self.text_ctrl_2.GetValue().strip()
         # numeric check
@@ -497,11 +497,11 @@ class ver_editar(wx.Frame):
             self.text_ctrl_2.ChangeValue('')
         event.Skip()
 
-    def activo(self, event):  # wxGlade: ver_editar.<event_handler>
+    def activo(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'activo' not implemented!"
         event.Skip()
 
-    def save_menu(self, event):  # wxGlade: ver_editar.<event_handler>
+    def save_menu(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'save_menu' not implemented!"
         # comprobar que no hay campos vacios
         if self.text_ctrl_2.GetValue()!='' and self.text_ctrl_1.GetValue()!='' and self.text_ctrl_3.GetValue()!='' and self.text_ctrl_descripcion.GetValue()!='':
@@ -525,7 +525,7 @@ class ver_editar(wx.Frame):
             msgbox = wx.MessageBox('¡Rellena los campos!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
-    def load_img(self, event):  # wxGlade: ver_editar.<event_handler>
+    def load_img(self, event):  # wxGlade: crear_menu.<event_handler>
         print "load_img"
         img = self.img
         openFileDialog = wx.FileDialog(self, "Selecionar imagen del menu", "", "", "pictures (*.jpeg,*.jpg,*.png)|*.jpeg;*.jpg;*.png", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
@@ -545,19 +545,19 @@ class ver_editar(wx.Frame):
         event.Skip()
 
 
-    def primero_selec(self, event):  # wxGlade: ver_editar.<event_handler>
+    def primero_selec(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'primero_selec' not implemented!"
         event.Skip()
 
-    def segundo_selec(self, event):  # wxGlade: ver_editar.<event_handler>
+    def segundo_selec(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'segundo_selec' not implemented!"
         event.Skip()
 
-    def postre_selec(self, event):  # wxGlade: ver_editar.<event_handler>
+    def postre_selec(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'postre_selec' not implemented!"
         event.Skip()
 
-    def add_prim(self, event):  # wxGlade: ver_editar.<event_handler>
+    def add_prim(self, event):  # wxGlade: crear_menu.<event_handler>
         print "add_prim"
         # comprobar si el item existe en la lista para no añadirlo dos veces
         if self.list_ctrl_3.GetFocusedItem()!=-1:
@@ -576,7 +576,7 @@ class ver_editar(wx.Frame):
                     self.primeros.append(item['_data']['id'])
         event.Skip()
 
-    def left_prim(self, event):  # wxGlade: ver_editar.<event_handler>
+    def left_prim(self, event):  # wxGlade: crear_menu.<event_handler>
         print "left_prim"
         if self.list_ctrl_5a.GetFirstSelected()!=-1:
             item = self.searchItem(self.list_ctrl_5a.GetItemText(self.list_ctrl_5a.GetFirstSelected()),servicio.Items)
@@ -595,7 +595,7 @@ class ver_editar(wx.Frame):
             if str(element['_data']['id']) == iditem:
                 return element
 
-    def crear_item(self, event):  # wxGlade: ver_editar.<event_handler>
+    def crear_item(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'crear_item'"
         crearItem = crear_item(self)
         crearItem.Show()
@@ -623,7 +623,7 @@ class ver_editar(wx.Frame):
             print 'Carry out your code for when Main window closes'
         event.Skip()
 
-    def add_seg(self, event):  # wxGlade: ver_editar.<event_handler>
+    def add_seg(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'add_seg' not implemented!"
         # comprobar si el item existe en la lista para no añadirlo dos veces
         if self.list_ctrl_3.GetFocusedItem()!=-1:
@@ -642,7 +642,7 @@ class ver_editar(wx.Frame):
                     self.segundos.append(item['_data']['id'])
         event.Skip()
 
-    def left_seg(self, event):  # wxGlade: ver_editar.<event_handler>
+    def left_seg(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'left_seg' not implemented!"
         if self.list_ctrl_5ab.GetFirstSelected()!=-1:
             item = self.searchItem(self.list_ctrl_5ab.GetItemText(self.list_ctrl_5ab.GetFirstSelected()),servicio.Items)
@@ -656,7 +656,7 @@ class ver_editar(wx.Frame):
                 pass
         event.Skip()
 
-    def add_postre(self, event):  # wxGlade: ver_editar.<event_handler>
+    def add_postre(self, event):  # wxGlade: crear_menu.<event_handler>
         # comprobar si el item existe en la lista para no añadirlo dos veces
         if self.list_ctrl_3.GetFocusedItem()!=-1:
             item = self.searchItem(self.list_ctrl_3.GetItemText(self.list_ctrl_3.GetFocusedItem()),servicio.Items)
@@ -674,7 +674,7 @@ class ver_editar(wx.Frame):
                     self.postres.append(item['_data']['id'])
         event.Skip()
 
-    def left_postre(self, event):  # wxGlade: ver_editar.<event_handler>
+    def left_postre(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'left_postre' not implemented!"
         if self.list_ctrl_5abc.GetFirstSelected()!=-1:
             item = self.searchItem(self.list_ctrl_5abc.GetItemText(self.list_ctrl_5abc.GetFirstSelected()),servicio.Items)
@@ -688,13 +688,13 @@ class ver_editar(wx.Frame):
                 pass
         event.Skip()
 
-    def item_selec(self, event):  # wxGlade: ver_editar.<event_handler>
+    def item_selec(self, event):  # wxGlade: crear_menu.<event_handler>
         print "Event handler 'item_selec' not implemented!"
         print self.list_ctrl_3.GetFocusedItem()
         self.item_seleccionado = self.list_ctrl_3.GetFocusedItem()
         event.Skip()
 
-# end of class ver_editar
+# end of class crear_menu
 
 class crear_item(wx.Frame):
     #variables para guardar la imagen codificada en base64
