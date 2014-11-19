@@ -67,17 +67,23 @@ class ServicioPyro(object):
 	def addItemMenuP(self, items, menu):
 		for item in items:
 			if not self.servicio.addItemMenuP(item, menu):
+				self.servicio.delMenu(menu)
 				return False
 		return True
 
 	def addItemMenuS(self, items, menu):
 		for item in items:
 			if not self.servicio.addItemMenuS(item, menu):
+				self.servicio.delMenu(menu)
 				return False
 		return True
 
 	def addItemMenuD(self, items, menu):
 		for item in items:
 			if not self.servicio.addItemMenuD(item, menu):
+				self.servicio.delMenu(menu)
 				return False
 		return True
+
+	def delMenu(self, menu):
+		return self.servicio.delMenu(menu)

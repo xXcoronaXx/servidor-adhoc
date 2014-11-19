@@ -66,6 +66,11 @@ class MyFrame(wx.Frame):
         self.__set_properties()
         self.__do_layout()
 
+        self.list_ctrl_1.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
+        self.createContextMenu()
+        #self.list_ctrl_2.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
+        #self.createMenu()
+
         self.Bind(wx.EVT_BUTTON, self.crear_menu, self.button_1)
         #self.Bind(wx.EVT_BUTTON, self.ver_edit_menu, self.button_2)
         self.Bind(wx.EVT_BUTTON, self.crear_oferta, self.button_3)
@@ -110,6 +115,40 @@ class MyFrame(wx.Frame):
         self.SetSizer(sizer_1)
         self.Layout()
         # end wxGlade
+
+    def createContextMenu(self):
+        self.menu = wx.Menu()
+        #item1 = self.menu.Append(-1,'Editar')
+        item2 = self.menu.Append(-1,'Borrar')
+        #self.Bind(wx.EVT_MENU, self.editarItem, item1)
+        self.Bind(wx.EVT_MENU, self.borrarMenu, item2)
+
+    def borrarMenu(self,event):
+        print 'Borrando menu'
+        menu = self.list_ctrl_1.GetFocusedItem()
+        print menu
+        if menu !=-1:
+            if servicio.delMenu(self.list_ctrl_1.GetItemText(menu)):
+                print 'Menu borrado!'
+            # Actualizamos la lista de menus
+            servicio.updateMenus()
+            self.list_ctrl_1.DeleteAllItems()
+            for data in servicio.Menus:
+                pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
+                self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
+                self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
+
+            else:
+                print 'No se pudo borrar el menu'
+
+
+    
+    def showPopupMenu(self,event):
+        print 'boton derecho'
+        position = self.ScreenToClient(wx.GetMousePosition())
+        item = self.list_ctrl_1.HitTest(event.GetPosition())
+        if item[0]!=-1: # para que solo aparezca el menu cuando pincha en un item
+            self.PopupMenu(self.menu,position)
 
 
     def on_close_crear_menu(self, event):

@@ -26,7 +26,7 @@ def main():
 		print str(x.id)+' '+x.nombre+' - '+str(x.fecha_fin)
 	print '---'
 	print '---Items-1--'
-	for x in Item_db.select():
+	for x in Item_db.select().where( Item_db.segundos==0,Item_db.primeros==0,Item_db.postres==0 ):
 		print str(x.id)+' '+x.nombre
 	print '---'
 	# fin base de datos

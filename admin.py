@@ -227,7 +227,8 @@ class ControladorPyro(object):
 		try:
 			print 'Item pyro'
 			i = []
-			for x in Item_db.select():
+			# busca todos lo items que no estan asignados a ningun meno o oferta
+			for x in Item_db.select().where( Item_db.segundos == 0, Item_db.primeros == 0 ,Item_db.postres == 0 ):
 			 	i.append(x)
 			return serpent.dumps(i,indent=False)
 		except Exception, e:
