@@ -13,7 +13,11 @@ Instalación de requerimientos
 =============================
 Es posible que algunos requerimientos tengas que instalarlos de manera manual según tu sistema operativo.
 
-	pip install -r requiriments.txt
+	pip install -r requeriments.txt
+
+Para instalar la libreria gráfica la descargamos e instalamos de:
+
+	http://www.wxpython.org/download.php
 
 Arrancar servidor y cliente
 ===========================
