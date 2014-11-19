@@ -59,4 +59,25 @@ class ServicioPyro(object):
 	def updateItem(self, nomAnt, disponible, precio, nombre, descripcion, imagen):
 		return self.servicio.updateItem(nomAnt, disponible, precio, nombre, descripcion, imagen)
 
+	def createMenu(self,disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen):
+		fecha_ini = fecha_ini.replace('-','/')
+		fecha_fin = fecha_fin.replace('-','/')
+		return self.servicio.createMenu(disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen)
+	
+	def addItemMenuP(self, items, menu):
+		for item in items:
+			if not self.servicio.addItemMenuP(item, menu):
+				return False
+		return True
 
+	def addItemMenuS(self, items, menu):
+		for item in items:
+			if not self.servicio.addItemMenuS(item, menu):
+				return False
+		return True
+
+	def addItemMenuD(self, items, menu):
+		for item in items:
+			if not self.servicio.addItemMenuD(item, menu):
+				return False
+		return True

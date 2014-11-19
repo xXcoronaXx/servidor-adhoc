@@ -7,6 +7,8 @@
 import wx
 import wx.calendar
 
+from datetime import timedelta
+import datetime as datetime
 # begin wxGlade: dependencies
 import gettext
 # end wxGlade
@@ -161,6 +163,8 @@ class ver_editar(wx.Frame):
         self.sizer_16_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Segundos"))
         self.list_ctrl_5abc = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         self.sizer_17_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Postres"))
+        self.text_ctrl_descripcion = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_MULTILINE)
+        self.sizer_descripcion_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Descripción"))
         self.button_5 = wx.Button(self, wx.ID_ANY, _("<<"))
         self.button_7 = wx.Button(self, wx.ID_ANY, _(">>"))
         self.button_6 = wx.Button(self, wx.ID_ANY, _("Crear item"))
@@ -296,8 +300,9 @@ class ver_editar(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: ver_editar.__set_properties
         self.SetTitle(_("Menu"))
-        self.SetSize((800, 531))
+        self.SetSize((800, 535))
         self.checkbox_1.SetValue(1)
+        self.text_ctrl_descripcion.SetMinSize((200, 100))
         self.list_ctrl_3.SetMinSize((250, 510))
         self.calendar_ctrl_3.SetMinSize((215, 140))
         # primeros segundos y postre
@@ -310,6 +315,7 @@ class ver_editar(wx.Frame):
         # begin wxGlade: ver_editar.__do_layout
         sizer_4 = wx.BoxSizer(wx.VERTICAL)
         sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_activo = wx.BoxSizer(wx.HORIZONTAL)
         grid_sizer_6 = wx.FlexGridSizer(1, 2, 0, 0)
         sizer_7 = wx.BoxSizer(wx.VERTICAL)
         sizer_10 = wx.BoxSizer(wx.VERTICAL)
@@ -318,6 +324,8 @@ class ver_editar(wx.Frame):
         sizer_9 = wx.BoxSizer(wx.VERTICAL)
         sizer_6 = wx.BoxSizer(wx.VERTICAL)
         sizer_guardar = wx.BoxSizer(wx.VERTICAL)
+        self.sizer_descripcion_staticbox.Lower()
+        sizer_descripcion = wx.StaticBoxSizer(self.sizer_descripcion_staticbox, wx.HORIZONTAL)
         self.sizer_17_staticbox.Lower()
         sizer_17 = wx.StaticBoxSizer(self.sizer_17_staticbox, wx.HORIZONTAL)
         self.sizer_16_staticbox.Lower()
@@ -325,6 +333,7 @@ class ver_editar(wx.Frame):
         self.sizer_15_staticbox.Lower()
         sizer_15 = wx.StaticBoxSizer(self.sizer_15_staticbox, wx.HORIZONTAL)
         grid_sizer_7 = wx.FlexGridSizer(7, 1, 0, 0)
+        grid_sizer_activo = wx.FlexGridSizer(1, 3, 0, 0)
         self.sizer_14_staticbox.Lower()
         sizer_14 = wx.StaticBoxSizer(self.sizer_14_staticbox, wx.HORIZONTAL)
         self.sizer_13_staticbox.Lower()
@@ -341,9 +350,16 @@ class ver_editar(wx.Frame):
         sizer_13.Add(self.text_ctrl_2, 0, 0, 0)
         grid_sizer_7.Add(sizer_13, 1, wx.EXPAND, 0)
         sizer_14.Add(self.checkbox_1, 0, 0, 0)
-        grid_sizer_7.Add(sizer_14, 1, wx.EXPAND, 0)
-        sizer_guardar.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        sizer_guardar.Add((50,50),0,0,0)
+        grid_sizer_7.Add(grid_sizer_activo,1,0,0)
+        #sizer_14.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        grid_sizer_activo.Add(sizer_14, 1, wx.EXPAND, 0)
+        grid_sizer_activo.Add((40,10),0,0,0)
+        grid_sizer_activo.Add(self.button_14, 1, wx.EXPAND, 0)
+        sizer_descripcion.Add(self.text_ctrl_descripcion,0,0,0)
+        grid_sizer_7.Add(sizer_descripcion,1,wx.EXPAND,0)
+
+        #sizer_guardar.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        #sizer_guardar.Add((50,50),0,0,0)
         sizer_guardar.Add(self.Guardar, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0) 
         grid_sizer_7.Add(sizer_guardar,0,wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL,0)
         sizer_5.Add(grid_sizer_7, 1, wx.EXPAND, 0)
@@ -414,7 +430,7 @@ class ver_editar(wx.Frame):
         print "solo_num"
         raw_value = self.text_ctrl_1.GetValue().strip()
         # numeric check
-        if all(x in '0123456789.' for x in raw_value):
+        if all(x in '0123456789' for x in raw_value):
             pass
         else:
             self.text_ctrl_1.ChangeValue('')
@@ -436,8 +452,26 @@ class ver_editar(wx.Frame):
 
     def save_menu(self, event):  # wxGlade: ver_editar.<event_handler>
         print "Event handler 'save_menu' not implemented!"
-        print self.calendar_ctrl_3.GetDate().FormatISODate()
-        #self.getColumnPrimeros()
+        # comprobar que no hay campos vacios
+        if self.text_ctrl_2.GetValue()!='' and self.text_ctrl_1.GetValue()!='' and self.text_ctrl_3.GetValue()!='' and self.text_ctrl_descripcion.GetValue()!='':
+            fechaini = self.calendar_ctrl_3.GetDate().FormatISODate()
+            fechaini2 = datetime.datetime.strptime(fechaini, "%Y-%m-%d")
+
+            fechafin = fechaini2 + datetime.timedelta( days=int(self.text_ctrl_1.GetValue()) )
+            fechafin = fechafin.date().isoformat()
+            # crear menu
+            if servicio.createMenu(self.checkbox_1.GetValue(), self.text_ctrl_2.GetValue(), self.text_ctrl_3.GetValue(), self.text_ctrl_descripcion.GetValue(), fechaini, fechafin, self.img):
+                # crear asignar items
+                if servicio.addItemMenuP(self.primeros, self.text_ctrl_3.GetValue()):
+                    print 'Primeros asignados'
+                if servicio.addItemMenuS(self.segundos, self.text_ctrl_3.GetValue()):
+                    print 'Segundos asignados'
+                if servicio.addItemMenuD(self.postres, self.text_ctrl_3.GetValue()):
+                    print 'Postres asignados'
+                msgbox = wx.MessageBox('!Menu creado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                self.Close(True)
+        else:
+            msgbox = wx.MessageBox('¡Rellena los campos!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     def load_img(self, event):  # wxGlade: ver_editar.<event_handler>
