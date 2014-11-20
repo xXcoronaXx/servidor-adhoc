@@ -12,6 +12,10 @@ from datetime import date
 import base64
 import serpent
 
+# variables globales para conectarse con el cliente
+OBJETO_PYRO = 'servidor1.configura'					# nombre del objeto que buscamos
+DIRECCION_PYRO = '@localhost'						# direccion del servidor de nombrado el @ es importante
+PROXY_PYRO = 'PYRONAME:'+OBJETO_PYRO+DIRECCION_PYRO
 KEY='the_same_string_for_server_and_client'
 
 class ServicioPyro(object):
@@ -27,7 +31,7 @@ class ServicioPyro(object):
 		super(ServicioPyro, self).__init__()
 		print 'Conectando ...'
 		Pyro4.config.HMAC_KEY=KEY
-		self.servicio = Pyro4.Proxy('PYRONAME:servidor1.configura')
+		self.servicio = Pyro4.Proxy(PROXY_PYRO)
 		self.Online = self.servicio.online()
 		print 'Conectado al servicio !'
 		self.Menus = serpent.loads(self.servicio.getMenus())

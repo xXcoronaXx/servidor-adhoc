@@ -353,7 +353,7 @@ class ControladorPyro(object):
 			database2 = SqliteDatabase(DATABASE, threadlocals=True)
 
 			# Arrancamos el servcio web para la aplicacion
-			bottle.run()
+			bottle.run(host=DIRECCION_WS, port=PUERTO_WS)
 			# fin de arranque del servicio REST
 		# manejo de hilos en pyro4
 		thread = threading.Thread(target=servicio_Rest)

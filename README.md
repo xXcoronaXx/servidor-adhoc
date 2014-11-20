@@ -23,7 +23,7 @@ Arrancar servidor y cliente
 ===========================
 Para arrancar el servidor de nombrado.
 
-	python -m Pyro4.naming
+	python -m Pyro4.naming (--host localhost)
 
 Para arrancar el servidor REST.
 
@@ -32,3 +32,12 @@ Para arrancar el servidor REST.
 Para arrancar el cliente para la gestion del servicio (modo texto).
 
 	python clientePyro.py
+
+Para ver si esta corriendo el navegador las direcciones del servicio REST son del tipo:
+
+	http://localhost:8080/ws/getMenus.json
+	http://localhost:8080/ws/getMenu.json
+	http://localhost:8080/ws/getItems.json
+	...
+
+Si no tienes ningun menu creado obviamente te devolvera una lista vacia.
