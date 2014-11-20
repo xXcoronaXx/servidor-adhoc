@@ -418,7 +418,6 @@ class crear_menu(wx.Frame):
         item = self.list_ctrl_3.GetItemText(self.list_ctrl_3.GetFocusedItem())
         print item
         if servicio.delItem(item):
-            print 'item borrado'
             msgbox = wx.MessageBox('!Item borrado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
             self.list_ctrl_3.DeleteAllItems() # limpiamos la lista
             self.comprobarItemsBorrado(item) 
@@ -881,7 +880,7 @@ class crear_item(wx.Frame):
 class crear_oferta(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: crear_oferta.__init__
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN
         wx.Frame.__init__(self, *args, **kwds)
         self.calendar_ctrl_4 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
         self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "")
@@ -900,18 +899,26 @@ class crear_oferta(wx.Frame):
         self.button_18 = wx.Button(self, wx.ID_ANY, _(">>"))
         self.list_ctrl_4 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
-        self.list_ctrl_4.InsertColumn(0,"Nombre")
-        self.list_ctrl_4.InsertColumn(1,"Precio")
-        self.list_ctrl_4.InsertColumn(2,"Disponible")
+        self.list_ctrl_4.InsertColumn(0,"ID")
+        self.list_ctrl_4.SetColumnWidth(0,0)
+        self.list_ctrl_4.InsertColumn(1,"Nombre")
+        self.list_ctrl_4.SetColumnWidth(1,100)
+        self.list_ctrl_4.InsertColumn(2,"Precio")
+        self.list_ctrl_4.SetColumnWidth(2,60)
+        self.list_ctrl_4.InsertColumn(3,"Disponible")
+        self.list_ctrl_4.SetColumnWidth(3,45)
 
-        self.list_ctrl_5.InsertColumn(0,"Nombre")
-        self.list_ctrl_5.InsertColumn(1,"Precio")
-        self.list_ctrl_5.InsertColumn(2,"Disponible")
+        self.list_ctrl_5.InsertColumn(0,"ID")
+        self.list_ctrl_5.SetColumnWidth(0,0)
+        self.list_ctrl_5.InsertColumn(1,"Nombre")
+        self.list_ctrl_5.SetColumnWidth(1,100)
+        self.list_ctrl_5.InsertColumn(2,"Precio")
+        self.list_ctrl_5.SetColumnWidth(2,60)
+        self.list_ctrl_5.InsertColumn(3,"Disponible")
+        self.list_ctrl_5.SetColumnWidth(3,45)
 
         for data in servicio.Items:
-            # 0 will insert at the start of the list
             pos = self.list_ctrl_4.InsertStringItem(0,data['_data']['nombre'])
-            # add values in the other columns on the same row
             self.list_ctrl_4.SetStringItem(pos,1,str(data['_data']['precio']))
             self.list_ctrl_4.SetStringItem(pos,2,str(data['_data']['disponible']))
 
@@ -927,6 +934,9 @@ class crear_oferta(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.pasar_izq, self.button_17)
         self.Bind(wx.EVT_BUTTON, self.pasar_der, self.button_18)
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.item_select, self.list_ctrl_4)
+
+        # centramos la ventana en la pantalla
+        self.Center()
         # end wxGlade
 
     def __set_properties(self):
