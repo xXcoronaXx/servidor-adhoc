@@ -7,7 +7,7 @@ Esta habilitada la seguridad HMAC de Pyro4, por lo tanto hay que asegurarse de q
 
 	export PYRO_HMAC_KEY='the_same_string_for_server_and_client'
 
-En seting.py, estan las constantes de configuración del servicio REST.
+En seting.py, estan las constantes de configuración del servicio REST, en ServicioPyro.py estan las correspondientes para el cliente.
 
 Instalación de requerimientos
 =============================
