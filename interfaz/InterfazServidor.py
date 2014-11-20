@@ -195,7 +195,8 @@ class MyFrame(wx.Frame):
 class crear_menu(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: crear_menu.__init__
-        kwds["style"] = wx.CLOSE_BOX    # creando la ventana solo con el aspa de cierre y tamaño fijo
+        kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN  # creando la ventana solo con el aspa de cierre y tamaño fijo
+        #  wx.CAPTION|wx.CLOSE_BOX|wx.MINIMIZE_BOX|wx.MAXIMIZE_BOX|wx.STAY_ON_TOP|wx.SYSTEM_MENU|wx.RESIZE_BORDER|wx.CLIP_CHILDREN
         wx.Frame.__init__(self, *args, **kwds)
         # creando los elementos que vamos a necesitar en la interfaz
         self.calendar_ctrl_3 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
@@ -301,7 +302,9 @@ class crear_menu(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.left_postre, self.button_11)
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.item_selec, self.list_ctrl_3)
 
-        self.crearItem = None
+        #self.crearItem = None
+        # centramos la ventana en la pantalla
+        self.Center()
         # end wxGlade
 
     def __set_properties(self):
@@ -719,7 +722,7 @@ class crear_item(wx.Frame):
 
     def __init__(self, parent, item=-1, *args, **kwds):
         # begin wxGlade: crear_item.__init__
-        kwds["style"] = wx.CLOSE_BOX
+        kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN
         wx.Frame.__init__(self,parent, *args, **kwds)
         self.text_ctrl_8 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_32_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
@@ -757,6 +760,8 @@ class crear_item(wx.Frame):
             self.Bind(wx.EVT_BUTTON, self.modificar_item, self.button_12)
         else:
             self.Bind(wx.EVT_BUTTON, self.crear_item_go, self.button_12)
+        # centramos la ventana en la pantalla
+        self.Center()
 
         # end wxGlade
 
