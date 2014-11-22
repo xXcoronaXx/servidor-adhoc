@@ -27,10 +27,6 @@ class MyFrame(wx.Frame):
         self.main_menubar = wx.MenuBar()
         self.Inicio = wx.Menu()
         self.main_menubar.Append(self.Inicio, _("Inicio"))
-        self.Online = wx.Menu()
-        self.main_menubar.Append(self.Online, _("Online"))
-        self.Salir = wx.Menu()
-        self.main_menubar.Append(self.Salir, _("Salir"))
         self.SetMenuBar(self.main_menubar)
         # Menu Bar end
         self.button_1 = wx.Button(self, wx.ID_ANY, _("Crear"))
@@ -370,7 +366,7 @@ class crear_menu(wx.Frame):
                 self.list_ctrl_5abc.SetStringItem(pos,2,str(data['_data']['precio']))
                 self.list_ctrl_5abc.SetStringItem(pos,3,str(data['_data']['disponible']))
                 self.postres.append(self.searchNomItem(data['_data']['nombre'],servicio.Items))
-            self.editando = True
+            self.editando = True # variable bandera
 
         #self.crearItem = None
         # centramos la ventana en la pantalla
@@ -413,7 +409,6 @@ class crear_menu(wx.Frame):
         sizer_6 = wx.BoxSizer(wx.VERTICAL)
         sizer_guardar = wx.BoxSizer(wx.VERTICAL)
         self.sizer_descripcion_staticbox.Lower()
-        sizer_descripcion = wx.StaticBoxSizer(self.sizer_descripcion_staticbox, wx.HORIZONTAL)
         self.sizer_17_staticbox.Lower()
         sizer_17 = wx.StaticBoxSizer(self.sizer_17_staticbox, wx.HORIZONTAL)
         self.sizer_16_staticbox.Lower()
@@ -421,7 +416,6 @@ class crear_menu(wx.Frame):
         self.sizer_15_staticbox.Lower()
         sizer_15 = wx.StaticBoxSizer(self.sizer_15_staticbox, wx.HORIZONTAL)
         grid_sizer_7 = wx.FlexGridSizer(7, 1, 0, 0)
-        grid_sizer_activo = wx.FlexGridSizer(1, 3, 0, 0)
         self.sizer_14_staticbox.Lower()
         sizer_14 = wx.StaticBoxSizer(self.sizer_14_staticbox, wx.HORIZONTAL)
         self.sizer_13_staticbox.Lower()
@@ -440,9 +434,11 @@ class crear_menu(wx.Frame):
         sizer_14.Add(self.checkbox_1, 0, 0, 0)
         grid_sizer_7.Add(grid_sizer_activo,1,0,0)
         #sizer_14.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
+        grid_sizer_activo = wx.FlexGridSizer(1, 3, 0, 0)
         grid_sizer_activo.Add(sizer_14, 1, wx.EXPAND, 0)
         grid_sizer_activo.Add((40,10),0,0,0)
         grid_sizer_activo.Add(self.button_14, 1, wx.EXPAND, 0)
+        sizer_descripcion = wx.StaticBoxSizer(self.sizer_descripcion_staticbox, wx.HORIZONTAL)
         sizer_descripcion.Add(self.text_ctrl_descripcion,0,0,0)
         grid_sizer_7.Add(sizer_descripcion,1,wx.EXPAND,0)
 
@@ -1031,7 +1027,10 @@ class crear_oferta(wx.Frame):
         self.sizer_29_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Items"))
         self.button_17 = wx.Button(self, wx.ID_ANY, _("<<"))
         self.button_18 = wx.Button(self, wx.ID_ANY, _(">>"))
+        self.button_crear_item = wx.Button(self, wx.ID_ANY, _("Crear item"))
         self.list_ctrl_4 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
+        self.text_ctrl_descripcion = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_MULTILINE)
+        self.sizer_descripcion_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Descripción"))
 
         self.list_ctrl_4.InsertColumn(0,"ID")
         self.list_ctrl_4.SetColumnWidth(0,0)
@@ -1052,9 +1051,10 @@ class crear_oferta(wx.Frame):
         self.list_ctrl_5.SetColumnWidth(3,45)
 
         for data in servicio.Items:
-            pos = self.list_ctrl_4.InsertStringItem(0,data['_data']['nombre'])
-            self.list_ctrl_4.SetStringItem(pos,1,str(data['_data']['precio']))
-            self.list_ctrl_4.SetStringItem(pos,2,str(data['_data']['disponible']))
+            pos = self.list_ctrl_4.InsertStringItem(0,str(data['_data']['id']))
+            self.list_ctrl_4.SetStringItem(pos,1,str(data['_data']['nombre']))
+            self.list_ctrl_4.SetStringItem(pos,2,str(data['_data']['precio']))
+            self.list_ctrl_4.SetStringItem(pos,3,str(data['_data']['disponible']))
 
         self.__set_properties()
         self.__do_layout()
@@ -1075,12 +1075,13 @@ class crear_oferta(wx.Frame):
 
     def __set_properties(self):
         # begin wxGlade: crear_oferta.__set_properties
-        self.SetTitle(_("frame_2"))
-        self.SetSize((648, 529))
+        self.SetTitle(_("Oferta"))
+        self.SetSize((800, 535))
         self.checkbox_3.SetValue(1)
-        self.list_ctrl_5.SetMinSize((160, 469))
-        self.list_ctrl_4.SetMinSize((164, 500))
+        self.list_ctrl_5.SetMinSize((150, 500))
+        self.list_ctrl_4.SetMinSize((250, 500))
         self.calendar_ctrl_4.SetMinSize((215, 140))
+        self.text_ctrl_descripcion.SetMinSize((200, 100))
         # end wxGlade
 
     def __do_layout(self):
@@ -1109,13 +1110,26 @@ class crear_oferta(wx.Frame):
         sizer_27.Add(self.text_ctrl_6, 0, 0, 0)
         grid_sizer_9.Add(sizer_27, 1, wx.EXPAND, 0)
         sizer_28.Add(self.checkbox_3, 0, 0, 0)
-        grid_sizer_9.Add(sizer_28, 1, wx.EXPAND, 0)
-        grid_sizer_9.Add(self.button_15, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
+
+        grid_sizer_activo = wx.FlexGridSizer(1, 3, 0, 0)
+        grid_sizer_activo.Add(sizer_28, 1, wx.EXPAND, 0)
+        grid_sizer_activo.Add((40,10),0,0,0)
+        grid_sizer_activo.Add(self.button_15, 1, wx.EXPAND, 0)
+        sizer_descripcion = wx.StaticBoxSizer(self.sizer_descripcion_staticbox, wx.HORIZONTAL)
+        sizer_descripcion.Add(self.text_ctrl_descripcion,0,0,0)
+        grid_sizer_9.Add(grid_sizer_activo,1,wx.EXPAND,0)
+        grid_sizer_9.Add(sizer_descripcion,1,wx.EXPAND,0)
+
+
+        #grid_sizer_9.Add(sizer_28, 1, wx.EXPAND, 0)
+        #grid_sizer_9.Add(self.button_15, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_9.Add(self.button_16, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         sizer_25.Add(grid_sizer_9, 1, wx.EXPAND, 0)
         sizer_29.Add(self.list_ctrl_5, 1, wx.EXPAND, 0)
         sizer_25.Add(sizer_29, 1, wx.EXPAND, 0)
-        sizer_30.Add((80, 200), 0, 0, 0)
+        sizer_30.Add((80, 40), 0, 0, 0)
+        sizer_30.Add(self.button_crear_item ,0,0,0)
+        sizer_30.Add((80, 160), 0, 0, 0)
         sizer_31.Add(self.button_17, 0, 0, 0)
         sizer_31.Add(self.button_18, 0, 0, 0)
         sizer_30.Add(sizer_31, 1, wx.EXPAND, 0)
