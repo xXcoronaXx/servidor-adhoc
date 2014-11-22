@@ -71,23 +71,46 @@ class ServicioPyro(object):
 	def addItemMenuP(self, items, menu):
 		for item in items:
 			if not self.servicio.addItemMenuP(item, menu):
-				self.servicio.delMenu(menu)
+				#self.servicio.delMenu(menu)
 				return False
 		return True
 
 	def addItemMenuS(self, items, menu):
 		for item in items:
 			if not self.servicio.addItemMenuS(item, menu):
-				self.servicio.delMenu(menu)
+				#self.servicio.delMenu(menu)
 				return False
 		return True
 
 	def addItemMenuD(self, items, menu):
 		for item in items:
 			if not self.servicio.addItemMenuD(item, menu):
-				self.servicio.delMenu(menu)
+				#self.servicio.delMenu(menu)
 				return False
 		return True
 
 	def delMenu(self, menu):
 		return self.servicio.delMenu(menu)
+
+	def updateMenu(self, disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen):
+		fecha_ini = fecha_ini.replace('-','/')
+		fecha_fin = fecha_fin.replace('-','/')
+		return self.servicio.updateMenu(disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen)
+
+	def delItemMenuP(self, items, menu):
+		for item in items:
+			if not self.servicio.delItemMenuP(item, menu):
+				return False
+		return True
+
+	def delItemMenuS(self, items, menu):
+		for item in items:
+			if not self.servicio.delItemMenuS(item, menu):
+				return False
+		return True
+
+	def delItemMenuD(self, items, menu):
+		for item in items:
+			if not self.servicio.delItemMenuD(item, menu):
+				return False
+		return True

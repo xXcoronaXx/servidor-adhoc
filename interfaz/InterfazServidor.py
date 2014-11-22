@@ -118,10 +118,21 @@ class MyFrame(wx.Frame):
 
     def createContextMenu(self):
         self.menu = wx.Menu()
-        #item1 = self.menu.Append(-1,'Editar')
+        item1 = self.menu.Append(-1,'Editar')
         item2 = self.menu.Append(-1,'Borrar')
-        #self.Bind(wx.EVT_MENU, self.editarItem, item1)
+        self.Bind(wx.EVT_MENU, self.editarMenu, item1)
         self.Bind(wx.EVT_MENU, self.borrarMenu, item2)
+
+    def editarMenu(self,event):
+        print 'Editar menu'
+        menu = self.list_ctrl_1.GetFocusedItem()
+        if menu !=-1:
+            menu = self.list_ctrl_1.GetItemText(self.list_ctrl_1.GetFocusedItem())
+            crearMenu = crear_menu(self,menu=menu)
+            crearMenu.Show()
+            crearMenu.Bind(wx.EVT_CLOSE, self.on_close_crear_menu)
+            event.Skip()
+        event.Skip()
 
     def borrarMenu(self,event):
         print 'Borrando menu'
@@ -129,6 +140,7 @@ class MyFrame(wx.Frame):
         if menu !=-1:
             if servicio.delMenu(self.list_ctrl_1.GetItemText(menu)):
                 print 'Menu borrado!'
+                msgbox = wx.MessageBox('!Menu borrado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                 # Actualizamos la lista de menus
                 servicio.updateMenus()
                 self.list_ctrl_1.DeleteAllItems()
@@ -138,6 +150,7 @@ class MyFrame(wx.Frame):
                     self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
             else:
                 print 'No se pudo borrar el menu'
+        event.Skip()
 
 
     
@@ -147,7 +160,7 @@ class MyFrame(wx.Frame):
         item = self.list_ctrl_1.HitTest(event.GetPosition())
         if item[0]!=-1: # para que solo aparezca el menu cuando pincha en un item
             self.PopupMenu(self.menu,position)
-
+        event.Skip()
 
     def on_close_crear_menu(self, event):
         self.list_ctrl_1.DeleteAllItems() # limpiamos la lista
@@ -193,11 +206,17 @@ class MyFrame(wx.Frame):
 # end of class MyFrame
 
 class crear_menu(wx.Frame):
-    def __init__(self, *args, **kwds):
+
+    def searchNomItem(self, nomitem, items):
+        for element in items:
+            if str(element['_data']['nombre']) == nomitem:
+                return element['_data']['id']
+
+    def __init__(self, parent, menu=-1,*args, **kwds):
         # begin wxGlade: crear_menu.__init__
         kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN  # creando la ventana solo con el aspa de cierre y tamaño fijo
         #  wx.CAPTION|wx.CLOSE_BOX|wx.MINIMIZE_BOX|wx.MAXIMIZE_BOX|wx.STAY_ON_TOP|wx.SYSTEM_MENU|wx.RESIZE_BORDER|wx.CLIP_CHILDREN
-        wx.Frame.__init__(self, *args, **kwds)
+        wx.Frame.__init__(self, parent, *args, **kwds)
         # creando los elementos que vamos a necesitar en la interfaz
         self.calendar_ctrl_3 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
         self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "")
@@ -233,6 +252,15 @@ class crear_menu(wx.Frame):
         self.segundos = []
         self.postres = []
         self.img = 0
+        # variables temporales para los items que se asignan y se borran mientras editamos un menu
+        self.primerosModAdd = []
+        self.segundosModAdd = []
+        self.postresModAdd = []
+        self.primerosModDel = []
+        self.segundosModDel = []
+        self.postresModDel = []
+
+        self.editando = False
 
         # Dando estilo a las listas de items
         self.list_ctrl_3.InsertColumn(0,"ID")
@@ -284,11 +312,12 @@ class crear_menu(wx.Frame):
 
         # bindeamos los eventos a los diferentes objetos que hemos creado mas arriba
         self.list_ctrl_3.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
+        self.Bind(wx.EVT_BUTTON, self.save_menu, self.Guardar)
         #self.Bind(wx.calendar.EVT_CALENDAR, self.calendario, self.calendar_ctrl_3)
         self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_1)
         self.Bind(wx.EVT_TEXT, self.solo_num2, self.text_ctrl_2)
         #self.Bind(wx.EVT_CHECKBOX, self.activo, self.checkbox_1)
-        self.Bind(wx.EVT_BUTTON, self.save_menu, self.Guardar)
+        #self.Bind(wx.EVT_BUTTON, self.save_menu, self.Guardar)
         self.Bind(wx.EVT_BUTTON, self.load_img, self.button_14)
         # self.Bind(wx.EVT_LISTBOX_DCLICK, self.primero_selec, self.list_ctrl_5a)
         # self.Bind(wx.EVT_LISTBOX_DCLICK, self.segundo_selec, self.list_ctrl_5ab)
@@ -301,11 +330,58 @@ class crear_menu(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.add_postre, self.button_10)
         self.Bind(wx.EVT_BUTTON, self.left_postre, self.button_11)
         #self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.item_selec, self.list_ctrl_3)
+        
+        # si estamos editando un menu rellenamos los datos
+        if menu!=-1:
+            print 'Editando menu '+menu
+            self.menuMod = self.searchMenu(menu,servicio.Menus)
+            self.text_ctrl_3.AppendText(self.menuMod['nombre'])
+            self.text_ctrl_2.AppendText(str(self.menuMod['precio']))
+            self.text_ctrl_descripcion.AppendText(self.menuMod['descripcion'])
+
+            # seleccionar fechas
+            fechaini = datetime.datetime.strptime(self.menuMod['fecha_ini'], "%Y-%m-%dT00:00:00")
+            fechafin = datetime.datetime.strptime(self.menuMod['fecha_fin'], "%Y-%m-%dT00:00:00")
+
+            self.calendar_ctrl_3.PySetDate(fechaini)
+            # duracion en dias
+            delta = fechafin - fechaini
+            self.text_ctrl_1.AppendText(str(delta.days))
+            if self.menuMod['disponible'] == False:
+                self.checkbox_1.SetValue(0)
+            self.img = self.menuMod['imagen']
+            #self.Bind(wx.EVT_BUTTON, self.modificar_menu, self.Guardar)
+            # rellenar listas
+            for data in self.menuMod['primeros']:
+                pos = self.list_ctrl_5a.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items))) # id diferente explicar
+                self.list_ctrl_5a.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5a.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5a.SetStringItem(pos,3,str(data['_data']['disponible']))
+                self.primeros.append(self.searchNomItem(data['_data']['nombre'],servicio.Items)) # guardamos las id de los items modelos
+            for data in self.menuMod['segundos']:
+                pos = self.list_ctrl_5ab.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items)))
+                self.list_ctrl_5ab.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5ab.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5ab.SetStringItem(pos,3,str(data['_data']['disponible']))
+                self.segundos.append(self.searchNomItem(data['_data']['nombre'],servicio.Items))
+            for data in self.menuMod['postres']:
+                pos = self.list_ctrl_5abc.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items)))
+                self.list_ctrl_5abc.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5abc.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5abc.SetStringItem(pos,3,str(data['_data']['disponible']))
+                self.postres.append(self.searchNomItem(data['_data']['nombre'],servicio.Items))
+            self.editando = True
 
         #self.crearItem = None
         # centramos la ventana en la pantalla
         self.Center()
         # end wxGlade
+
+    def searchMenu(self, iditem, items):
+        for element in items:
+            if str(element['nombre']) == iditem:
+                return element
+
 
     def __set_properties(self):
         # begin wxGlade: crear_menu.__set_properties
@@ -416,7 +492,6 @@ class crear_menu(wx.Frame):
     def borrarItem(self,event):
         print 'Borrando item'
         item = self.list_ctrl_3.GetItemText(self.list_ctrl_3.GetFocusedItem())
-        print item
         if servicio.delItem(item):
             msgbox = wx.MessageBox('!Item borrado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
             self.list_ctrl_3.DeleteAllItems() # limpiamos la lista
@@ -524,17 +599,33 @@ class crear_menu(wx.Frame):
 
             fechafin = fechaini2 + datetime.timedelta( days=int(self.text_ctrl_1.GetValue()) )
             fechafin = fechafin.date().isoformat()
-            # crear menu
-            if servicio.createMenu(self.checkbox_1.GetValue(), self.text_ctrl_2.GetValue(), self.text_ctrl_3.GetValue(), self.text_ctrl_descripcion.GetValue(), fechaini, fechafin, self.img):
-                # asignando items
-                if servicio.addItemMenuP(self.primeros, self.text_ctrl_3.GetValue()):
-                    print 'Primeros asignados'
-                if servicio.addItemMenuS(self.segundos, self.text_ctrl_3.GetValue()):
-                    print 'Segundos asignados'
-                if servicio.addItemMenuD(self.postres, self.text_ctrl_3.GetValue()):
-                    print 'Postres asignados'
-                msgbox = wx.MessageBox('!Menu creado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
-                self.Close(True)
+
+            if self.editando == False:
+                # crear menu
+                if servicio.createMenu(self.checkbox_1.GetValue(), self.text_ctrl_2.GetValue(), self.text_ctrl_3.GetValue(), self.text_ctrl_descripcion.GetValue(), fechaini, fechafin, self.img):
+                    # asignando items
+                    if servicio.addItemMenuP(self.primeros, self.text_ctrl_3.GetValue()) and servicio.addItemMenuS(self.segundos, self.text_ctrl_3.GetValue()) and servicio.addItemMenuD(self.postres, self.text_ctrl_3.GetValue()):
+                        print 'Items asignados'
+                        msgbox = wx.MessageBox('!Menu creado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                        self.Close(True)
+                    else:
+                        servicio.delMenu(self.text_ctrl_3.GetValue())
+                        msgbox = wx.MessageBox('¡No se pudo crear menu!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                else:
+                    msgbox = wx.MessageBox('¡No se pudo crear el menu, cambie el nombre!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            else:
+                # editando menu
+                if servicio.updateMenu(self.checkbox_1.GetValue(), self.text_ctrl_2.GetValue(), self.text_ctrl_3.GetValue(), self.text_ctrl_descripcion.GetValue(), fechaini, fechafin, self.img):
+                    # asignando items
+                    if servicio.addItemMenuP(self.primerosModAdd, self.text_ctrl_3.GetValue()) and servicio.addItemMenuS(self.segundosModAdd, self.text_ctrl_3.GetValue()) and servicio.addItemMenuD(self.postresModAdd, self.text_ctrl_3.GetValue()) and servicio.delItemMenuP(self.primerosModDel, self.text_ctrl_3.GetValue()) and servicio.delItemMenuS(self.segundosModDel, self.text_ctrl_3.GetValue()) and servicio.delItemMenuD(self.postresModDel, self.text_ctrl_3.GetValue()):
+                        print 'Items asignados'
+                        msgbox = wx.MessageBox('!Menu editado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                        self.Close(True)
+                    else:
+                        servicio.delMenu(self.text_ctrl_3.GetValue())
+                        msgbox = wx.MessageBox('¡No se pudo editar los items del menu!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                else:
+                    msgbox = wx.MessageBox('¡No se pudo editar el menu!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         else:
             msgbox = wx.MessageBox('¡Rellena los campos!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
@@ -589,18 +680,37 @@ class crear_menu(wx.Frame):
                     self.list_ctrl_5a.SetStringItem(pos,2,str(item['_data']['precio']))
                     self.list_ctrl_5a.SetStringItem(pos,3,str(item['_data']['disponible']))
                     self.primeros.append(item['_data']['id'])
+                    if self.editando == True:
+                        try:
+                            self.primerosModDel.pop(self.primerosModDel.index(item['_data']['nombre']))
+                            # si se habia añadido para borrarse lo quitamos
+                        except Exception, e:
+                            # en caso contrario lo añadimos para que se añada
+                            self.primerosModAdd.append(item['_data']['id'])
         event.Skip()
 
     # Elimina el item seleccionado o el primero en caso de no estar ninguno seleccionado de la lista de primeros
     def left_prim(self, event):  # wxGlade: crear_menu.<event_handler>
         print "left_prim"
         if self.list_ctrl_5a.GetFirstSelected()!=-1:
-            item = self.searchItem(self.list_ctrl_5a.GetItemText(self.list_ctrl_5a.GetFirstSelected()),servicio.Items)
+            item = self.searchItem( self.list_ctrl_5a.GetItemText( self.list_ctrl_5a.GetFirstSelected() ), servicio.Items )
             self.list_ctrl_5a.DeleteItem(self.list_ctrl_5a.GetFirstSelected())
             self.primeros.pop(self.primeros.index(item['_data']['id']))
+            if self.editando == True:
+                try:
+                    self.primerosModAdd.pop(self.primerosModAdd.index(item['_data']['id']))
+                    # antes de añadirlo a la lista de borrados comprobamos si se a añadido como nuevo item en al modificacion
+                except Exception, e:
+                    # si no lo esta quiere decir que se esta borrando un item que estaba desde el principio en el manu
+                    self.primerosModDel.append(item['_data']['nombre'])
         else:
             try:
                 self.primeros.pop(self.primeros.index(int(self.list_ctrl_5a.GetItem(itemId=0, col=0).GetText())))
+                if self.editando == True:
+                    try:
+                        self.primerosModAdd.pop(self.primerosModAdd.index(str(self.list_ctrl_5a.GetItem(itemId=0, col=1).GetText())))
+                    except Exception, e:
+                        self.primerosModDel.append(str(self.list_ctrl_5a.GetItem(itemId=0, col=1).GetText()))
                 self.list_ctrl_5a.DeleteItem(0)
             except Exception, e:
                 pass
@@ -659,6 +769,11 @@ class crear_menu(wx.Frame):
                     self.list_ctrl_5ab.SetStringItem(pos,2,str(item['_data']['precio']))
                     self.list_ctrl_5ab.SetStringItem(pos,3,str(item['_data']['disponible']))
                     self.segundos.append(item['_data']['id'])
+                    if self.editando == True:
+                        try:
+                            self.segundosModDel.pop(self.segundosModDel.index(item['_data']['nombre']))
+                        except Exception, e:
+                            self.segundosModAdd.append(item['_data']['id'])
         event.Skip()
 
     # igual que left_prim pero con la lista de segundos
@@ -668,9 +783,16 @@ class crear_menu(wx.Frame):
             item = self.searchItem(self.list_ctrl_5ab.GetItemText(self.list_ctrl_5ab.GetFirstSelected()),servicio.Items)
             self.list_ctrl_5ab.DeleteItem(self.list_ctrl_5ab.GetFirstSelected())
             self.segundos.pop(self.segundos.index(item['_data']['id']))
+            if self.editando==True:
+                self.segundosModDel.append(item['_data']['nombre'])
         else:
             try:
                 self.segundos.pop(self.segundos.index(int(self.list_ctrl_5ab.GetItem(itemId=0, col=0).GetText())))
+                if self.editando == True:
+                    try:
+                        self.segundosModAdd.pop(self.segundosModAdd.index(str(self.list_ctrl_5ab.GetItem(itemId=0, col=1).GetText())))
+                    except Exception, e:
+                        self.segundosModDel.append(str(self.list_ctrl_5ab.GetItem(itemId=0, col=1).GetText()))
                 self.list_ctrl_5ab.DeleteItem(0)
             except Exception, e:
                 pass
@@ -692,6 +814,11 @@ class crear_menu(wx.Frame):
                     self.list_ctrl_5abc.SetStringItem(pos,2,str(item['_data']['precio']))
                     self.list_ctrl_5abc.SetStringItem(pos,3,str(item['_data']['disponible']))
                     self.postres.append(item['_data']['id'])
+                    if self.editando == True:
+                        try:
+                            self.postresModDel.pop(self.postresModDel.index(item['_data']['nombre']))
+                        except Exception, e:
+                            self.postresModAdd.append(item['_data']['id'])
         event.Skip()
 
     # igual que lef_prim pero con los postres
@@ -701,10 +828,17 @@ class crear_menu(wx.Frame):
             item = self.searchItem(self.list_ctrl_5abc.GetItemText(self.list_ctrl_5abc.GetFirstSelected()),servicio.Items)
             self.list_ctrl_5abc.DeleteItem(self.list_ctrl_5abc.GetFirstSelected())
             self.postres.pop(self.postres.index(item['_data']['id']))
+            if self.editando == True:
+                self.postresModDel.append(item['_data']['nombre'])
         else:
             try:
                 self.postres.pop(self.postres.index(int(self.list_ctrl_5abc.GetItem(itemId=0, col=0).GetText())))
-                self.list_ctrl_5abc.DeleteItem(0)
+                if self.editando == True:
+                    try:
+                        self.postresModAdd.pop(self.postresModAdd.index(str(self.list_ctrl_5abc.GetItem(itemId=0, col=1).GetText())))
+                    except Exception, e:
+                        self.postresModDel.append(str(self.list_ctrl_5abc.GetItem(itemId=0, col=1).GetText()))
+                self.list_ctrl_5abc.DeleteItem(0)             
             except Exception, e:
                 pass
         event.Skip()

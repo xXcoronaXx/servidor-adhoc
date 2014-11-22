@@ -41,7 +41,6 @@ class ControladorPyro(object):
 		try:
 			print 'Update Item'
 			items = Item_db.select().where(Item_db.nombre==nomAnt)
-			print items
 			for i in items:
 				print i
 				i.disponible = disponible
@@ -72,12 +71,14 @@ class ControladorPyro(object):
 	def updateMenu(self, disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen):
 		try:
 			print 'Update menu'
-			menu = Menu_db.get(Menu_db.nombre==nombre)
+			menu = Menu_db.select().where(Menu_db.nombre==nombre).get()
 			menu.disponible = disponible
-			menu.precio = predio
+			menu.precio = precio
 			menu.descripcion = descripcion
-			menu.fecha_ini = fecha_ini
-			menu.fecha_fin = fecha_fin
+			fecha_ini = fecha_ini.split('/')
+			fecha_fin = fecha_fin.split('/')
+			menu.fecha_ini = date(int(fecha_ini[0]),int(fecha_ini[1]),int(fecha_ini[2]))
+			menu.fecha_fin = date(int(fecha_fin[0]),int(fecha_fin[1]),int(fecha_fin[2]))
 			menu.imagen = imagen
 			menu.save()
 			return True
@@ -107,8 +108,10 @@ class ControladorPyro(object):
 			oferta.codigo = codigo
 			oferta.precio = precio
 			oferta.descripcion = descripcion
-			oferta.fecha_ini = fecha_ini
-			oferta.fecha_fin = fecha_fin
+			fecha_ini = fecha_ini.split('/')
+			fecha_fin = fecha_fin.split('/')
+			oferta.fecha_ini = date(int(fecha_ini[0]),int(fecha_ini[1]),int(fecha_ini[2]))
+			oferta.fecha_fin = date(int(fecha_fin[0]),int(fecha_fin[1]),int(fecha_fin[2]))
 			oferta.imagen = imagen
 			oferta.save()
 			return True
@@ -171,7 +174,8 @@ class ControladorPyro(object):
 	def delItemMenuP(self, item, menu):
 		try:
 			print 'borrando primero'
-			i = Item_db.select().where(Item_db.nombre==item).where(Item_db.primeros==menu).get()
+			m = Menu_db.select().where(Menu_db.nombre==menu).get()
+			i = Item_db.select().where(Item_db.nombre==item, Item_db.primeros==m.id).get()
 			i.delete_instance()
 			return True
 		except Exception, e:
@@ -181,7 +185,8 @@ class ControladorPyro(object):
 	def delItemMenuS(self, item, menu):
 		try:
 			print 'borrando segundo'
-			i = Item_db.select().where(Item_db.nombre==item).where(Item_db.segundos==menu).get()
+			m = Menu_db.select().where(Menu_db.nombre==menu).get()
+			i = Item_db.select().where(Item_db.nombre==item, Item_db.segundos==m.id).get()
 			i.delete_instance()
 			return True
 		except Exception, e:
@@ -191,17 +196,18 @@ class ControladorPyro(object):
 	def delItemMenuD(self, item, menu):
 		try:
 			print 'borrando postre'
-			i = Item_db.select().where(Item_db.nombre==item).where(Item_db.postres==menu).get()
+			m = Menu_db.select().where(Menu_db.nombre==m).get()
+			i = Item_db.select().where(Item_db.nombre==item, Item_db.postres==m.id).get()
 			i.delete_instance()
 			return True
 		except Exception, e:
 			return False
 
 	# borra item de una oferta
-	def delItemMenuD(self, item, oferta):
+	def delItemOferta(self, item, oferta):
 		try:
 			print 'borrando item oferta'
-			i = Item_db.select().where(Item_db.nombre==item).where(Item_db.ofertas==oferta).get()
+			i = Item_db.select().where(Item_db.nombre==item, Item_db.ofertas==oferta).get()
 			i.delete_instance()
 			return True
 		except Exception, e:
@@ -273,6 +279,9 @@ class ControladorPyro(object):
 				m['precio'] = float(x.precio)
 				m['descripcion'] = x.descripcion
 				m['fecha_ini'] = x.fecha_ini
+				print ''
+				print type(x.fecha_ini)
+				print ''
 				m['fecha_fin'] = x.fecha_fin
 				m['imagen'] = x.imagen
 				for y in Item_db.select().where(Item_db.primeros==x):
