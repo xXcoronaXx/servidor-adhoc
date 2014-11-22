@@ -1010,7 +1010,15 @@ class crear_oferta(wx.Frame):
             self.list_ctrl_4.SetStringItem(pos,2,str(data['_data']['precio']))
             self.list_ctrl_4.SetStringItem(pos,3,str(data['_data']['disponible']))
 
+        # variables para guardar los items asignados y la codificacion en base64 de la imagen
+        # en ellos se listan las id de la base de datos
+        self.items = []
         self.img = 0
+        # variables temporales para los items que se asignan y se borran mientras editamos un menu
+        self.itemsModAdd = []
+        self.itemsModDel = []
+
+        self.editando = False
 
         self.__set_properties()
         self.__do_layout()
@@ -1093,6 +1101,12 @@ class crear_oferta(wx.Frame):
         self.SetSizer(sizer_24)
         self.Layout()
         # end wxGlade
+
+    # Busta iditem en la lista de items
+    def searchItem(self,iditem, items):
+        for element in items:
+            if str(element['_data']['id']) == iditem:
+                return element
 
     # Abre la ventana de crear item y bindea un evento para que al cerrarse se actualice la lista de items
     def crear_item(self, event):  # wxGlade: crear_menu.<event_handler>
@@ -1234,12 +1248,56 @@ class crear_oferta(wx.Frame):
         event.Skip()
 
     def pasar_izq(self, event):  # wxGlade: crear_oferta.<event_handler>
-        print "Event handler 'pasar_izq' not implemented!"
+        print "pasar_izq"
+        # comprobar si el item existe en la lista para no añadirlo dos veces
+        if self.list_ctrl_4.GetFocusedItem()!=-1:
+            item = self.searchItem(self.list_ctrl_4.GetItemText(self.list_ctrl_4.GetFocusedItem()),servicio.Items)
+            try:
+                self.primeros.index(item['_data']['id'])
+                # el item existe
+            except Exception, e:
+                # el item no esta en la lista primeros
+                if self.list_ctrl_4.GetFirstSelected()!=-1:
+                    pos = self.list_ctrl_5.InsertStringItem(0,str(item['_data']['id']))
+                    self.list_ctrl_5.SetStringItem(pos,1,str(item['_data']['nombre']))
+                    self.list_ctrl_5.SetStringItem(pos,2,str(item['_data']['precio']))
+                    self.list_ctrl_5.SetStringItem(pos,3,str(item['_data']['disponible']))
+                    self.items.append(item['_data']['id'])
+                    if self.editando == True:
+                        try:
+                            self.itemsModDel.pop(self.itemsModDel.index(item['_data']['nombre']))
+                            # si se habia añadido para borrarse lo quitamos
+                        except Exception, e:
+                            # en caso contrario lo añadimos para que se añada
+                            self.itemsModAdd.append(item['_data']['id'])
         event.Skip()
 
     def pasar_der(self, event):  # wxGlade: crear_oferta.<event_handler>
-        print "Event handler 'pasar_der' not implemented!"
+        print "pasar_der"
+        if self.list_ctrl_5.GetFirstSelected()!=-1:
+            item = self.searchItem( self.list_ctrl_5.GetItemText( self.list_ctrl_5.GetFirstSelected() ), servicio.Items )
+            self.list_ctrl_5.DeleteItem(self.list_ctrl_5.GetFirstSelected())
+            self.items.pop(self.items.index(item['_data']['id']))
+            if self.editando == True:
+                try:
+                    self.itemsModAdd.pop(self.itemsModAdd.index(item['_data']['id']))
+                    # antes de añadirlo a la lista de borrados comprobamos si se a añadido como nuevo item en al modificacion
+                except Exception, e:
+                    # si no lo esta quiere decir que se esta borrando un item que estaba desde el principio en el manu
+                    self.itemsModDel.append(item['_data']['nombre'])
+        else:
+            try:
+                self.items.pop(self.items.index(int(self.list_ctrl_5.GetItem(itemId=0, col=0).GetText())))
+                if self.editando == True:
+                    try:
+                        self.itemsModAdd.pop(self.itemsModAdd.index(str(self.list_ctrl_5.GetItem(itemId=0, col=1).GetText())))
+                    except Exception, e:
+                        self.itemsModDel.append(str(self.list_ctrl_5.GetItem(itemId=0, col=1).GetText()))
+                self.list_ctrl_5.DeleteItem(0)
+            except Exception, e:
+                pass
         event.Skip()
+
 
     def item_select(self, event):  # wxGlade: crear_oferta.<event_handler>
         print "Event handler 'item_select' not implemented!"
