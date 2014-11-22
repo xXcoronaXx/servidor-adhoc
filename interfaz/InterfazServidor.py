@@ -215,7 +215,7 @@ class crear_menu(wx.Frame):
         wx.Frame.__init__(self, parent, *args, **kwds)
         # creando los elementos que vamos a necesitar en la interfaz
         self.calendar_ctrl_3 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
-        self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "")
+        #self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_34_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_1 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_12_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duración en dias"))
@@ -241,6 +241,10 @@ class crear_menu(wx.Frame):
         self.button_10 = wx.Button(self, wx.ID_ANY, _("<<"))
         self.button_11 = wx.Button(self, wx.ID_ANY, _(">>"))
         self.list_ctrl_3 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
+        if menu!=-1:
+            self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_READONLY)
+        else:
+            self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "")
 
         # variables para guardar los items asignados y la codificacion en base64 de la imagen
         # en ellos se listan las id de la base de datos
@@ -368,6 +372,7 @@ class crear_menu(wx.Frame):
                 self.postres.append(self.searchNomItem(data['_data']['nombre'],servicio.Items))
             self.editando = True # variable bandera
 
+
         #self.crearItem = None
         # centramos la ventana en la pantalla
         self.Center()
@@ -432,9 +437,9 @@ class crear_menu(wx.Frame):
         sizer_13.Add(self.text_ctrl_2, 0, 0, 0)
         grid_sizer_7.Add(sizer_13, 1, wx.EXPAND, 0)
         sizer_14.Add(self.checkbox_1, 0, 0, 0)
+        grid_sizer_activo = wx.FlexGridSizer(1, 3, 0, 0)
         grid_sizer_7.Add(grid_sizer_activo,1,0,0)
         #sizer_14.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        grid_sizer_activo = wx.FlexGridSizer(1, 3, 0, 0)
         grid_sizer_activo.Add(sizer_14, 1, wx.EXPAND, 0)
         grid_sizer_activo.Add((40,10),0,0,0)
         grid_sizer_activo.Add(self.button_14, 1, wx.EXPAND, 0)
