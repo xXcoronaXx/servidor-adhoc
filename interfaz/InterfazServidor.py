@@ -215,7 +215,6 @@ class crear_menu(wx.Frame):
         wx.Frame.__init__(self, parent, *args, **kwds)
         # creando los elementos que vamos a necesitar en la interfaz
         self.calendar_ctrl_3 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
-        #self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_34_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_1 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_12_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duración en dias"))
@@ -313,15 +312,9 @@ class crear_menu(wx.Frame):
         # bindeamos los eventos a los diferentes objetos que hemos creado mas arriba
         self.list_ctrl_3.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
         self.Bind(wx.EVT_BUTTON, self.save_menu, self.Guardar)
-        #self.Bind(wx.calendar.EVT_CALENDAR, self.calendario, self.calendar_ctrl_3)
         self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_1)
         self.Bind(wx.EVT_TEXT, self.solo_num2, self.text_ctrl_2)
-        #self.Bind(wx.EVT_CHECKBOX, self.activo, self.checkbox_1)
-        #self.Bind(wx.EVT_BUTTON, self.save_menu, self.Guardar)
         self.Bind(wx.EVT_BUTTON, self.load_img, self.button_14)
-        # self.Bind(wx.EVT_LISTBOX_DCLICK, self.primero_selec, self.list_ctrl_5a)
-        # self.Bind(wx.EVT_LISTBOX_DCLICK, self.segundo_selec, self.list_ctrl_5ab)
-        # self.Bind(wx.EVT_LISTBOX_DCLICK, self.postre_selec, self.list_ctrl_5abc)
         self.Bind(wx.EVT_BUTTON, self.add_prim, self.button_5)
         self.Bind(wx.EVT_BUTTON, self.left_prim, self.button_7)
         self.Bind(wx.EVT_BUTTON, self.crear_item, self.button_6)
@@ -329,7 +322,6 @@ class crear_menu(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.left_seg, self.button_9)
         self.Bind(wx.EVT_BUTTON, self.add_postre, self.button_10)
         self.Bind(wx.EVT_BUTTON, self.left_postre, self.button_11)
-        #self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.item_selec, self.list_ctrl_3)
         
         # si estamos editando un menu rellenamos los datos
         if menu!=-1:
@@ -350,7 +342,6 @@ class crear_menu(wx.Frame):
             if self.menuMod['disponible'] == False:
                 self.checkbox_1.SetValue(0)
             self.img = self.menuMod['imagen']
-            #self.Bind(wx.EVT_BUTTON, self.modificar_menu, self.Guardar)
             # rellenar listas
             for data in self.menuMod['primeros']:
                 pos = self.list_ctrl_5a.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items))) # id diferente explicar
@@ -372,8 +363,6 @@ class crear_menu(wx.Frame):
                 self.postres.append(self.searchNomItem(data['_data']['nombre'],servicio.Items))
             self.editando = True # variable bandera
 
-
-        #self.crearItem = None
         # centramos la ventana en la pantalla
         self.Center()
         # end wxGlade
@@ -439,16 +428,12 @@ class crear_menu(wx.Frame):
         sizer_14.Add(self.checkbox_1, 0, 0, 0)
         grid_sizer_activo = wx.FlexGridSizer(1, 3, 0, 0)
         grid_sizer_7.Add(grid_sizer_activo,1,0,0)
-        #sizer_14.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
         grid_sizer_activo.Add(sizer_14, 1, wx.EXPAND, 0)
         grid_sizer_activo.Add((40,10),0,0,0)
         grid_sizer_activo.Add(self.button_14, 1, wx.EXPAND, 0)
         sizer_descripcion = wx.StaticBoxSizer(self.sizer_descripcion_staticbox, wx.HORIZONTAL)
         sizer_descripcion.Add(self.text_ctrl_descripcion,0,0,0)
         grid_sizer_7.Add(sizer_descripcion,1,wx.EXPAND,0)
-
-        #sizer_guardar.Add(self.button_14, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
-        #sizer_guardar.Add((50,50),0,0,0)
         sizer_guardar.Add(self.Guardar, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0) 
         grid_sizer_7.Add(sizer_guardar,0,wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL,0)
         sizer_5.Add(grid_sizer_7, 1, wx.EXPAND, 0)
@@ -558,10 +543,6 @@ class crear_menu(wx.Frame):
                 break
             i+=1
 
-    # def calendario(self, event):  # wxGlade: crear_menu.<event_handler>
-    #     print "Event handler 'calendario' not implemented!"
-    #     event.Skip()
-
     # solo deja escribir numeros
     def solo_num(self, event):  # wxGlade: crear_menu.<event_handler>
         print "solo_num"
@@ -583,10 +564,6 @@ class crear_menu(wx.Frame):
         else:
             self.text_ctrl_2.ChangeValue('')
         event.Skip()
-
-    # def activo(self, event):  # wxGlade: crear_menu.<event_handler>
-    #     print "Event handler 'activo' not implemented!"
-    #     event.Skip()
 
     # Crea el menu con los datos introducidos
     def save_menu(self, event):  # wxGlade: crear_menu.<event_handler>
@@ -650,19 +627,6 @@ class crear_menu(wx.Frame):
         else:
             msgbox = wx.MessageBox('¡La imágen no se guardo, o elegiste la misma que ya estaba guardada!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
-
-
-    # def primero_selec(self, event):  # wxGlade: crear_menu.<event_handler>
-    #     print "Event handler 'primero_selec' not implemented!"
-    #     event.Skip()
-
-    # def segundo_selec(self, event):  # wxGlade: crear_menu.<event_handler>
-    #     print "Event handler 'segundo_selec' not implemented!"
-    #     event.Skip()
-
-    # def postre_selec(self, event):  # wxGlade: crear_menu.<event_handler>
-    #     print "Event handler 'postre_selec' not implemented!"
-    #     event.Skip()
 
     # Añade un item a la lista de los primeros
     def add_prim(self, event):  # wxGlade: crear_menu.<event_handler>
@@ -844,12 +808,6 @@ class crear_menu(wx.Frame):
                 pass
         event.Skip()
 
-    # def item_selec(self, event):  # wxGlade: crear_menu.<event_handler>
-    #     print "Event handler 'item_selec' not implemented!"
-    #     print self.list_ctrl_3.GetFocusedItem()
-    #     self.item_seleccionado = self.list_ctrl_3.GetFocusedItem()
-    #     event.Skip()
-
 # end of class crear_menu
 
 class crear_item(wx.Frame):
@@ -861,10 +819,8 @@ class crear_item(wx.Frame):
         self.sizer_32_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_9 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_33_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Precio"))
-        #self.combo_box_1 = wx.ComboBox(self, wx.ID_ANY, choices=[_("Primero"), _("Segundo"), _("Postre")], style=wx.CB_DROPDOWN)
         self.sizer_20_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Descripcion"))
         self.text_ctrl_4 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_MULTILINE)
-        #self.sizer_21_staticbox = wx.StaticBox(self, wx.ID_ANY, _(""))
         self.button_13 = wx.Button(self, wx.ID_ANY, _("img"))
         self.sizer_22_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Imagen"))
         self.checkbox_2 = wx.CheckBox(self, wx.ID_ANY, "")
@@ -876,7 +832,6 @@ class crear_item(wx.Frame):
 
         self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_9)
         self.Bind(wx.EVT_BUTTON, self.load_img_item, self.button_13)
-        #self.Bind(wx.EVT_CHECKBOX, self.item_disp, self.checkbox_2)
 
         self.img = 0
         self.itemMod = -1
@@ -920,7 +875,6 @@ class crear_item(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: crear_item.__set_properties
         self.SetTitle(_("Item"))
-        #self.combo_box_1.SetSelection(0)
         self.text_ctrl_4.SetMinSize((200, 100))
         self.checkbox_2.SetValue(1)
         # end wxGlade
@@ -933,11 +887,8 @@ class crear_item(wx.Frame):
         sizer_23 = wx.StaticBoxSizer(self.sizer_23_staticbox, wx.HORIZONTAL)
         self.sizer_22_staticbox.Lower()
         sizer_22 = wx.StaticBoxSizer(self.sizer_22_staticbox, wx.HORIZONTAL)
-        #self.sizer_21_staticbox.Lower()
-        #sizer_21 = wx.StaticBoxSizer(self.sizer_21_staticbox, wx.HORIZONTAL)
         self.sizer_20_staticbox.Lower()
         sizer_20 = wx.StaticBoxSizer(self.sizer_20_staticbox, wx.HORIZONTAL)
-        
         sizer_19 = wx.BoxSizer(wx.VERTICAL)
         sizer_sal = wx.BoxSizer(wx.VERTICAL)
         self.sizer_33_staticbox.Lower()
@@ -945,22 +896,18 @@ class crear_item(wx.Frame):
         self.sizer_32_staticbox.Lower()
         sizer_32 = wx.StaticBoxSizer(self.sizer_32_staticbox, wx.HORIZONTAL)
         sizer_32.Add(self.text_ctrl_8, 0, wx.EXPAND, 0)
-        
         sizer_19.Add(sizer_32, 1, wx.EXPAND, 0)
         sizer_33.Add(self.text_ctrl_9, 0, wx.EXPAND, 0)
         sizer_19.Add(sizer_33, 1, wx.EXPAND, 0)
         grid_sizer_8.Add(sizer_19, 1, wx.EXPAND, 0)
-        #sizer_21.Add(self.combo_box_1, 0, 0, 0)
         grid_sizer_8.Add(sizer_20, 1, wx.EXPAND, 0)
         sizer_20.Add(self.text_ctrl_4, 0, wx.EXPAND, 0)
-        #grid_sizer_8.Add(sizer_21, 1, wx.EXPAND, 0)
         sizer_22.Add(self.button_13, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_8.Add(sizer_22, 1, wx.EXPAND, 0)
         sizer_23.Add(self.checkbox_2, 0, 0, 0)
         sizer_sal.Add(sizer_23,0, wx.EXPAND, 0)
         sizer_sal.Add(self.button_12,0,wx.EXPAND,0)
         grid_sizer_8.Add(sizer_sal, 1, wx.EXPAND, 0)
-        #grid_sizer_8.Add(self.button_12, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
         sizer_18.Add(grid_sizer_8, 1, wx.EXPAND, 0)
         self.SetSizer(sizer_18)
         sizer_18.Fit(self)
@@ -1037,6 +984,8 @@ class crear_oferta(wx.Frame):
         self.text_ctrl_descripcion = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_MULTILINE)
         self.sizer_descripcion_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Descripción"))
 
+        self.createMenu()
+
         self.list_ctrl_4.InsertColumn(0,"ID")
         self.list_ctrl_4.SetColumnWidth(0,0)
         self.list_ctrl_4.InsertColumn(1,"Nombre")
@@ -1073,6 +1022,8 @@ class crear_oferta(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.pasar_izq, self.button_17)
         self.Bind(wx.EVT_BUTTON, self.pasar_der, self.button_18)
         self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.item_select, self.list_ctrl_4)
+        self.Bind(wx.EVT_BUTTON, self.crear_item, self.button_crear_item)
+        self.list_ctrl_4.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
 
         # centramos la ventana en la pantalla
         self.Center()
@@ -1115,7 +1066,6 @@ class crear_oferta(wx.Frame):
         sizer_27.Add(self.text_ctrl_6, 0, 0, 0)
         grid_sizer_9.Add(sizer_27, 1, wx.EXPAND, 0)
         sizer_28.Add(self.checkbox_3, 0, 0, 0)
-
         grid_sizer_activo = wx.FlexGridSizer(1, 3, 0, 0)
         grid_sizer_activo.Add(sizer_28, 1, wx.EXPAND, 0)
         grid_sizer_activo.Add((40,10),0,0,0)
@@ -1124,10 +1074,6 @@ class crear_oferta(wx.Frame):
         sizer_descripcion.Add(self.text_ctrl_descripcion,0,0,0)
         grid_sizer_9.Add(grid_sizer_activo,1,wx.EXPAND,0)
         grid_sizer_9.Add(sizer_descripcion,1,wx.EXPAND,0)
-
-
-        #grid_sizer_9.Add(sizer_28, 1, wx.EXPAND, 0)
-        #grid_sizer_9.Add(self.button_15, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         grid_sizer_9.Add(self.button_16, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL, 0)
         sizer_25.Add(grid_sizer_9, 1, wx.EXPAND, 0)
         sizer_29.Add(self.list_ctrl_5, 1, wx.EXPAND, 0)
@@ -1145,6 +1091,92 @@ class crear_oferta(wx.Frame):
         self.SetSizer(sizer_24)
         self.Layout()
         # end wxGlade
+
+    # Abre la ventana de crear item y bindea un evento para que al cerrarse se actualice la lista de items
+    def crear_item(self, event):  # wxGlade: crear_menu.<event_handler>
+        print "crear_item"
+        crearItem = crear_item(self)
+        crearItem.Show()
+        self.Hide()                 # oculta la ventana de crear menu
+        crearItem.Bind(wx.EVT_CLOSE, self.on_close_crear_item)
+        self.crearItem = crearItem # comentar esto creo que sobra
+        event.Skip()
+
+    # Actualiza la lista de items
+    def on_close_crear_item(self, event):
+        self.list_ctrl_4.DeleteAllItems() # limpiamos la lista
+        servicio.updateItems()            # actualizamos los items del servidor
+        for data in servicio.Items:       # y actualizamos la lista
+            pos = self.list_ctrl_4.InsertStringItem(0,str(data['_data']['id']))
+            self.list_ctrl_4.SetStringItem(pos,1,str(data['_data']['nombre']))
+            self.list_ctrl_4.SetStringItem(pos,2,str(data['_data']['precio']))
+            self.list_ctrl_4.SetStringItem(pos,3,str(data['_data']['disponible']))
+
+        closed_window = event.EventObject
+        if closed_window == self.crearItem:
+            self.crearItem = None
+            self.Show()
+        elif closed_window == self:
+            print 'Carry out your code for when Main window closes'
+        event.Skip()
+
+    # funcion para crear el context menu del click izquierdo
+    def createMenu(self):
+        self.menu = wx.Menu()
+        item1 = self.menu.Append(-1,'Editar')           # añadimos los items
+        item2 = self.menu.Append(-1,'Borrar')
+        self.Bind(wx.EVT_MENU, self.editarItem, item1)  # bindeamos sus acciones
+        self.Bind(wx.EVT_MENU, self.borrarItem, item2)
+
+    def borrarItem(self,event):
+        print 'Borrando item'
+        item = self.list_ctrl_4.GetItemText(self.list_ctrl_4.GetFocusedItem())
+        if servicio.delItem(item):
+            msgbox = wx.MessageBox('!Item borrado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+            self.list_ctrl_4.DeleteAllItems() # limpiamos la lista
+            self.comprobarItemsBorrado(item) 
+            servicio.updateItems()            # actualizamos los items del servidor
+            for data in servicio.Items:       # y actualizamos la lista
+                pos = self.list_ctrl_4.InsertStringItem(0,str(data['_data']['id']))
+                self.list_ctrl_4.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_4.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_4.SetStringItem(pos,3,str(data['_data']['disponible']))
+        else:
+            print 'ERROR al borrar el item'
+        event.Skip()
+
+    # muestra el la ventana de editar item con los datos del item que estamos editando
+    # tambien se bindea el evento para que se actualicen los items cuando se cierre la ventana de editar item
+    def editarItem(self,event):
+        print 'Editando item'
+        item = self.list_ctrl_4.GetItemText(self.list_ctrl_4.GetFocusedItem())
+        crearItem = crear_item(self,item=item)
+        crearItem.Show()
+        self.Hide()
+        crearItem.Bind(wx.EVT_CLOSE, self.on_close_crear_item)
+        self.crearItem = crearItem # comentar esto creo que sobra
+        event.Skip()
+
+    # muestra el menu del click derecho
+    def showPopupMenu(self,event):
+        print 'Boton derecho'
+        position = self.ScreenToClient(wx.GetMousePosition())
+        item = self.list_ctrl_4.HitTest(event.GetPosition())
+        if item[0]!=-1: # para que solo aparezca el menu cuando pincha en un item
+            self.PopupMenu(self.menu,position)
+        event.Skip()
+
+    # cuando se borra un item actualiza la lista de items el item borrado de ellas
+    def comprobarItemsBorrado(self,itemBorrado):
+        count = self.list_ctrl_5.GetItemCount()
+        i=0
+        for row in range(count):
+            item = self.list_ctrl_5.GetItem(itemId=row, col=0)
+            if item.GetText() == itemBorrado:
+                self.list_ctrl_5.DeleteItem(i)
+                self.primeros.pop(self.primeros.index(int(itemBorrado)))
+                break
+            i+=1
 
     def solo_num(self, event):  # wxGlade: crear_oferta.<event_handler>
         print "Event handler 'solo_num' not implemented!"
