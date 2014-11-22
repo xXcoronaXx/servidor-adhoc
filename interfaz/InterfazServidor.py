@@ -1010,11 +1010,13 @@ class crear_oferta(wx.Frame):
             self.list_ctrl_4.SetStringItem(pos,2,str(data['_data']['precio']))
             self.list_ctrl_4.SetStringItem(pos,3,str(data['_data']['disponible']))
 
+        self.img = 0
+
         self.__set_properties()
         self.__do_layout()
 
         self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_5)
-        self.Bind(wx.EVT_TEXT, self.solo_num, self.text_ctrl_6)
+        self.Bind(wx.EVT_TEXT, self.solo_num2, self.text_ctrl_6)
         self.Bind(wx.EVT_CHECKBOX, self.activo, self.checkbox_3)
         self.Bind(wx.EVT_BUTTON, self.load_img_oferta, self.button_15)
         self.Bind(wx.EVT_BUTTON, self.guardar_oferta, self.button_16)
@@ -1178,8 +1180,26 @@ class crear_oferta(wx.Frame):
                 break
             i+=1
 
-    def solo_num(self, event):  # wxGlade: crear_oferta.<event_handler>
-        print "Event handler 'solo_num' not implemented!"
+    # solo deja escribir numeros
+    def solo_num(self, event):  # wxGlade: crear_menu.<event_handler>
+        print "solo_num"
+        raw_value = self.text_ctrl_5.GetValue().strip()
+        # numeric check
+        if all(x in '0123456789' for x in raw_value):
+            pass
+        else:
+            self.text_ctrl_5.ChangeValue('')
+        event.Skip()
+
+    # solo deja escribir numeros y puntos
+    def solo_num2(self, event):  # wxGlade: crear_menu.<event_handler>
+        print "solo_num2"
+        raw_value = self.text_ctrl_6.GetValue().strip()
+        # numeric check
+        if all(x in '0123456789.' for x in raw_value):
+            pass
+        else:
+            self.text_ctrl_6.ChangeValue('')
         event.Skip()
 
     def activo(self, event):  # wxGlade: crear_oferta.<event_handler>
@@ -1187,7 +1207,22 @@ class crear_oferta(wx.Frame):
         event.Skip()
 
     def load_img_oferta(self, event):  # wxGlade: crear_oferta.<event_handler>
-        print "Event handler 'load_img_oferta' not implemented!"
+        print "load_img"
+        img = self.img
+        openFileDialog = wx.FileDialog(self, "Selecionar imagen del menu", "", "", "pictures (*.jpeg,*.jpg,*.png)|*.jpeg;*.jpg;*.png", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+
+        if openFileDialog.ShowModal() == wx.ID_CANCEL:
+            return     # the user changed idea...
+
+        print openFileDialog.GetPath()
+        # pasar a base64 y guardar en variable
+        with open(openFileDialog.GetPath(), "rb") as imageFile:
+            img = base64.b64encode(imageFile.read())
+        if img!=self.img:
+            msgbox = wx.MessageBox('!Imágen guardada!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+            self.img = img
+        else:
+            msgbox = wx.MessageBox('¡La imágen no se guardo, o elegiste la misma que ya estaba guardada!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     def guardar_oferta(self, event):  # wxGlade: crear_oferta.<event_handler>
