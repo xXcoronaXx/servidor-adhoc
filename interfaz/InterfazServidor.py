@@ -26,9 +26,10 @@ class MyFrame(wx.Frame):
         self.main_menubar = wx.MenuBar()
         self.Inicio = wx.Menu()
         self.main_menubar.Append(self.Inicio, _("Inicio"))
-        self.Inicio.Append(wx.ID_ANY, 'Reconectar', 'Conectarse a otro servicio')
+        reconectar = self.Inicio.Append(wx.ID_ANY, 'Reconectar', 'Conectarse a otro servicio')
         self.Inicio.Append(wx.ID_EXIT, 'Salir', 'Salir de la aplicación')
         self.SetMenuBar(self.main_menubar)
+        self.Bind(wx.EVT_MENU, self.listar_servidores, reconectar)
         # Menu Bar end
         self.button_1 = wx.Button(self, wx.ID_ANY, _("Crear"))
         #self.button_2 = wx.Button(self, wx.ID_ANY, _("Ver / Editar"))
@@ -114,8 +115,8 @@ class MyFrame(wx.Frame):
         self.Layout()
         # end wxGlade
 
-    def listar_servidores(self):
-        pass
+    def listar_servidores(self, event):
+        print 'listar servidores'
 
     def createContextMenu(self):
         self.menu = wx.Menu()
