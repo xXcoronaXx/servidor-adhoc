@@ -26,6 +26,8 @@ class MyFrame(wx.Frame):
         self.main_menubar = wx.MenuBar()
         self.Inicio = wx.Menu()
         self.main_menubar.Append(self.Inicio, _("Inicio"))
+        self.Inicio.Append(wx.ID_ANY, 'Reconectar', 'Conectarse a otro servicio')
+        self.Inicio.Append(wx.ID_EXIT, 'Salir', 'Salir de la aplicación')
         self.SetMenuBar(self.main_menubar)
         # Menu Bar end
         self.button_1 = wx.Button(self, wx.ID_ANY, _("Crear"))
@@ -71,8 +73,8 @@ class MyFrame(wx.Frame):
         #self.Bind(wx.EVT_BUTTON, self.ver_edit_menu, self.button_2)
         self.Bind(wx.EVT_BUTTON, self.crear_oferta, self.button_3)
         #self.Bind(wx.EVT_BUTTON, self.ver_edit_oferta, self.button_4)
-        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.menu_selected, self.list_ctrl_1)
-        self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.oferta_selected, self.list_ctrl_2)
+        #self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.menu_selected, self.list_ctrl_1)
+        #self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.oferta_selected, self.list_ctrl_2)
         # end wxGlade
 
     def __set_properties(self):
@@ -112,6 +114,9 @@ class MyFrame(wx.Frame):
         self.Layout()
         # end wxGlade
 
+    def listar_servidores(self):
+        pass
+
     def createContextMenu(self):
         self.menu = wx.Menu()
         item1 = self.menu.Append(-1,'Editar')
@@ -120,9 +125,9 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.borrarMenu, item2)
 
     def createContextMenu2(self):
-        self.menu = wx.Menu()
-        item1 = self.menu.Append(-1,'Editar')
-        item2 = self.menu.Append(-1,'Borrar')
+        self.menu2 = wx.Menu()
+        item1 = self.menu2.Append(-1,'Editar')
+        item2 = self.menu2.Append(-1,'Borrar')
         self.Bind(wx.EVT_MENU, self.editarOferta, item1)
         self.Bind(wx.EVT_MENU, self.borrarOferta, item2)
 
@@ -196,14 +201,15 @@ class MyFrame(wx.Frame):
         event.Skip()
 
     def showPopupMenu2(self,event):
-        print 'boton derecho'
+        print 'boton derecho2'
         position = self.ScreenToClient(wx.GetMousePosition())
         item = self.list_ctrl_2.HitTest(event.GetPosition())
         if item[0]!=-1: # para que solo aparezca el menu cuando pincha en un item
-            self.PopupMenu(self.menu,position)
+            self.PopupMenu(self.menu2,position)
         event.Skip()
 
     def on_close_crear_menu(self, event):
+        print 'on_close_crear_menu'
         self.list_ctrl_1.DeleteAllItems() # limpiamos la lista
         servicio.updateMenus()            # actualizamos los items del servidor
         for data in servicio.Menus:
@@ -213,6 +219,7 @@ class MyFrame(wx.Frame):
         event.Skip()
 
     def on_close_crear_oferta(self, event):
+        print 'on_close_crear_oferta'
         self.list_ctrl_2.DeleteAllItems() # limpiamos la lista
         servicio.updateOfertas()            # actualizamos los items del servidor
         for data in servicio.Ofertas:
@@ -1025,7 +1032,7 @@ class crear_oferta(wx.Frame):
         kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN
         wx.Frame.__init__(self, parent, *args, **kwds)
         self.calendar_ctrl_4 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
-        self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "")
+        #self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_35_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_5 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_26_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duración en dias"))
