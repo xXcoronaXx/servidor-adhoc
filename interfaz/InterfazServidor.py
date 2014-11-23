@@ -117,6 +117,9 @@ class MyFrame(wx.Frame):
 
     def listar_servidores(self, event):
         print 'listar servidores'
+        servidores = listar_servidores(self)
+        servidores.Show()
+        event.Skip()
 
     def createContextMenu(self):
         self.menu = wx.Menu()
@@ -262,6 +265,24 @@ class MyFrame(wx.Frame):
         event.Skip()
 
 # end of class MyFrame
+
+class listar_servidores(wx.Frame):
+    def __init__(self, parent, *args, **kwds):
+        # begin wxGlade: crear_item.__init__
+        kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN
+        wx.Frame.__init__(self,parent, *args, **kwds)
+        self.list_ctrl_servidores = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
+        self.list_ctrl_servidores.InsertColumn(0,"Servidor")
+        self.list_ctrl_servidores.SetColumnWidth(0,200)
+        self.__set_properties()
+        # centramos la ventana en la pantalla
+        self.Center()
+
+    def __set_properties(self):
+        # definimos el titulo de la ventana y los tamaños de los elementos de la interfaz
+        self.SetTitle(_("Servidores"))
+        self.SetSize((200, 300))
+
 
 class crear_menu(wx.Frame):
 
