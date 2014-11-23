@@ -275,6 +275,12 @@ class listar_servidores(wx.Frame):
         self.list_ctrl_servidores.InsertColumn(0,"Servidor")
         self.list_ctrl_servidores.SetColumnWidth(0,200)
         self.__set_properties()
+
+        # le preguntamos al servidor de nombrado los objetos que tiene registrado
+        ns = Pyro4.locateNS()
+        for servidor in ns.list():
+            if not 'Pyro.NameServer' in servidor:
+                self.list_ctrl_servidores.InsertStringItem(0,str(servidor))
         # centramos la ventana en la pantalla
         self.Center()
 
