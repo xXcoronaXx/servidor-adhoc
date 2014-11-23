@@ -86,26 +86,25 @@ class ControladorPyro(object):
 			return False
 
 	# crea oferta
-	def createOferta(self, disponible, codigo, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen):
+	def createOferta(self, disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen):
 		try:
 			print 'Crear oferta'
 			if nombre == '':
 				raise Exception("No se puede crear una oferta sin nombre")
 			fecha_ini = fecha_ini.split('/')
 			fecha_fin = fecha_fin.split('/')
-			nuevaOferta = Oferta_db(disponible=disponible, codigo=codigo, precio=precio, nombre=nombre,descripcion=descripcion,fecha_ini=date(int(fecha_ini[0]),int(fecha_ini[1]),int(fecha_ini[2])),fecha_fin=date(int(fecha_fin[0]),int(fecha_fin[1]),int(fecha_fin[2])) ,imagen=imagen)	
+			nuevaOferta = Oferta_db(disponible=disponible, precio=precio, nombre=nombre,descripcion=descripcion,fecha_ini=date(int(fecha_ini[0]),int(fecha_ini[1]),int(fecha_ini[2])),fecha_fin=date(int(fecha_fin[0]),int(fecha_fin[1]),int(fecha_fin[2])) ,imagen=imagen)	
 			nuevaOferta.save()
 			return True
 		except Exception, e:
 			return False
 
 	# update oferta
-	def updateOferta(self, disponible, codigo, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen):
+	def updateOferta(self, disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen):
 		try:
 			print 'Update oferta'
 			oferta = Oferta_db.get(Oferta_db.nombre==nombre)
 			oferta.disponible = disponible
-			oferta.codigo = codigo
 			oferta.precio = precio
 			oferta.descripcion = descripcion
 			fecha_ini = fecha_ini.split('/')
@@ -234,7 +233,7 @@ class ControladorPyro(object):
 			print 'Item pyro'
 			i = []
 			# busca todos lo items que no estan asignados a ningun meno o oferta
-			for x in Item_db.select().where( Item_db.segundos == 0, Item_db.primeros == 0 ,Item_db.postres == 0 ):
+			for x in Item_db.select().where( Item_db.segundos == 0, Item_db.primeros == 0 ,Item_db.postres == 0 ,Item_db.ofertas == 0 ):
 			 	i.append(x)
 			return serpent.dumps(i,indent=False)
 		except Exception, e:
@@ -330,7 +329,6 @@ class ControladorPyro(object):
 				m['nombre'] = x.nombre
 				m['disponible'] = x.disponible
 				m['precio'] = float(x.precio)
-				m['codigo'] = x.codigo
 				m['descripcion'] = x.descripcion
 				m['fecha_ini'] = x.fecha_ini
 				m['fecha_fin'] = x.fecha_fin

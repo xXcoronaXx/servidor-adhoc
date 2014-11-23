@@ -16,7 +16,6 @@ from ServicioPyro import *
 # begin wxGlade: extracode
 # end wxGlade
 
-
 class MyFrame(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
@@ -45,6 +44,11 @@ class MyFrame(wx.Frame):
         self.list_ctrl_1.InsertColumn(1,"Precio")
         self.list_ctrl_1.InsertColumn(2,"Disponible")
 
+        self.list_ctrl_2.InsertColumn(0,"Nombre")
+        self.list_ctrl_2.SetColumnWidth(0,180)
+        self.list_ctrl_2.InsertColumn(1,"Precio")
+        self.list_ctrl_2.InsertColumn(2,"Disponible")
+        
         for data in servicio.Menus:
             pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
             self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
@@ -54,18 +58,14 @@ class MyFrame(wx.Frame):
             self.list_ctrl_2.SetStringItem(pos,1,str(data['precio']))
             self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
 
-        self.list_ctrl_2.InsertColumn(0,"Nombre")
-        self.list_ctrl_2.SetColumnWidth(0,180)
-        self.list_ctrl_2.InsertColumn(1,"Precio")
-        self.list_ctrl_2.InsertColumn(2,"Disponible")
         
         self.__set_properties()
         self.__do_layout()
 
         self.list_ctrl_1.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
         self.createContextMenu()
-        #self.list_ctrl_2.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
-        #self.createMenu()
+        self.list_ctrl_2.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu2)
+        self.createContextMenu2()
 
         self.Bind(wx.EVT_BUTTON, self.crear_menu, self.button_1)
         #self.Bind(wx.EVT_BUTTON, self.ver_edit_menu, self.button_2)
@@ -119,6 +119,14 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.editarMenu, item1)
         self.Bind(wx.EVT_MENU, self.borrarMenu, item2)
 
+    def createContextMenu2(self):
+        self.menu = wx.Menu()
+        item1 = self.menu.Append(-1,'Editar')
+        item2 = self.menu.Append(-1,'Borrar')
+        self.Bind(wx.EVT_MENU, self.editarOferta, item1)
+        self.Bind(wx.EVT_MENU, self.borrarOferta, item2)
+
+
     def editarMenu(self,event):
         print 'Editar menu'
         menu = self.list_ctrl_1.GetFocusedItem()
@@ -148,12 +156,49 @@ class MyFrame(wx.Frame):
                 print 'No se pudo borrar el menu'
         event.Skip()
 
+    def editarOferta(self,event):
+        print 'Editar oferta'
+        oferta = self.list_ctrl_2.GetFocusedItem()
+        if oferta !=-1:
+            oferta = self.list_ctrl_2.GetItemText(self.list_ctrl_2.GetFocusedItem())
+            crearOferta = crear_oferta(self,oferta=oferta)
+            crearOferta.Show()
+            crearOferta.Bind(wx.EVT_CLOSE, self.on_close_crear_oferta)
+            event.Skip()
+        event.Skip()
+
+    def borrarOferta(self,event):
+        print 'Borrando oferta'
+        oferta = self.list_ctrl_2.GetFocusedItem()
+        if oferta !=-1:
+            if servicio.delOferta(self.list_ctrl_2.GetItemText(oferta)):
+                print 'Oferta borrada!'
+                msgbox = wx.MessageBox('!Oferta borrada!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                # Actualizamos la lista de ofertas
+                servicio.updateOfertas()
+                self.list_ctrl_2.DeleteAllItems()
+                for data in servicio.Ofertas:
+                    pos = self.list_ctrl_2.InsertStringItem(0,data['nombre'])
+                    self.list_ctrl_2.SetStringItem(pos,1,str(data['precio']))
+                    self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
+            else:
+                print 'No se pudo borrar la ofera'
+        event.Skip()
+
 
     
     def showPopupMenu(self,event):
         print 'boton derecho'
         position = self.ScreenToClient(wx.GetMousePosition())
         item = self.list_ctrl_1.HitTest(event.GetPosition())
+        if item[0]!=-1: # para que solo aparezca el menu cuando pincha en un item
+            self.PopupMenu(self.menu,position)
+        event.Skip()
+
+    def showPopupMenu2(self,event):
+        print 'boton derecho'
+        position = self.ScreenToClient(wx.GetMousePosition())
+        item = self.list_ctrl_2.HitTest(event.GetPosition())
         if item[0]!=-1: # para que solo aparezca el menu cuando pincha en un item
             self.PopupMenu(self.menu,position)
         event.Skip()
@@ -165,6 +210,15 @@ class MyFrame(wx.Frame):
             pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
             self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
             self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
+        event.Skip()
+
+    def on_close_crear_oferta(self, event):
+        self.list_ctrl_2.DeleteAllItems() # limpiamos la lista
+        servicio.updateOfertas()            # actualizamos los items del servidor
+        for data in servicio.Ofertas:
+            pos = self.list_ctrl_2.InsertStringItem(0,data['nombre'])
+            self.list_ctrl_2.SetStringItem(pos,1,str(data['precio']))
+            self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
         event.Skip()
 
     def crear_menu(self, event):  # wxGlade: MyFrame.<event_handler>
@@ -960,10 +1014,16 @@ class crear_item(wx.Frame):
 # end of class crear_item
 
 class crear_oferta(wx.Frame):
-    def __init__(self, *args, **kwds):
+
+    def searchNomItem(self, nomitem, items):
+        for element in items:
+            if str(element['_data']['nombre']) == nomitem:
+                return element['_data']['id']
+
+    def __init__(self, parent, oferta=-1, *args, **kwds):
         # begin wxGlade: crear_oferta.__init__
         kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN
-        wx.Frame.__init__(self, *args, **kwds)
+        wx.Frame.__init__(self, parent, *args, **kwds)
         self.calendar_ctrl_4 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
         self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_35_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
@@ -983,6 +1043,10 @@ class crear_oferta(wx.Frame):
         self.list_ctrl_4 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         self.text_ctrl_descripcion = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_MULTILINE)
         self.sizer_descripcion_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Descripción"))
+        if oferta!=-1:
+            self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_READONLY)
+        else:
+            self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "")
 
         self.createMenu()
 
@@ -1035,6 +1099,34 @@ class crear_oferta(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.crear_item, self.button_crear_item)
         self.list_ctrl_4.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
 
+        # si estamos editando una oferta rellenamos los datos
+        if oferta!=-1:
+            print 'Editando oferta '+oferta
+            self.ofertaMod = self.searchOferta(oferta,servicio.Ofertas)
+            self.text_ctrl_10.AppendText(self.ofertaMod['nombre'])
+            self.text_ctrl_6.AppendText(str(self.ofertaMod['precio']))
+            self.text_ctrl_descripcion.AppendText(self.ofertaMod['descripcion'])
+
+            # seleccionar fechas
+            fechaini = datetime.datetime.strptime(self.ofertaMod['fecha_ini'], "%Y-%m-%dT00:00:00")
+            fechafin = datetime.datetime.strptime(self.ofertaMod['fecha_fin'], "%Y-%m-%dT00:00:00")
+
+            self.calendar_ctrl_4.PySetDate(fechaini)
+            # duracion en dias
+            delta = fechafin - fechaini
+            self.text_ctrl_5.AppendText(str(delta.days))
+            if self.ofertaMod['disponible'] == False:
+                self.checkbox_3.SetValue(0)
+            self.img = self.ofertaMod['imagen']
+            # rellenar listas
+            for data in self.ofertaMod['items']:
+                pos = self.list_ctrl_5.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items))) # id diferente explicar
+                self.list_ctrl_5.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5.SetStringItem(pos,3,str(data['_data']['disponible']))
+                self.items.append(self.searchNomItem(data['_data']['nombre'],servicio.Items)) # guardamos las id de los items modelos
+            self.editando = True # variable bandera
+
         # centramos la ventana en la pantalla
         self.Center()
         # end wxGlade
@@ -1058,6 +1150,7 @@ class crear_oferta(wx.Frame):
         sizer_30 = wx.BoxSizer(wx.VERTICAL)
         sizer_31 = wx.BoxSizer(wx.VERTICAL)
         self.sizer_29_staticbox.Lower()
+        self.sizer_descripcion_staticbox.Lower()
         sizer_29 = wx.StaticBoxSizer(self.sizer_29_staticbox, wx.HORIZONTAL)
         grid_sizer_9 = wx.FlexGridSizer(7, 1, 0, 0)
         self.sizer_28_staticbox.Lower()
@@ -1101,6 +1194,11 @@ class crear_oferta(wx.Frame):
         self.SetSizer(sizer_24)
         self.Layout()
         # end wxGlade
+
+    def searchOferta(self, iditem, items):
+        for element in items:
+            if str(element['nombre']) == iditem:
+                return element
 
     # Busta iditem en la lista de items
     def searchItem(self,iditem, items):
@@ -1240,7 +1338,45 @@ class crear_oferta(wx.Frame):
         event.Skip()
 
     def guardar_oferta(self, event):  # wxGlade: crear_oferta.<event_handler>
-        print "Event handler 'guardar_oferta' not implemented!"
+        print "guardar_oferta"
+        # comprobar que no hay campos vacios
+        if self.text_ctrl_10.GetValue()!='' and self.text_ctrl_5.GetValue()!='' and self.text_ctrl_6.GetValue()!='' and self.text_ctrl_descripcion.GetValue()!='':
+            # generando fechas de inicio y fin del menu el objeto que encapsula el sevicio en el interfaz
+            # recibe las fechas en formato %Y-%m-%d en una string
+            fechaini = self.calendar_ctrl_4.GetDate().FormatISODate()
+            fechaini2 = datetime.datetime.strptime(fechaini, "%Y-%m-%d")
+
+            fechafin = fechaini2 + datetime.timedelta( days=int(self.text_ctrl_5.GetValue()) )
+            fechafin = fechafin.date().isoformat()
+
+            if self.editando == False:
+                # crear menu
+                if servicio.createOferta(self.checkbox_3.GetValue(), self.text_ctrl_6.GetValue(), self.text_ctrl_10.GetValue(), self.text_ctrl_descripcion.GetValue(), fechaini, fechafin, self.img):
+                    # asignando items
+                    if servicio.addItemOferta(self.items, self.text_ctrl_10.GetValue()):
+                        print 'Items asignados'
+                        msgbox = wx.MessageBox('!Oferta creada!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                        self.Close(True)
+                    else:
+                        servicio.delOferta(self.text_ctrl_10.GetValue())
+                        msgbox = wx.MessageBox('¡No se pudo crear la oferta!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                else:
+                    msgbox = wx.MessageBox('¡No se pudo crear la oferta, cambie el nombre!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            else:
+                # editando menu
+                if servicio.updateOferta(self.checkbox_3.GetValue(), self.text_ctrl_6.GetValue(), self.text_ctrl_10.GetValue(), self.text_ctrl_descripcion.GetValue(), fechaini, fechafin, self.img):
+                    # asignando items
+                    if servicio.addItemOferta(self.itemsModAdd, self.text_ctrl_10.GetValue()) and servicio.delItemOferta(self.itemsModDel, self.text_ctrl_10.GetValue()):
+                        print 'Items asignados'
+                        msgbox = wx.MessageBox('!Oferta editado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                        self.Close(True)
+                    else:
+                        servicio.delOferta(self.text_ctrl_10.GetValue())
+                        msgbox = wx.MessageBox('¡No se pudo editar los items de la oferta!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                else:
+                    msgbox = wx.MessageBox('¡No se pudo editar la oferta!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+        else:
+            msgbox = wx.MessageBox('¡Rellena los campos!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     def item_selec2(self, event):  # wxGlade: crear_oferta.<event_handler>
@@ -1253,7 +1389,7 @@ class crear_oferta(wx.Frame):
         if self.list_ctrl_4.GetFocusedItem()!=-1:
             item = self.searchItem(self.list_ctrl_4.GetItemText(self.list_ctrl_4.GetFocusedItem()),servicio.Items)
             try:
-                self.primeros.index(item['_data']['id'])
+                self.items.index(item['_data']['id'])
                 # el item existe
             except Exception, e:
                 # el item no esta en la lista primeros

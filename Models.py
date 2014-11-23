@@ -7,7 +7,7 @@ db = SqliteDatabase('ws.db', check_same_thread=False)
 
 class Menu_db(Model):
 	nombre = CharField(unique=True, null=False)
-	precio = CharField()
+	precio = FloatField()
 	disponible = BooleanField()
 	descripcion = CharField()
 	fecha_ini = DateTimeField()
@@ -24,12 +24,12 @@ class Menu_db(Model):
 
 class Oferta_db(Model):
 	nombre = CharField(unique=True, null=False)
-	precio = CharField()
+	precio = FloatField()
 	disponible = BooleanField()
 	descripcion = CharField()
 	fecha_ini = DateTimeField()
 	fecha_fin = DateTimeField()
-	codigo =  CharField()
+	#codigo =  CharField()
 	imagen = CharField()
 	modified = DateTimeField()
 
@@ -42,7 +42,7 @@ class Oferta_db(Model):
 
 class Item_db(Model):
 	nombre = CharField(null=False)
-	precio = CharField()
+	precio = FloatField()
 	disponible = BooleanField()
 	descripcion = CharField()
 	imagen = CharField() #imagen base64

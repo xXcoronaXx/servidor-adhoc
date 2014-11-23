@@ -114,3 +114,28 @@ class ServicioPyro(object):
 			if not self.servicio.delItemMenuD(item, menu):
 				return False
 		return True
+
+	def createOferta(self, disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen):
+		fecha_ini = fecha_ini.replace('-','/')
+		fecha_fin = fecha_fin.replace('-','/')
+		return	self.servicio.createOferta(disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen)
+
+	def updateOferta(self, disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen):
+		fecha_ini = fecha_ini.replace('-','/')
+		fecha_fin = fecha_fin.replace('-','/')
+		return 	self.servicio.updateOferta(disponible, precio, nombre, descripcion, fecha_ini, fecha_fin, imagen)
+
+	def delOferta(self, oferta):
+		return self.servicio.delOferta(oferta)
+
+	def delItemOferta(self, items, oferta):
+		for item in items:
+			if not self.servicio.delItemMenuD(item, oferta):
+				return False
+		return True
+
+	def addItemOferta(self, items, oferta):
+		for item in items:
+			if not self.servicio.addItemOferta(item, oferta):
+				return False
+		return True
