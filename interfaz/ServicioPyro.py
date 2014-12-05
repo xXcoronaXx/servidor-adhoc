@@ -20,15 +20,16 @@ KEY='the_same_string_for_server_and_client'
 
 class ServicioPyro(object):
 	"""docstring for ServicioPyro"""
-	#variables
-	Menus = []
-	Ofertas = []
-	Items = []
-	Online = False
-	servicio = 0
-	#fin de variables 
 	def __init__(self):
 		super(ServicioPyro, self).__init__()
+		#variables
+		self.servicioActual = 0
+		self.Menus = []
+		self.Ofertas = []
+		self.Items = []
+		self.Online = False
+		self.servicio = 0
+		#fin de variables 
 		print 'Conectando ...'
 		Pyro4.config.HMAC_KEY=KEY
 		self.servicio = Pyro4.Proxy(PROXY_PYRO)

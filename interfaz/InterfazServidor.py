@@ -32,16 +32,15 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.listar_servidores, reconectar)
         # Menu Bar end
         self.button_1 = wx.Button(self, wx.ID_ANY, _("Crear"))
-        #self.button_2 = wx.Button(self, wx.ID_ANY, _("Ver / Editar"))
         self.sizer_2_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Menu"))
         self.calendar_ctrl_1 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
         self.button_3 = wx.Button(self, wx.ID_ANY, _("Crear"))
-        #self.button_4 = wx.Button(self, wx.ID_ANY, _("Ver / Editar"))
         self.sizer_3_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Ofertas"))
         self.calendar_ctrl_2 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
         self.list_ctrl_1 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         self.list_ctrl_2 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
+        # configuramos las columnas de las ofertas y de los menus
         self.list_ctrl_1.InsertColumn(0,"Nombre")
         self.list_ctrl_1.SetColumnWidth(0,180)
         self.list_ctrl_1.InsertColumn(1,"Precio")
@@ -51,7 +50,7 @@ class MyFrame(wx.Frame):
         self.list_ctrl_2.SetColumnWidth(0,180)
         self.list_ctrl_2.InsertColumn(1,"Precio")
         self.list_ctrl_2.InsertColumn(2,"Disponible")
-        
+        # rellenamos las listas
         for data in servicio.Menus:
             pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
             self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
@@ -61,21 +60,17 @@ class MyFrame(wx.Frame):
             self.list_ctrl_2.SetStringItem(pos,1,str(data['precio']))
             self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
 
-        
         self.__set_properties()
         self.__do_layout()
 
+        # bindeamos los eventos de botones y boton derecho sobre las listas
         self.list_ctrl_1.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu)
         self.createContextMenu()
         self.list_ctrl_2.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu2)
-        self.createContextMenu2()
+        self.createContextMenu2()   # creamos el context menu que aparecera con el boton derecho
 
         self.Bind(wx.EVT_BUTTON, self.crear_menu, self.button_1)
-        #self.Bind(wx.EVT_BUTTON, self.ver_edit_menu, self.button_2)
         self.Bind(wx.EVT_BUTTON, self.crear_oferta, self.button_3)
-        #self.Bind(wx.EVT_BUTTON, self.ver_edit_oferta, self.button_4)
-        #self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.menu_selected, self.list_ctrl_1)
-        #self.Bind(wx.EVT_LIST_ITEM_SELECTED, self.oferta_selected, self.list_ctrl_2)
         # end wxGlade
 
     def __set_properties(self):
@@ -97,13 +92,11 @@ class MyFrame(wx.Frame):
         sizer_2 = wx.StaticBoxSizer(self.sizer_2_staticbox, wx.HORIZONTAL)
         grid_sizer_4 = wx.GridSizer(1, 1, 0, 0) # cambiado
         grid_sizer_4.Add(self.button_1, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
-        #grid_sizer_4.Add(self.button_2, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
         sizer_2.Add(grid_sizer_4, 1, wx.EXPAND, 0)
         grid_sizer_2.Add(sizer_2, 1, wx.EXPAND | wx.SHAPED, 0)
         grid_sizer_2.Add(self.calendar_ctrl_1, 0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL, 5)
         grid_sizer_1.Add(grid_sizer_2, 1, wx.EXPAND, 0)
         grid_sizer_5.Add(self.button_3, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
-        #grid_sizer_5.Add(self.button_4, 0, wx.ALIGN_CENTER_HORIZONTAL | wx.ALIGN_CENTER_VERTICAL | wx.SHAPED, 0)
         sizer_3.Add(grid_sizer_5, 1, wx.EXPAND, 0)
         grid_sizer_3.Add(sizer_3, 1, wx.EXPAND | wx.SHAPED, 0)
         grid_sizer_3.Add(self.calendar_ctrl_2, 0, wx.ALL | wx.EXPAND | wx.ALIGN_CENTER_HORIZONTAL, 5)
@@ -115,12 +108,14 @@ class MyFrame(wx.Frame):
         self.Layout()
         # end wxGlade
 
+    # lista los servidores existentes en el servidor de nombrado
     def listar_servidores(self, event):
         print 'listar servidores'
         servidores = listar_servidores(self)
         servidores.Show()
         event.Skip()
 
+    # crea el context menu y le bindea los eventos para los menus
     def createContextMenu(self):
         self.menu = wx.Menu()
         item1 = self.menu.Append(-1,'Editar')
@@ -128,6 +123,7 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.editarMenu, item1)
         self.Bind(wx.EVT_MENU, self.borrarMenu, item2)
 
+    # crea el context menu y le bindea los eventos para las ofertas
     def createContextMenu2(self):
         self.menu2 = wx.Menu()
         item1 = self.menu2.Append(-1,'Editar')
@@ -136,21 +132,23 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.borrarOferta, item2)
 
 
+    # evento editar menu del context menu, abre la ventana de edicion de menu
     def editarMenu(self,event):
         print 'Editar menu'
         menu = self.list_ctrl_1.GetFocusedItem()
-        if menu !=-1:
+        if menu !=-1:   # comprueba si hay menu seleccionado para editar
             menu = self.list_ctrl_1.GetItemText(self.list_ctrl_1.GetFocusedItem())
             crearMenu = crear_menu(self,menu=menu)
             crearMenu.Show()
-            crearMenu.Bind(wx.EVT_CLOSE, self.on_close_crear_menu)
+            crearMenu.Bind(wx.EVT_CLOSE, self.on_close_crear_menu)  # bindeamos el evento que saltara cuando se cierre la ventana
             event.Skip()
         event.Skip()
 
+    # evento borrar menu del context menu
     def borrarMenu(self,event):
         print 'Borrando menu'
         menu = self.list_ctrl_1.GetFocusedItem()
-        if menu !=-1:
+        if menu !=-1:   # comprueba si hay menu seleccionado para borrar
             if servicio.delMenu(self.list_ctrl_1.GetItemText(menu)):
                 print 'Menu borrado!'
                 msgbox = wx.MessageBox('!Menu borrado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
@@ -163,12 +161,14 @@ class MyFrame(wx.Frame):
                     self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
             else:
                 print 'No se pudo borrar el menu'
+                msgbox = wx.MessageBox('¡No se pudo borrar el menu!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
+    # evento editar oferta del context menu, abre la ventana de edicion de oferta
     def editarOferta(self,event):
         print 'Editar oferta'
         oferta = self.list_ctrl_2.GetFocusedItem()
-        if oferta !=-1:
+        if oferta !=-1: # comprueba si hay oferta seleccionada
             oferta = self.list_ctrl_2.GetItemText(self.list_ctrl_2.GetFocusedItem())
             crearOferta = crear_oferta(self,oferta=oferta)
             crearOferta.Show()
@@ -176,10 +176,11 @@ class MyFrame(wx.Frame):
             event.Skip()
         event.Skip()
 
+    # evento borrar oferta del context menu
     def borrarOferta(self,event):
         print 'Borrando oferta'
         oferta = self.list_ctrl_2.GetFocusedItem()
-        if oferta !=-1:
+        if oferta !=-1: # comprueba si hay oferta seleccionado
             if servicio.delOferta(self.list_ctrl_2.GetItemText(oferta)):
                 print 'Oferta borrada!'
                 msgbox = wx.MessageBox('!Oferta borrada!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
@@ -191,11 +192,11 @@ class MyFrame(wx.Frame):
                     self.list_ctrl_2.SetStringItem(pos,1,str(data['precio']))
                     self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
             else:
-                print 'No se pudo borrar la ofera'
+                print 'No se pudo borrar la oferta'
+                msgbox = wx.MessageBox('¡No se pudo borrar la oferta!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
-
-    
+    # muestra el context menu cuando se hace click derecho sobre la lista de menus
     def showPopupMenu(self,event):
         print 'boton derecho'
         position = self.ScreenToClient(wx.GetMousePosition())
@@ -204,6 +205,7 @@ class MyFrame(wx.Frame):
             self.PopupMenu(self.menu,position)
         event.Skip()
 
+    # muestra el context menu cuando se hace click derecho sobre la lista de ofertas
     def showPopupMenu2(self,event):
         print 'boton derecho2'
         position = self.ScreenToClient(wx.GetMousePosition())
@@ -212,6 +214,7 @@ class MyFrame(wx.Frame):
             self.PopupMenu(self.menu2,position)
         event.Skip()
 
+    # evento que se lanza al volver de editar o crear un menu, actualizando la lista de menus
     def on_close_crear_menu(self, event):
         print 'on_close_crear_menu'
         self.list_ctrl_1.DeleteAllItems() # limpiamos la lista
@@ -222,16 +225,18 @@ class MyFrame(wx.Frame):
             self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
         event.Skip()
 
+    # evento que se lanza al editar o crear una oferta, actualizando la lista de ofertas
     def on_close_crear_oferta(self, event):
         print 'on_close_crear_oferta'
         self.list_ctrl_2.DeleteAllItems() # limpiamos la lista
-        servicio.updateOfertas()            # actualizamos los items del servidor
+        servicio.updateOfertas()          # actualizamos los items del servidor
         for data in servicio.Ofertas:
             pos = self.list_ctrl_2.InsertStringItem(0,data['nombre'])
             self.list_ctrl_2.SetStringItem(pos,1,str(data['precio']))
             self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
         event.Skip()
 
+    # abre la ventana de crear menu
     def crear_menu(self, event):  # wxGlade: MyFrame.<event_handler>
         print "crear_menu"
         crearMenu = crear_menu(self)
@@ -241,34 +246,34 @@ class MyFrame(wx.Frame):
         event.Skip()
 
 
-    def ver_edit_menu(self, event):  # wxGlade: MyFrame.<event_handler>
-        print "ver_edit_menu"
-        editarMenu = crear_menu(self)
-        editarMenu.Show()
+    # def ver_edit_menu(self, event):  # wxGlade: MyFrame.<event_handler>
+    #     print "ver_edit_menu"
+    #     editarMenu = crear_menu(self)
+    #     editarMenu.Show()
 
+    # abre la ventana para crear una oferta
     def crear_oferta(self, event):  # wxGlade: MyFrame.<event_handler>
         print "crear_oferta"
         crearOferta = crear_oferta(self)
         crearOferta.Show()
 
-    def ver_edit_oferta(self, event):  # wxGlade: MyFrame.<event_handler>
-        print "ver_edit_oferta"
-        verOferta = crear_oferta(self)
-        verOferta.Show()
+    # def ver_edit_oferta(self, event):  # wxGlade: MyFrame.<event_handler>
+    #     print "ver_edit_oferta"
+    #     verOferta = crear_oferta(self)
+    #     verOferta.Show()
 
-    def menu_selected(self, event):  # wxGlade: MyFrame.<event_handler>
-        print "Event handler 'menu_selected' not implemented!"
-        event.Skip()
+    # def menu_selected(self, event):  # wxGlade: MyFrame.<event_handler>
+    #     print "Event handler 'menu_selected' not implemented!"
+    #     event.Skip()
 
-    def oferta_selected(self, event):  # wxGlade: MyFrame.<event_handler>
-        print "Event handler 'oferta_selected' not implemented!"
-        event.Skip()
+    # def oferta_selected(self, event):  # wxGlade: MyFrame.<event_handler>
+    #     print "Event handler 'oferta_selected' not implemented!"
+    #     event.Skip()
 
 # end of class MyFrame
 
 class listar_servidores(wx.Frame):
     def __init__(self, parent, *args, **kwds):
-        # begin wxGlade: crear_item.__init__
         kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN
         wx.Frame.__init__(self,parent, *args, **kwds)
         self.list_ctrl_servidores = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
@@ -277,11 +282,13 @@ class listar_servidores(wx.Frame):
         self.__set_properties()
 
         # le preguntamos al servidor de nombrado los objetos que tiene registrado
+        # poner host con constante
         ns = Pyro4.locateNS()
         for servidor in ns.list():
-            if not 'Pyro.NameServer' in servidor:
+            if not 'Pyro.NameServer' in servidor: # quitamos el propio objeto del servidor de nombrado xq no nos interesa
                 self.list_ctrl_servidores.InsertStringItem(0,str(servidor))
         # centramos la ventana en la pantalla
+        self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.servidor_selec, self.list_ctrl_servidores)
         self.Center()
 
     def __set_properties(self):
@@ -289,10 +296,15 @@ class listar_servidores(wx.Frame):
         self.SetTitle(_("Servidores"))
         self.SetSize((200, 300))
 
+    def servidor_selec(self, event):
+        print 'servidor_selec'
+        event.Skip()
+
 
 class crear_menu(wx.Frame):
 
     def searchNomItem(self, nomitem, items):
+        # busca nomitem en la lista de items con la estructura de elementos que nos devuelve serpent
         for element in items:
             if str(element['_data']['nombre']) == nomitem:
                 return element['_data']['id']
@@ -329,7 +341,7 @@ class crear_menu(wx.Frame):
         self.button_10 = wx.Button(self, wx.ID_ANY, _("<<"))
         self.button_11 = wx.Button(self, wx.ID_ANY, _(">>"))
         self.list_ctrl_3 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
-        if menu!=-1:
+        if menu!=-1: # para que en caso de que se este editando un menu no se pueda cambiar su nombre
             self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_READONLY)
         else:
             self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "")
@@ -461,7 +473,6 @@ class crear_menu(wx.Frame):
             if str(element['nombre']) == iditem:
                 return element
 
-
     def __set_properties(self):
         # begin wxGlade: crear_menu.__set_properties
         # definimos el titulo de la ventana y los tamaños de los elementos de la interfaz
@@ -579,6 +590,7 @@ class crear_menu(wx.Frame):
                 self.list_ctrl_3.SetStringItem(pos,3,str(data['_data']['disponible']))
         else:
             print 'ERROR al borrar el item'
+            msgbox = wx.MessageBox('¡No se pudo borrar el item!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     # muestra el la ventana de editar item con los datos del item que estamos editando
@@ -1230,6 +1242,7 @@ class crear_oferta(wx.Frame):
         self.Layout()
         # end wxGlade
 
+    # Busta iditem en la lista de ofertas
     def searchOferta(self, iditem, items):
         for element in items:
             if str(element['nombre']) == iditem:
@@ -1292,6 +1305,7 @@ class crear_oferta(wx.Frame):
                 self.list_ctrl_4.SetStringItem(pos,3,str(data['_data']['disponible']))
         else:
             print 'ERROR al borrar el item'
+            msgbox = wx.MessageBox('¡No se pudo borrar el item!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     # muestra el la ventana de editar item con los datos del item que estamos editando
