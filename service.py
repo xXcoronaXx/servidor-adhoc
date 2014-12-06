@@ -1,4 +1,5 @@
-# coding=utf8
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 from webservice import *
 from admin import *
 from seting import *
@@ -39,7 +40,7 @@ def main():
 	daemon = Pyro4.Daemon(host=DIRECCION_PYRO)
 	#daemon = Pyro4.Daemon(host="192.168.0.18", port=5150);
 	uri = daemon.register(configura)
-	ns = Pyro4.locateNS()
+	ns = Pyro4.locateNS(host=DIRECCION_PYRO)
 	print uri
 	ns.register(OBJETO_PYRO, uri)
 

@@ -1,4 +1,5 @@
-# coding=utf8
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 from peewee import *
 import datetime
 

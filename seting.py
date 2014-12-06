@@ -1,5 +1,5 @@
-# coding=utf8
-
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 # Configuracion Pyro4
 DATABASE = 'ws.db'
 OBJETO_PYRO = 'servidor1.configura'

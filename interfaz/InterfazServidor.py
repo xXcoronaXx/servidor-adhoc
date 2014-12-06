@@ -75,7 +75,7 @@ class MyFrame(wx.Frame):
 
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
-        self.SetTitle(_("Servidor"))
+        self.SetTitle(_("Servidor "+servicio.servicioActual))
         self.SetSize((697, 657))
         # end wxGlade
 
@@ -113,8 +113,23 @@ class MyFrame(wx.Frame):
         print 'listar servidores'
         servidores = listar_servidores(self)
         servidores.Show()
+        servidores.Bind(wx.EVT_CLOSE, self.on_close_listar)
         event.Skip()
 
+    def on_close_listar(self, event):
+        # actualizamos las listas
+        self.SetTitle(_("Servidor "+servicio.servicioActual))
+        self.list_ctrl_1.DeleteAllItems()
+        for data in servicio.Menus:
+            pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
+            self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
+            self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
+        self.list_ctrl_2.DeleteAllItems()
+        for data in servicio.Ofertas:
+            pos = self.list_ctrl_2.InsertStringItem(0,data['nombre'])
+            self.list_ctrl_2.SetStringItem(pos,1,str(data['precio']))
+            self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
+        event.Skip()
     # crea el context menu y le bindea los eventos para los menus
     def createContextMenu(self):
         self.menu = wx.Menu()
@@ -245,30 +260,11 @@ class MyFrame(wx.Frame):
         self.crearMenu = crearMenu # comentar esto creo que sobra
         event.Skip()
 
-
-    # def ver_edit_menu(self, event):  # wxGlade: MyFrame.<event_handler>
-    #     print "ver_edit_menu"
-    #     editarMenu = crear_menu(self)
-    #     editarMenu.Show()
-
     # abre la ventana para crear una oferta
     def crear_oferta(self, event):  # wxGlade: MyFrame.<event_handler>
         print "crear_oferta"
         crearOferta = crear_oferta(self)
         crearOferta.Show()
-
-    # def ver_edit_oferta(self, event):  # wxGlade: MyFrame.<event_handler>
-    #     print "ver_edit_oferta"
-    #     verOferta = crear_oferta(self)
-    #     verOferta.Show()
-
-    # def menu_selected(self, event):  # wxGlade: MyFrame.<event_handler>
-    #     print "Event handler 'menu_selected' not implemented!"
-    #     event.Skip()
-
-    # def oferta_selected(self, event):  # wxGlade: MyFrame.<event_handler>
-    #     print "Event handler 'oferta_selected' not implemented!"
-    #     event.Skip()
 
 # end of class MyFrame
 
@@ -277,29 +273,78 @@ class listar_servidores(wx.Frame):
         kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN
         wx.Frame.__init__(self,parent, *args, **kwds)
         self.list_ctrl_servidores = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
+        self.sizer_dir_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Direccion servidor de nombrado"))
+        self.text_ctrl_dir = wx.TextCtrl(self, wx.ID_ANY, "")
+        self.sizer_key_staticbox = wx.StaticBox(self, wx.ID_ANY, _("KEY"))
+        self.text_ctrl_key = wx.TextCtrl(self, wx.ID_ANY, "")
+        self.button_guardar = wx.Button(self, wx.ID_ANY, _("Guardar"))
+
         self.list_ctrl_servidores.InsertColumn(0,"Servidor")
         self.list_ctrl_servidores.SetColumnWidth(0,200)
         self.__set_properties()
+        self.__do_layout()
 
         # le preguntamos al servidor de nombrado los objetos que tiene registrado
-        # poner host con constante
-        ns = Pyro4.locateNS()
-        for servidor in ns.list():
-            if not 'Pyro.NameServer' in servidor: # quitamos el propio objeto del servidor de nombrado xq no nos interesa
-                self.list_ctrl_servidores.InsertStringItem(0,str(servidor))
+        try:
+            ns = Pyro4.locateNS(host=servicio.dir.split('@')[1])
+            for servidor in ns.list():
+                if not 'Pyro.NameServer' in servidor: # quitamos el propio objeto del servidor de nombrado xq no nos interesa
+                    self.list_ctrl_servidores.InsertStringItem(0,str(servidor))
+        except Exception, e:
+            pass
         # centramos la ventana en la pantalla
         self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.servidor_selec, self.list_ctrl_servidores)
+        self.Bind(wx.EVT_BUTTON, self.cargar_servidores, self.button_guardar)
         self.Center()
 
     def __set_properties(self):
         # definimos el titulo de la ventana y los tamaños de los elementos de la interfaz
         self.SetTitle(_("Servidores"))
         self.SetSize((200, 300))
+        self.text_ctrl_dir.AppendText(str(servicio.dir))
+        self.text_ctrl_key.AppendText(str(servicio.key))
+
+    def __do_layout(self):
+        # begin wxGlade: crear_menu.__do_layout
+        # definimos el layout en el que se colocaran los elementos de la interfaz
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer_dir_staticbox.Lower()
+        sizer_1 = wx.StaticBoxSizer(self.sizer_dir_staticbox, wx.HORIZONTAL)
+        sizer_1.Add(self.text_ctrl_dir, 1, wx.EXPAND, 0)
+        self.sizer_key_staticbox.Lower()
+        sizer_2 = wx.StaticBoxSizer(self.sizer_key_staticbox, wx.HORIZONTAL)
+        sizer_2.Add(self.text_ctrl_key, 1, wx.EXPAND, 0)
+        sizer.Add(sizer_1, 0, wx.EXPAND, 0)
+        sizer.Add(sizer_2, 0, wx.EXPAND, 0)
+        sizer.Add(self.button_guardar, 0, wx.EXPAND, 0)
+        sizer.Add(self.list_ctrl_servidores, 0, 0, 0)
+        self.SetSizer(sizer)
+        self.Layout()
 
     def servidor_selec(self, event):
         print 'servidor_selec'
+        item = self.list_ctrl_servidores.GetItemText(self.list_ctrl_servidores.GetFocusedItem())
+        if servicio.reconectar(servicio.dir, item, servicio.key):
+            self.Close(True)
+        else:
+            print 'No se pudo conectar al servicio'
+            msgbox = wx.MessageBox('¡No se pudo conectar al servidor!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
+    def cargar_servidores(self, event):
+        print 'cargar_servidores'
+        try:
+            self.list_ctrl_servidores.DeleteAllItems()
+            ns = Pyro4.locateNS(host=self.text_ctrl_dir.GetValue().strip().split('@')[1])
+            for servidor in ns.list():
+                if not 'Pyro.NameServer' in servidor: # quitamos el propio objeto del servidor de nombrado xq no nos interesa
+                    self.list_ctrl_servidores.InsertStringItem(0,str(servidor))
+        except Exception, e:
+            print 'No se encontro el servidor de nombrado'
+            msgbox = wx.MessageBox('¡No se encontró el servidor de nombrado!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+        event.Skip()
+
+# end of listar_servidores
 
 class crear_menu(wx.Frame):
 
@@ -785,7 +830,7 @@ class crear_menu(wx.Frame):
     # Busta iditem en la lista de items
     def searchItem(self,iditem, items):
         for element in items:
-            if str(element['_data']['id']) == iditem:
+            if str(element['_data']['id']) == str(iditem):
                 return element
 
     # Abre la ventana de crear item y bindea un evento para que al cerrarse se actualice la lista de items
@@ -803,13 +848,54 @@ class crear_menu(wx.Frame):
         self.list_ctrl_3.DeleteAllItems() # limpiamos la lista
         servicio.updateItems()            # actualizamos los items del servidor
         for data in servicio.Items:       # y actualizamos la lista
-            # 0 will insert at the start of the list
             pos = self.list_ctrl_3.InsertStringItem(0,str(data['_data']['id']))
-            # add values in the other columns on the same row
             self.list_ctrl_3.SetStringItem(pos,1,str(data['_data']['nombre']))
             self.list_ctrl_3.SetStringItem(pos,2,str(data['_data']['precio']))
             self.list_ctrl_3.SetStringItem(pos,3,str(data['_data']['disponible']))
-
+        if self.editando:
+            # actualizamos las listas de items
+            self.menuMod = servicio.getMenu(self.menuMod['nombre'])
+            self.list_ctrl_5a.DeleteAllItems()
+            for data in self.menuMod['primeros']:
+                pos = self.list_ctrl_5a.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items))) # id diferente explicar
+                self.list_ctrl_5a.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5a.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5a.SetStringItem(pos,3,str(data['_data']['disponible']))
+            self.list_ctrl_5ab.DeleteAllItems()
+            for data in self.menuMod['segundos']:
+                pos = self.list_ctrl_5ab.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items)))
+                self.list_ctrl_5ab.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5ab.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5ab.SetStringItem(pos,3,str(data['_data']['disponible']))
+            self.list_ctrl_5abc.DeleteAllItems()
+            for data in self.menuMod['postres']:
+                pos = self.list_ctrl_5abc.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items)))
+                self.list_ctrl_5abc.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5abc.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5abc.SetStringItem(pos,3,str(data['_data']['disponible']))
+        else:
+            # usar las variables de primeros segundos y postres para rellenar las listas actualizadas
+            self.list_ctrl_5a.DeleteAllItems()
+            for x in self.primeros:
+                data = self.searchItem(x,servicio.Items)
+                pos = self.list_ctrl_5a.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items))) # id diferente explicar
+                self.list_ctrl_5a.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5a.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5a.SetStringItem(pos,3,str(data['_data']['disponible']))
+            self.list_ctrl_5ab.DeleteAllItems()
+            for x in self.segundos:
+                data = self.searchItem(x,servicio.Items)
+                pos = self.list_ctrl_5ab.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items))) # id diferente explicar
+                self.list_ctrl_5ab.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5ab.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5ab.SetStringItem(pos,3,str(data['_data']['disponible']))
+            self.list_ctrl_5abc.DeleteAllItems()
+            for x in self.postres:
+                data = self.searchItem(x,servicio.Items)
+                pos = self.list_ctrl_5abc.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items))) # id diferente explicar
+                self.list_ctrl_5abc.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5abc.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5abc.SetStringItem(pos,3,str(data['_data']['disponible']))
         closed_window = event.EventObject
         if closed_window == self.crearItem:
             self.crearItem = None
@@ -941,7 +1027,7 @@ class crear_item(wx.Frame):
             print 'Editando '+item
             self.itemMod = self.searchItem(item,servicio.Items)
             self.text_ctrl_8.AppendText(self.itemMod['_data']['nombre'])
-            self.text_ctrl_9.AppendText(self.itemMod['_data']['precio'])
+            self.text_ctrl_9.AppendText(str(self.itemMod['_data']['precio']))
             self.text_ctrl_4.AppendText(self.itemMod['_data']['descripcion'])
             if self.itemMod['_data']['disponible'] == False:
                 self.checkbox_2.SetValue(0)
@@ -1273,7 +1359,24 @@ class crear_oferta(wx.Frame):
             self.list_ctrl_4.SetStringItem(pos,1,str(data['_data']['nombre']))
             self.list_ctrl_4.SetStringItem(pos,2,str(data['_data']['precio']))
             self.list_ctrl_4.SetStringItem(pos,3,str(data['_data']['disponible']))
-
+        if self.editando:
+            # actualizamos la lista de items de la oferta
+            self.ofertaMod = servicio.getOferta(self.ofertaMod['nombre'])
+            self.list_ctrl_5.DeleteAllItems()
+            for data in self.ofertaMod['items']:
+                pos = self.list_ctrl_5.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items))) # id diferente explicar
+                self.list_ctrl_5.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5.SetStringItem(pos,3,str(data['_data']['disponible']))
+        else:
+            # usar las variables de primeros segundos y postres para rellenar las listas actualizadas
+            self.list_ctrl_5.DeleteAllItems()
+            for x in self.items:
+                data = self.searchItem(x,servicio.Items)
+                pos = self.list_ctrl_5.InsertStringItem(0,str(self.searchNomItem(data['_data']['nombre'],servicio.Items))) # id diferente explicar
+                self.list_ctrl_5.SetStringItem(pos,1,str(data['_data']['nombre']))
+                self.list_ctrl_5.SetStringItem(pos,2,str(data['_data']['precio']))
+                self.list_ctrl_5.SetStringItem(pos,3,str(data['_data']['disponible']))
         closed_window = event.EventObject
         if closed_window == self.crearItem:
             self.crearItem = None
@@ -1501,8 +1604,11 @@ class InterfazServidor(wx.App):
 # end of class InterfazServidor
 
 if __name__ == "__main__":
-    servicio = ServicioPyro()
-    servicio.isOnline()
+    try:
+        servicio = ServicioPyro()
+        servicio.isOnline()
+    except Exception, e:
+        print 'No se encontro servidor en localhost'
 
     gettext.install("Servidor") # replace with the appropriate catalog name
 

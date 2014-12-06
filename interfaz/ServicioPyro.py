@@ -20,24 +20,48 @@ KEY='the_same_string_for_server_and_client'
 
 class ServicioPyro(object):
 	"""docstring for ServicioPyro"""
-	def __init__(self):
+	def __init__(self, direccion=DIRECCION_PYRO, objeto=OBJETO_PYRO, key=KEY):
 		super(ServicioPyro, self).__init__()
 		#variables
-		self.servicioActual = 0
 		self.Menus = []
 		self.Ofertas = []
 		self.Items = []
 		self.Online = False
 		self.servicio = 0
-		#fin de variables 
-		print 'Conectando ...'
-		Pyro4.config.HMAC_KEY=KEY
-		self.servicio = Pyro4.Proxy(PROXY_PYRO)
-		self.Online = self.servicio.online()
-		print 'Conectado al servicio !'
-		self.Menus = serpent.loads(self.servicio.getMenus())
-		self.Ofertas = serpent.loads(self.servicio.getOfertas())
-		self.Items = serpent.loads(self.servicio.getItems())
+		self.dir = direccion
+		self.key = key
+		#fin de variables
+		try:
+			print 'Conectando ...'
+			Pyro4.config.HMAC_KEY=key
+			self.servicio = Pyro4.Proxy('PYRONAME:'+objeto+direccion)
+			self.Online = self.servicio.online()
+			self.servicioActual = objeto
+			print 'Conectado al servicio !'
+			self.Menus = serpent.loads(self.servicio.getMenus())
+			self.Ofertas = serpent.loads(self.servicio.getOfertas())
+			self.Items = serpent.loads(self.servicio.getItems())
+		except Exception, e:
+			self.servicioActual = 'Desconectado'
+			pass 	# para que cree el objeto vacio si no encuentra el servicio
+
+	def reconectar(self, direccion, objeto, key):
+		try:
+			print 'Conectando ...'
+			Pyro4.config.HMAC_KEY=key
+			self.servicio = Pyro4.Proxy('PYRONAME:'+objeto+direccion)
+			self.Online = self.servicio.online()
+			self.servicioActual = objeto
+			self.dir = direccion
+			self.key = key
+			print 'Conectado al servicio !'
+			self.Menus = serpent.loads(self.servicio.getMenus())
+			self.Ofertas = serpent.loads(self.servicio.getOfertas())
+			self.Items = serpent.loads(self.servicio.getItems())
+			return True
+		except Exception, e:
+			self.servicioActual = 'Desconectado'
+			return False
 	
 	def updateMenus(self):
 		self.Menus = serpent.loads(self.servicio.getMenus())
@@ -140,3 +164,9 @@ class ServicioPyro(object):
 			if not self.servicio.addItemOferta(item, oferta):
 				return False
 		return True
+
+	def getMenu(self, menu):
+		return serpent.loads(self.servicio.getMenu(menu))
+
+	def getOferta(self, oferta):
+		return serpent.loads(self.servicio.getOferta(oferta))

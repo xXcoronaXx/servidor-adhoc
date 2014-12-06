@@ -1,4 +1,5 @@
-# coding=utf8
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 import Pyro4
 import threading
 
@@ -40,15 +41,8 @@ class ControladorPyro(object):
 	def updateItem(self, nomAnt, disponible, precio, nombre, descripcion, imagen):
 		try:
 			print 'Update Item'
-			items = Item_db.select().where(Item_db.nombre==nomAnt)
-			for i in items:
-				print i
-				i.disponible = disponible
-				i.precio = precio
-				i.descripcion = descripcion
-				i.imagen = imagen
-				i.nombre = nombre
-				i.save()
+			items = Item_db.update(disponible=disponible,precio=precio,descripcion=descripcion, imagen=imagen,nombre=nombre).where(Item_db.nombre==nomAnt)
+			items.execute()
 			return True
 		except Exception, e:
 			return False
@@ -243,7 +237,28 @@ class ControladorPyro(object):
 	def getMenu(self, menu):
 		try:
 			print "Menu pyro"
-			return serpent.dumps(Menu_db.select().where(Menu_db.nombre==menu).get(),indent=False)
+			x = Menu_db.select().where(Menu_db.nombre==menu).get()
+			p = [] #primeros
+			s = [] #segundos
+			d = [] #postres
+			m = {}
+			m['nombre'] = x.nombre
+			m['disponible'] = x.disponible
+			m['precio'] = float(x.precio)
+			m['descripcion'] = x.descripcion
+			m['fecha_ini'] = x.fecha_ini
+			m['fecha_fin'] = x.fecha_fin
+			m['imagen'] = x.imagen
+			for y in Item_db.select().where(Item_db.primeros==x):
+				p.append(y)
+			for y in Item_db.select().where(Item_db.segundos==x):
+				s.append(y)
+			for y in Item_db.select().where(Item_db.postres==x):
+				d.append(y)
+			m['primeros'] = p
+			m['segundos'] = s
+			m['postres'] = d
+			return serpent.dumps(m,indent=False)
 		except Exception, e:
 			return False
 
@@ -278,9 +293,6 @@ class ControladorPyro(object):
 				m['precio'] = float(x.precio)
 				m['descripcion'] = x.descripcion
 				m['fecha_ini'] = x.fecha_ini
-				print ''
-				print type(x.fecha_ini)
-				print ''
 				m['fecha_fin'] = x.fecha_fin
 				m['imagen'] = x.imagen
 				for y in Item_db.select().where(Item_db.primeros==x):
@@ -302,7 +314,20 @@ class ControladorPyro(object):
 	def getOferta(self, oferta):
 		try:
 			print "Oferta pyro"
-			return serpent.dumps(Oferta_db.select().where(Oferta_db.nombre==oferta).get(),indent=False)
+			x = Oferta_db.select().where(Oferta_db.nombre==oferta).get()
+			i = [] #items
+			m = {}
+			m['nombre'] = x.nombre
+			m['disponible'] = x.disponible
+			m['precio'] = float(x.precio)
+			m['descripcion'] = x.descripcion
+			m['fecha_ini'] = x.fecha_ini
+			m['fecha_fin'] = x.fecha_fin
+			m['imagen'] = x.imagen
+			for y in Item_db.select().where(Item_db.ofertas==x):
+				i.append(y)
+			m['items'] = i
+			return serpent.dumps(m,indent=False)
 		except Exception, e:
 			return False
 
