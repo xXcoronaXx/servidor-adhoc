@@ -96,7 +96,7 @@ class Oferta(Base):
 	items = [Item]
 	fecha_ini = date
 	fecha_fin = date
-	codigo =  unicode
+	#codigo =  unicode
 	imagen = bytes
 
 	def setImage(self, f):
@@ -104,7 +104,7 @@ class Oferta(Base):
 			img = base64.b64encode(imageFile.read())
 		return img
 
-	def __init__(self, id = None, disponible = False, precio = None,nombre = None ,descripcion = None, items = None, fecha_ini = None, fecha_fin = None, codigo = None, imagen = None ):
+	def __init__(self, id = None, disponible = False, precio = None,nombre = None ,descripcion = None, items = None, fecha_ini = None, fecha_fin = None, imagen = None ):
 		if id:
 			self.id = id
 		if precio:
@@ -121,8 +121,6 @@ class Oferta(Base):
 			self.descripcion = descripcion
 		if items:
 			self.items = list(items)
-		if codigo:
-			self.codigo = codigo
 		if imagen:
 			self.imagen = imagen
 
@@ -174,7 +172,7 @@ class ControladorWS(WSRoot):
 			i = [] # items de la oferta
 			for y in Item_db.select().where(Item_db.ofertas==oferta):
 				i.append(Item(y.id, y.disponible, float(y.precio), y.nombre, y.descripcion, y.imagen))
-			return Oferta(oferta.id, oferta.disponible, float(oferta.precio), oferta.nombre, oferta.descripcion, i, oferta.fecha_ini, oferta.fecha_fin, oferta.codigo, oferta.imagen)
+			return Oferta(oferta.id, oferta.disponible, float(oferta.precio), oferta.nombre, oferta.descripcion, i, oferta.fecha_ini, oferta.fecha_fin, oferta.imagen)
 		except Exception, e:
 			return Oferta()
 
@@ -185,11 +183,11 @@ class ControladorWS(WSRoot):
 		ofertas = []
 		try:
 			o = Oferta_db.select()
+			i = [] # items de la oferta
 			for x in o:
-				i = [] # items de la oferta
 				for y in Item_db.select().where(Item_db.ofertas==x):
 					i.append(Item(y.id,y.disponible,float(y.precio),y.nombre,y.descripcion,y.imagen))
-				ofertas.append(Oferta(x.id, x.disponible, float(x.precio),x.nombre ,x.descripcion , i, x.fecha_ini, x.fecha_fin, x.codigo, x.imagen))
+				ofertas.append(Oferta(x.id, x.disponible, float(x.precio),x.nombre ,x.descripcion , i, x.fecha_ini, x.fecha_fin, x.imagen))
 			return ofertas
 		except Exception, e:
 			return []
