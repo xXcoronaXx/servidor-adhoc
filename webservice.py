@@ -18,6 +18,7 @@ class Item(object):
 	nombre = unicode
 	descripcion = unicode
 	imagen = bytes #imagen
+	modificado = date 
 
 	def showImage(self):
 		fh = open("imageToSave.jpg", "wb")
@@ -29,7 +30,7 @@ class Item(object):
 			img = base64.b64encode(imageFile.read())
 		return img
 
-	def __init__(self, id = None , disponible = False,precio = None, nombre = None, descripcion = None, imagen = None):
+	def __init__(self, id = None , disponible = False,precio = None, nombre = None, descripcion = None, imagen = None, modificado = None ):
 		if id:
 			self.id = id
 		if disponible:
@@ -42,6 +43,8 @@ class Item(object):
 			self.descripcion = descripcion
 		if imagen:
 			self.imagen = imagen
+		if modificado:
+			self.modificado = modificado
 
 class Menu(Base):
 	id = int
@@ -55,13 +58,14 @@ class Menu(Base):
 	primeros = [Item]
 	segundos = [Item]
 	postres = [Item]
+	modificado = date 
 
 	def setImage(self, f):
 		with open(f, "rb") as imageFile:
 			img = base64.b64encode(imageFile.read())
 		return img
 	
-	def __init__(self, id=None, disponible = False, precio = 0 ,nombre= None,descripcion = None,  primeros = None, segundos = None, postres = None,fecha_ini = None, fecha_fin = None, imagen = None):
+	def __init__(self, id=None, disponible = False, precio = 0 ,nombre= None,descripcion = None,  primeros = None, segundos = None, postres = None,fecha_ini = None, fecha_fin = None, imagen = None, modificado = None ):
 		if id:
 			self.id = id
 		if precio:
@@ -84,6 +88,8 @@ class Menu(Base):
 			self.fecha_fin = fecha_fin
 		if imagen:
 			self.imagen = imagen
+		if modificado:
+			self.modificado = modificado	
 
 
 
@@ -98,13 +104,14 @@ class Oferta(Base):
 	fecha_fin = date
 	#codigo =  unicode
 	imagen = bytes
+	modificado = date 
 
 	def setImage(self, f):
 		with open(f, "rb") as imageFile:
 			img = base64.b64encode(imageFile.read())
 		return img
 
-	def __init__(self, id = None, disponible = False, precio = None,nombre = None ,descripcion = None, items = None, fecha_ini = None, fecha_fin = None, imagen = None ):
+	def __init__(self, id = None, disponible = False, precio = None,nombre = None ,descripcion = None, items = None, fecha_ini = None, fecha_fin = None, imagen = None, modificado = None ):
 		if id:
 			self.id = id
 		if precio:
@@ -123,6 +130,8 @@ class Oferta(Base):
 			self.items = list(items)
 		if imagen:
 			self.imagen = imagen
+		if modificado:
+			self.modificado = modificado
 
 class ControladorWS(WSRoot):
 
@@ -135,16 +144,39 @@ class ControladorWS(WSRoot):
 			p = [] #primeros
 			s = [] #segundos
 			d = [] #postres
-			for y in Item_db.select().where(Item_db.primeros==menu):
-				p.append(Item(y.id,y.disponible,float(y.precio),y.nombre,y.descripcion,y.imagen))
+			for y in Item_db.select().where( Item_db.primeros==menu ):
+				p.append( Item( y.id, y.disponible, float(y.precio), y.nombre, y.descripcion, y.imagen, y.modified ) )
 			for v in Item_db.select().where(Item_db.segundos==menu):
-				s.append(Item(v.id,v.disponible,float(v.precio),v.nombre,v.descripcion,v.imagen))
+				s.append( Item( v.id, v.disponible, float(v.precio), v.nombre, v.descripcion, v.imagen, v.modified ) )
 			for z in Item_db.select().where(Item_db.postres==menu):
-				d.append(Item(z.id,z.disponible,float(z.precio),z.nombre,z.descripcion,z.imagen))
-			menu = Menu(menu.id, menu.disponible, float(menu.precio),menu.nombre,menu.descripcion,  p, s, d,menu.fecha_ini, menu.fecha_fin, menu.imagen)
+				d.append( Item( z.id, z.disponible, float(z.precio), z.nombre, z.descripcion, z.imagen, z.modified ) )
+			menu = Menu( menu.id, menu.disponible, float(menu.precio), menu.nombre, menu.descripcion,  p, s, d, menu.fecha_ini, menu.fecha_fin, menu.imagen, menu.modified)
 			return menu
 		except Exception, e:
 			return Menu()
+
+	#devuelve un array de menus
+	@expose([Menu])
+	def getMenus(self):
+		print "Menus WS"
+		try:
+			menus = [] #arrays de menus
+			m = Menu_db.select()
+			for x in m:
+				print x.nombre
+				p = [] #primeros
+				s = [] #segundos
+				d = [] #postres
+				for y in Item_db.select().where( Item_db.primeros==x ):
+					p.append( Item( y.id, y.disponible, float(y.precio), y.nombre, y.descripcion, y.imagen, y.modified ) )
+				for v in Item_db.select().where( Item_db.segundos==x ):
+					s.append( Item( v.id, v.disponible, float(v.precio), v.nombre, v.descripcion, v.imagen, v.modified ) )
+				for z in Item_db.select().where( Item_db.postres==x ):
+					d.append( Item( z.id, z.disponible, float(z.precio), z.nombre, z.descripcion, z.imagen, z.modified ) )
+				menus.append( Menu( x.id, x.disponible, float(x.precio), x.nombre, x.descripcion, p, s, d, x.fecha_ini, x.fecha_fin, x.imagen, x.modified ) )
+			return menus
+		except Exception, e:
+			return []
 
 	#devuelve un item
 	@expose([Item])
@@ -153,7 +185,7 @@ class ControladorWS(WSRoot):
 		try:
 			items = []
 			for x in Item_db.select():
-				items.append(Item(x.id,x.disponible,float(x.precio),x.nombre,x.descripcion,x.imagen))
+				items.append( Item( x.id, x.disponible, float(x.precio), x.nombre, x.descripcion, x.imagen, x.modified ) )
 			return items
 		except Exception, e:
 			return []
@@ -170,9 +202,9 @@ class ControladorWS(WSRoot):
 		try:
 			oferta = Oferta_db.select()[0]
 			i = [] # items de la oferta
-			for y in Item_db.select().where(Item_db.ofertas==oferta):
-				i.append(Item(y.id, y.disponible, float(y.precio), y.nombre, y.descripcion, y.imagen))
-			return Oferta(oferta.id, oferta.disponible, float(oferta.precio), oferta.nombre, oferta.descripcion, i, oferta.fecha_ini, oferta.fecha_fin, oferta.imagen)
+			for y in Item_db.select().where( Item_db.ofertas==oferta ):
+				i.append( Item( y.id, y.disponible, float(y.precio), y.nombre, y.descripcion, y.imagen, y.modified ) )
+			return Oferta( oferta.id, oferta.disponible, float(oferta.precio), oferta.nombre, oferta.descripcion, i, oferta.fecha_ini, oferta.fecha_fin, oferta.imagen, oferta.modified )
 		except Exception, e:
 			return Oferta()
 
@@ -185,32 +217,9 @@ class ControladorWS(WSRoot):
 			o = Oferta_db.select()
 			i = [] # items de la oferta
 			for x in o:
-				for y in Item_db.select().where(Item_db.ofertas==x):
-					i.append(Item(y.id,y.disponible,float(y.precio),y.nombre,y.descripcion,y.imagen))
-				ofertas.append(Oferta(x.id, x.disponible, float(x.precio),x.nombre ,x.descripcion , i, x.fecha_ini, x.fecha_fin, x.imagen))
+				for y in Item_db.select().where( Item_db.ofertas==x ):
+					i.append( Item( y.id, y.disponible, float(y.precio), y.nombre, y.descripcion, y.imagen, y.modified ) )
+				ofertas.append( Oferta( x.id, x.disponible, float(x.precio), x.nombre, x.descripcion, i, x.fecha_ini, x.fecha_fin, x.imagen, x.modified ) )
 			return ofertas
-		except Exception, e:
-			return []
-
-	#devuelve un array de menus
-	@expose([Menu])
-	def getMenus(self):
-		print "Menus WS"
-		try:
-			menus = [] #arrays de menus
-			m = Menu_db.select()
-			for x in m:
-				print x.nombre
-				p = [] #primeros
-				s = [] #segundos
-				d = [] #postres
-				for y in Item_db.select().where(Item_db.primeros==x):
-					p.append(Item(y.id,y.disponible,float(y.precio),y.nombre,y.descripcion,y.imagen))
-				for v in Item_db.select().where(Item_db.segundos==x):
-					s.append(Item(v.id,v.disponible,float(v.precio),v.nombre,v.descripcion,v.imagen))
-				for z in Item_db.select().where(Item_db.postres==x):
-					d.append(Item(z.id,z.disponible,float(z.precio),z.nombre,z.descripcion,z.imagen))
-				menus.append(Menu(x.id,x.disponible,float(x.precio),x.nombre,x.descripcion,p,s,d, x.fecha_ini,x.fecha_fin))
-			return menus
 		except Exception, e:
 			return []
