@@ -272,7 +272,7 @@ class listar_servidores(wx.Frame):
     def __init__(self, parent, *args, **kwds):
         kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN
         wx.Frame.__init__(self,parent, *args, **kwds)
-        self.list_ctrl_servidores = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
+        self.list_ctrl_servidores = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER, size=(-1,200))
         self.sizer_dir_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Direccion servidor de nombrado"))
         self.text_ctrl_dir = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_key_staticbox = wx.StaticBox(self, wx.ID_ANY, _("KEY"))
