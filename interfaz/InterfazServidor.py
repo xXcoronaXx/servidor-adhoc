@@ -272,7 +272,7 @@ class listar_servidores(wx.Frame):
     def __init__(self, parent, *args, **kwds):
         kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN
         wx.Frame.__init__(self,parent, *args, **kwds)
-        self.list_ctrl_servidores = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER, size=(200,200))
+        self.list_ctrl_servidores = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER, size=(200,-1))
         self.sizer_dir_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Direccion servidor de nombrado"))
         self.text_ctrl_dir = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_key_staticbox = wx.StaticBox(self, wx.ID_ANY, _("KEY"))
@@ -387,9 +387,9 @@ class crear_menu(wx.Frame):
         self.button_11 = wx.Button(self, wx.ID_ANY, _(">>"))
         self.list_ctrl_3 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         if menu!=-1: # para que en caso de que se este editando un menu no se pueda cambiar su nombre
-            self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_READONLY)
+            self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_READONLY, size=(200,-1))
         else:
-            self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "")
+            self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "", size=(200,-1))
 
         # variables para guardar los items asignados y la codificacion en base64 de la imagen
         # en ellos se listan las id de la base de datos
@@ -1002,7 +1002,7 @@ class crear_item(wx.Frame):
         # begin wxGlade: crear_item.__init__
         kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN
         wx.Frame.__init__(self,parent, *args, **kwds)
-        self.text_ctrl_8 = wx.TextCtrl(self, wx.ID_ANY, "")
+        self.text_ctrl_8 = wx.TextCtrl(self, wx.ID_ANY, "", size=(200,-1))
         self.sizer_32_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
         self.text_ctrl_9 = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sizer_33_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Precio"))
@@ -1177,9 +1177,9 @@ class crear_oferta(wx.Frame):
         self.text_ctrl_descripcion = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_MULTILINE)
         self.sizer_descripcion_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Descripción"))
         if oferta!=-1:
-            self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_READONLY)
+            self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_READONLY,size=(200,-1))
         else:
-            self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "")
+            self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "", size=(200,-1))
 
         self.createMenu()
 
