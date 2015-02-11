@@ -522,11 +522,11 @@ class crear_menu(wx.Frame):
         # begin wxGlade: crear_menu.__set_properties
         # definimos el titulo de la ventana y los tamaños de los elementos de la interfaz
         self.SetTitle(_("Menu"))
-        self.SetSize((800, 535))
+        self.SetSize((800, 550))
         self.checkbox_1.SetValue(1)
         self.text_ctrl_descripcion.SetMinSize((200, 100))
         self.list_ctrl_3.SetMinSize((250, 510))
-        self.calendar_ctrl_3.SetMinSize((215, 140))
+        self.calendar_ctrl_3.SetMinSize((240, 150))
         # primeros segundos y postre
         self.list_ctrl_5a.SetMinSize((164, 140))
         self.list_ctrl_5ab.SetMinSize((164, 140))
@@ -1267,11 +1267,11 @@ class crear_oferta(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: crear_oferta.__set_properties
         self.SetTitle(_("Oferta"))
-        self.SetSize((800, 535))
+        self.SetSize((800, 550))
         self.checkbox_3.SetValue(1)
         self.list_ctrl_5.SetMinSize((150, 500))
         self.list_ctrl_4.SetMinSize((250, 500))
-        self.calendar_ctrl_4.SetMinSize((215, 140))
+        self.calendar_ctrl_4.SetMinSize((240, 150))
         self.text_ctrl_descripcion.SetMinSize((200, 100))
         # end wxGlade
 
