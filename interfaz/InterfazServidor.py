@@ -166,7 +166,7 @@ class MyFrame(wx.Frame):
         if menu !=-1:   # comprueba si hay menu seleccionado para borrar
             if servicio.delMenu(self.list_ctrl_1.GetItemText(menu)):
                 print 'Menu borrado!'
-                msgbox = wx.MessageBox('!Menu borrado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                msgbox = wx.MessageBox('¡Menu borrado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                 # Actualizamos la lista de menus
                 servicio.updateMenus()
                 self.list_ctrl_1.DeleteAllItems()
@@ -257,7 +257,6 @@ class MyFrame(wx.Frame):
         crearMenu = crear_menu(self)
         crearMenu.Show()
         crearMenu.Bind(wx.EVT_CLOSE, self.on_close_crear_menu)
-        self.crearMenu = crearMenu # comentar esto creo que sobra
         event.Skip()
 
     # abre la ventana para crear una oferta
