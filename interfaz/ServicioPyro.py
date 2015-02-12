@@ -16,7 +16,7 @@ import serpent
 OBJETO_PYRO = 'servidor1.configura'					# nombre del objeto que buscamos
 DIRECCION_PYRO = '@localhost'						# direccion del servidor de nombrado el @ es importante
 PROXY_PYRO = 'PYRONAME:'+OBJETO_PYRO+DIRECCION_PYRO
-KEY='the_same_string_for_server_and_client'
+KEY = 'the_same_string_for_server_and_client'
 
 class ServicioPyro(object):
 	"""docstring for ServicioPyro"""
@@ -33,8 +33,10 @@ class ServicioPyro(object):
 		#fin de variables
 		try:
 			print 'Conectando ...'
-			Pyro4.config.HMAC_KEY=key
-			self.servicio = Pyro4.Proxy('PYRONAME:'+objeto+direccion)
+			#Pyro4.config.HMAC_KEY=key
+			#Pyro4.Daemon._pyroHmacKey = key
+			#Pyro4.Proxy._pyroHmacKey = key
+			self.servicio = Pyro4.Proxy(Pyro4.resolve('PYRONAME:'+objeto+direccion,hmac_key=key))
 			self.Online = self.servicio.online()
 			self.servicioActual = objeto
 			print 'Conectado al servicio !'
@@ -42,6 +44,7 @@ class ServicioPyro(object):
 			self.Ofertas = serpent.loads(self.servicio.getOfertas())
 			self.Items = serpent.loads(self.servicio.getItems())
 		except Exception, e:
+			print e
 			self.servicioActual = 'Desconectado'
 			pass 	# para que cree el objeto vacio si no encuentra el servicio
 
@@ -49,7 +52,7 @@ class ServicioPyro(object):
 		try:
 			print 'Conectando ...'
 			Pyro4.config.HMAC_KEY=key
-			self.servicio = Pyro4.Proxy('PYRONAME:'+objeto+direccion)
+			self.servicio = Pyro4.Proxy(Pyro4.resolve('PYRONAME:'+objeto+direccion,hmac_key=key))
 			self.Online = self.servicio.online()
 			self.servicioActual = objeto
 			self.dir = direccion

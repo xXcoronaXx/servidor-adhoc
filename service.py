@@ -33,14 +33,13 @@ def main():
 	# fin base de datos
 
 	# servicio Pyro4
-	Pyro4.config.HMAC_KEY = KEY
 	configura = ControladorPyro()
 	#print Pyro4.config.dump()
 
 	daemon = Pyro4.Daemon(host=DIRECCION_PYRO)
 	#daemon = Pyro4.Daemon(host="192.168.0.18", port=5150);
 	uri = daemon.register(configura)
-	ns = Pyro4.locateNS(host=DIRECCION_PYRO)
+	ns = Pyro4.locateNS(host=DIRECCION_PYRO, hmac_key=KEY)
 	print uri
 	ns.register(OBJETO_PYRO, uri)
 

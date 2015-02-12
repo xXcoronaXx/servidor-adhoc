@@ -286,7 +286,7 @@ class listar_servidores(wx.Frame):
 
         # le preguntamos al servidor de nombrado los objetos que tiene registrado
         try:
-            ns = Pyro4.locateNS(host=servicio.dir.split('@')[1])
+            ns = Pyro4.locateNS(host=servicio.dir.split('@')[1],hmac_key=servicio.key)
             for servidor in ns.list():
                 if not 'Pyro.NameServer' in servidor: # quitamos el propio objeto del servidor de nombrado xq no nos interesa
                     self.list_ctrl_servidores.InsertStringItem(0,str(servidor))
@@ -335,7 +335,7 @@ class listar_servidores(wx.Frame):
         print 'cargar_servidores'
         try:
             self.list_ctrl_servidores.DeleteAllItems()
-            ns = Pyro4.locateNS(host=self.text_ctrl_dir.GetValue().strip().split('@')[1])
+            ns = Pyro4.locateNS(host=self.text_ctrl_dir.GetValue().strip().split('@')[1],hmac_key=servicio.key)
             for servidor in ns.list():
                 if not 'Pyro.NameServer' in servidor: # quitamos el propio objeto del servidor de nombrado xq no nos interesa
                     self.list_ctrl_servidores.InsertStringItem(0,str(servidor))
