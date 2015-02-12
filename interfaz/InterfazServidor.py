@@ -265,6 +265,8 @@ class MyFrame(wx.Frame):
         print "crear_oferta"
         crearOferta = crear_oferta(self)
         crearOferta.Show()
+        crearOferta.Bind(wx.EVT_CLOSE, self.on_close_crear_oferta)
+        event.Skip()
 
 # end of class MyFrame
 
