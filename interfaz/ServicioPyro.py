@@ -51,18 +51,19 @@ class ServicioPyro(object):
 	def reconectar(self, direccion, objeto, key):
 		try:
 			print 'Conectando ...'
-			Pyro4.config.HMAC_KEY=key
+			#Pyro4.config.HMAC_KEY=key
 			self.servicio = Pyro4.Proxy(Pyro4.resolve('PYRONAME:'+objeto+direccion,hmac_key=key))
+			print 'Conectado al servicio !'
 			self.Online = self.servicio.online()
 			self.servicioActual = objeto
 			self.dir = direccion
 			self.key = key
-			print 'Conectado al servicio !'
 			self.Menus = serpent.loads(self.servicio.getMenus())
 			self.Ofertas = serpent.loads(self.servicio.getOfertas())
 			self.Items = serpent.loads(self.servicio.getItems())
 			return True
 		except Exception, e:
+			print e
 			self.servicioActual = 'Desconectado'
 			return False
 	
