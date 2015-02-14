@@ -25,31 +25,31 @@ class MyFrame(wx.Frame):
         # Menu Bar
         self.main_menubar = wx.MenuBar()
         self.Inicio = wx.Menu()
-        self.main_menubar.Append(self.Inicio, _("Inicio"))
-        reconectar = self.Inicio.Append(wx.ID_ANY, 'Reconectar', 'Conectarse a otro servicio')
-        self.Inicio.Append(wx.ID_EXIT, 'Salir', 'Salir de la aplicación')
+        self.main_menubar.Append(self.Inicio, _(u"Inicio"))
+        reconectar = self.Inicio.Append(wx.ID_ANY, u'Reconectar', u'Conectarse a otro servicio')
+        self.Inicio.Append(wx.ID_EXIT, u'Salir', u'Salir de la aplicación')
         self.SetMenuBar(self.main_menubar)
         self.Bind(wx.EVT_MENU, self.listar_servidores, reconectar)
         # Menu Bar end
-        self.button_1 = wx.Button(self, wx.ID_ANY, _("Crear"))
-        self.sizer_2_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Menu"))
+        self.button_1 = wx.Button(self, wx.ID_ANY, _(u"Crear"))
+        self.sizer_2_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Menu"))
         self.calendar_ctrl_1 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
-        self.button_3 = wx.Button(self, wx.ID_ANY, _("Crear"))
-        self.sizer_3_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Ofertas"))
+        self.button_3 = wx.Button(self, wx.ID_ANY, _(u"Crear"))
+        self.sizer_3_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Ofertas"))
         self.calendar_ctrl_2 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
         self.list_ctrl_1 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         self.list_ctrl_2 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
 
         # configuramos las columnas de las ofertas y de los menus
-        self.list_ctrl_1.InsertColumn(0,"Nombre")
+        self.list_ctrl_1.InsertColumn(0,u"Nombre")
         self.list_ctrl_1.SetColumnWidth(0,180)
-        self.list_ctrl_1.InsertColumn(1,"Precio")
-        self.list_ctrl_1.InsertColumn(2,"Disponible")
+        self.list_ctrl_1.InsertColumn(1,u"Precio")
+        self.list_ctrl_1.InsertColumn(2,u"Disponible")
 
-        self.list_ctrl_2.InsertColumn(0,"Nombre")
+        self.list_ctrl_2.InsertColumn(0,u"Nombre")
         self.list_ctrl_2.SetColumnWidth(0,180)
-        self.list_ctrl_2.InsertColumn(1,"Precio")
-        self.list_ctrl_2.InsertColumn(2,"Disponible")
+        self.list_ctrl_2.InsertColumn(1,u"Precio")
+        self.list_ctrl_2.InsertColumn(2,u"Disponible")
         # rellenamos las listas
         for data in servicio.Menus:
             pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
@@ -133,16 +133,16 @@ class MyFrame(wx.Frame):
     # crea el context menu y le bindea los eventos para los menus
     def createContextMenu(self):
         self.menu = wx.Menu()
-        item1 = self.menu.Append(-1,'Editar')
-        item2 = self.menu.Append(-1,'Borrar')
+        item1 = self.menu.Append(-1,u'Editar')
+        item2 = self.menu.Append(-1,u'Borrar')
         self.Bind(wx.EVT_MENU, self.editarMenu, item1)
         self.Bind(wx.EVT_MENU, self.borrarMenu, item2)
 
     # crea el context menu y le bindea los eventos para las ofertas
     def createContextMenu2(self):
         self.menu2 = wx.Menu()
-        item1 = self.menu2.Append(-1,'Editar')
-        item2 = self.menu2.Append(-1,'Borrar')
+        item1 = self.menu2.Append(-1,u'Editar')
+        item2 = self.menu2.Append(-1,u'Borrar')
         self.Bind(wx.EVT_MENU, self.editarOferta, item1)
         self.Bind(wx.EVT_MENU, self.borrarOferta, item2)
 
@@ -166,7 +166,7 @@ class MyFrame(wx.Frame):
         if menu !=-1:   # comprueba si hay menu seleccionado para borrar
             if servicio.delMenu(self.list_ctrl_1.GetItemText(menu)):
                 print 'Menu borrado!'
-                msgbox = wx.MessageBox('!Menu borrado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                msgbox = wx.MessageBox(u'!Menu borrado!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                 # Actualizamos la lista de menus
                 servicio.updateMenus()
                 self.list_ctrl_1.DeleteAllItems()
@@ -176,7 +176,7 @@ class MyFrame(wx.Frame):
                     self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
             else:
                 print 'No se pudo borrar el menu'
-                msgbox = wx.MessageBox('¡No se pudo borrar el menu!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                msgbox = wx.MessageBox(u'¡No se pudo borrar el menu!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     # evento editar oferta del context menu, abre la ventana de edicion de oferta
@@ -198,7 +198,7 @@ class MyFrame(wx.Frame):
         if oferta !=-1: # comprueba si hay oferta seleccionado
             if servicio.delOferta(self.list_ctrl_2.GetItemText(oferta)):
                 print 'Oferta borrada!'
-                msgbox = wx.MessageBox('!Oferta borrada!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                msgbox = wx.MessageBox(u'!Oferta borrada!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                 # Actualizamos la lista de ofertas
                 servicio.updateOfertas()
                 self.list_ctrl_2.DeleteAllItems()
@@ -208,7 +208,7 @@ class MyFrame(wx.Frame):
                     self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
             else:
                 print 'No se pudo borrar la oferta'
-                msgbox = wx.MessageBox('¡No se pudo borrar la oferta!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                msgbox = wx.MessageBox(u'¡No se pudo borrar la oferta!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     # muestra el context menu cuando se hace click derecho sobre la lista de menus
@@ -257,7 +257,6 @@ class MyFrame(wx.Frame):
         crearMenu = crear_menu(self)
         crearMenu.Show()
         crearMenu.Bind(wx.EVT_CLOSE, self.on_close_crear_menu)
-        self.crearMenu = crearMenu # comentar esto creo que sobra
         event.Skip()
 
     # abre la ventana para crear una oferta
@@ -265,6 +264,8 @@ class MyFrame(wx.Frame):
         print "crear_oferta"
         crearOferta = crear_oferta(self)
         crearOferta.Show()
+        crearOferta.Bind(wx.EVT_CLOSE, self.on_close_crear_oferta)
+        event.Skip()
 
 # end of class MyFrame
 
@@ -273,13 +274,13 @@ class listar_servidores(wx.Frame):
         kwds["style"] = wx.CLOSE_BOX|wx.CAPTION|wx.MINIMIZE_BOX|wx.CLIP_CHILDREN
         wx.Frame.__init__(self,parent, *args, **kwds)
         self.list_ctrl_servidores = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER, size=(200,-1))
-        self.sizer_dir_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Direccion servidor de nombrado"))
+        self.sizer_dir_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Direccion servidor de nombrado"))
         self.text_ctrl_dir = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.sizer_key_staticbox = wx.StaticBox(self, wx.ID_ANY, _("KEY"))
+        self.sizer_key_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"KEY"))
         self.text_ctrl_key = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.button_guardar = wx.Button(self, wx.ID_ANY, _("Guardar"))
+        self.button_guardar = wx.Button(self, wx.ID_ANY, _(u"Guardar"))
 
-        self.list_ctrl_servidores.InsertColumn(0,"Servidor")
+        self.list_ctrl_servidores.InsertColumn(0,u"Servidor")
         self.list_ctrl_servidores.SetColumnWidth(0,200)
         self.__set_properties()
         self.__do_layout()
@@ -299,7 +300,7 @@ class listar_servidores(wx.Frame):
 
     def __set_properties(self):
         # definimos el titulo de la ventana y los tamaños de los elementos de la interfaz
-        self.SetTitle(_("Servidores"))
+        self.SetTitle(_(u"Servidores"))
         self.SetSize((200, 300))
         self.text_ctrl_dir.AppendText(str(servicio.dir))
         self.text_ctrl_key.AppendText(str(servicio.key))
@@ -328,7 +329,7 @@ class listar_servidores(wx.Frame):
             self.Close(True)
         else:
             print 'No se pudo conectar al servicio'
-            msgbox = wx.MessageBox('¡No se pudo conectar al servidor!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'¡No se pudo conectar al servidor!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     def cargar_servidores(self, event):
@@ -341,7 +342,7 @@ class listar_servidores(wx.Frame):
                     self.list_ctrl_servidores.InsertStringItem(0,str(servidor))
         except Exception, e:
             print 'No se encontro el servidor de nombrado'
-            msgbox = wx.MessageBox('¡No se encontró el servidor de nombrado!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'¡No se encontró el servidor de nombrado!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
 # end of listar_servidores
@@ -361,30 +362,30 @@ class crear_menu(wx.Frame):
         wx.Frame.__init__(self, parent, *args, **kwds)
         # creando los elementos que vamos a necesitar en la interfaz
         self.calendar_ctrl_3 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
-        self.sizer_34_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
+        self.sizer_34_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Nombre"))
         self.text_ctrl_1 = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.sizer_12_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duración en dias"))
+        self.sizer_12_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Duración en dias"))
         self.text_ctrl_2 = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.sizer_13_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Precio"))
+        self.sizer_13_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Precio"))
         self.checkbox_1 = wx.CheckBox(self, wx.ID_ANY, "")
-        self.sizer_14_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Activo"))
-        self.Guardar = wx.Button(self, wx.ID_ANY, _("Guardar"))
-        self.button_14 = wx.Button(self, wx.ID_ANY, _("img"))
+        self.sizer_14_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Activo"))
+        self.Guardar = wx.Button(self, wx.ID_ANY, _(u"Guardar"))
+        self.button_14 = wx.Button(self, wx.ID_ANY, _(u"img"))
         self.list_ctrl_5a = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
-        self.sizer_15_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Primeros"))
+        self.sizer_15_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Primeros"))
         self.list_ctrl_5ab = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
-        self.sizer_16_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Segundos"))
+        self.sizer_16_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Segundos"))
         self.list_ctrl_5abc = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
-        self.sizer_17_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Postres"))
+        self.sizer_17_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Postres"))
         self.text_ctrl_descripcion = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_MULTILINE)
-        self.sizer_descripcion_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Descripción"))
-        self.button_5 = wx.Button(self, wx.ID_ANY, _("<<"))
-        self.button_7 = wx.Button(self, wx.ID_ANY, _(">>"))
-        self.button_6 = wx.Button(self, wx.ID_ANY, _("Crear item"))
-        self.button_8 = wx.Button(self, wx.ID_ANY, _("<<"))
-        self.button_9 = wx.Button(self, wx.ID_ANY, _(">>"))
-        self.button_10 = wx.Button(self, wx.ID_ANY, _("<<"))
-        self.button_11 = wx.Button(self, wx.ID_ANY, _(">>"))
+        self.sizer_descripcion_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Descripción"))
+        self.button_5 = wx.Button(self, wx.ID_ANY, _(u"<<"))
+        self.button_7 = wx.Button(self, wx.ID_ANY, _(u">>"))
+        self.button_6 = wx.Button(self, wx.ID_ANY, _(u"Crear item"))
+        self.button_8 = wx.Button(self, wx.ID_ANY, _(u"<<"))
+        self.button_9 = wx.Button(self, wx.ID_ANY, _(u">>"))
+        self.button_10 = wx.Button(self, wx.ID_ANY, _(u"<<"))
+        self.button_11 = wx.Button(self, wx.ID_ANY, _(u">>"))
         self.list_ctrl_3 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         if menu!=-1: # para que en caso de que se este editando un menu no se pueda cambiar su nombre
             self.text_ctrl_3 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_READONLY, size=(200,-1))
@@ -408,37 +409,37 @@ class crear_menu(wx.Frame):
         self.editando = False
 
         # Dando estilo a las listas de items
-        self.list_ctrl_3.InsertColumn(0,"ID")
+        self.list_ctrl_3.InsertColumn(0,u"ID")
         self.list_ctrl_3.SetColumnWidth(0,0) # para que no se visualize
-        self.list_ctrl_3.InsertColumn(1,"Nombre")
-        self.list_ctrl_3.InsertColumn(2,"Precio")
-        self.list_ctrl_3.InsertColumn(3,"Disponible")
+        self.list_ctrl_3.InsertColumn(1,u"Nombre")
+        self.list_ctrl_3.InsertColumn(2,u"Precio")
+        self.list_ctrl_3.InsertColumn(3,u"Disponible")
 
-        self.list_ctrl_5ab.InsertColumn(0,"ID")
+        self.list_ctrl_5ab.InsertColumn(0,u"ID")
         self.list_ctrl_5ab.SetColumnWidth(0,0) # para que no se visualize
-        self.list_ctrl_5ab.InsertColumn(1,"Nombre")
+        self.list_ctrl_5ab.InsertColumn(1,u"Nombre")
         self.list_ctrl_5ab.SetColumnWidth(1,100)
-        self.list_ctrl_5ab.InsertColumn(2,"Precio")
+        self.list_ctrl_5ab.InsertColumn(2,u"Precio")
         self.list_ctrl_5ab.SetColumnWidth(2,60)
-        self.list_ctrl_5ab.InsertColumn(3,"Disponible")
+        self.list_ctrl_5ab.InsertColumn(3,u"Disponible")
         self.list_ctrl_5ab.SetColumnWidth(3,45)
 
-        self.list_ctrl_5a.InsertColumn(0,"ID")
+        self.list_ctrl_5a.InsertColumn(0,u"ID")
         self.list_ctrl_5a.SetColumnWidth(0,0) # para que no se visualize
-        self.list_ctrl_5a.InsertColumn(1,"Nombre")
+        self.list_ctrl_5a.InsertColumn(1,u"Nombre")
         self.list_ctrl_5a.SetColumnWidth(1,100)
-        self.list_ctrl_5a.InsertColumn(2,"Precio")
+        self.list_ctrl_5a.InsertColumn(2,u"Precio")
         self.list_ctrl_5a.SetColumnWidth(2,60)
-        self.list_ctrl_5a.InsertColumn(3,"Disponible")
+        self.list_ctrl_5a.InsertColumn(3,u"Disponible")
         self.list_ctrl_5a.SetColumnWidth(3,45)
 
-        self.list_ctrl_5abc.InsertColumn(0,"ID")
+        self.list_ctrl_5abc.InsertColumn(0,u"ID")
         self.list_ctrl_5abc.SetColumnWidth(0,0) # para que no se visualize
-        self.list_ctrl_5abc.InsertColumn(1,"Nombre")
+        self.list_ctrl_5abc.InsertColumn(1,u"Nombre")
         self.list_ctrl_5abc.SetColumnWidth(1,100)
-        self.list_ctrl_5abc.InsertColumn(2,"Precio")
+        self.list_ctrl_5abc.InsertColumn(2,u"Precio")
         self.list_ctrl_5abc.SetColumnWidth(2,60)
-        self.list_ctrl_5abc.InsertColumn(3,"Disponible")
+        self.list_ctrl_5abc.InsertColumn(3,u"Disponible")
         self.list_ctrl_5abc.SetColumnWidth(3,45)
 
         # Rellenando la lista de items disponibles
@@ -615,8 +616,8 @@ class crear_menu(wx.Frame):
     # funcion para crear el context menu del click izquierdo
     def createMenu(self):
         self.menu = wx.Menu()
-        item1 = self.menu.Append(-1,'Editar')           # añadimos los items
-        item2 = self.menu.Append(-1,'Borrar')
+        item1 = self.menu.Append(-1,u'Editar')           # añadimos los items
+        item2 = self.menu.Append(-1,u'Borrar')
         self.Bind(wx.EVT_MENU, self.editarItem, item1)  # bindeamos sus acciones
         self.Bind(wx.EVT_MENU, self.borrarItem, item2)
 
@@ -624,7 +625,7 @@ class crear_menu(wx.Frame):
         print 'Borrando item'
         item = self.list_ctrl_3.GetItemText(self.list_ctrl_3.GetFocusedItem())
         if servicio.delItem(item):
-            msgbox = wx.MessageBox('!Item borrado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'!Item borrado!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
             self.list_ctrl_3.DeleteAllItems() # limpiamos la lista
             self.comprobarItemsBorrado(item) 
             servicio.updateItems()            # actualizamos los items del servidor
@@ -635,7 +636,7 @@ class crear_menu(wx.Frame):
                 self.list_ctrl_3.SetStringItem(pos,3,str(data['_data']['disponible']))
         else:
             print 'ERROR al borrar el item'
-            msgbox = wx.MessageBox('¡No se pudo borrar el item!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'¡No se pudo borrar el item!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     # muestra el la ventana de editar item con los datos del item que estamos editando
@@ -730,35 +731,35 @@ class crear_menu(wx.Frame):
                     # asignando items
                     if servicio.addItemMenuP(self.primeros, self.text_ctrl_3.GetValue()) and servicio.addItemMenuS(self.segundos, self.text_ctrl_3.GetValue()) and servicio.addItemMenuD(self.postres, self.text_ctrl_3.GetValue()):
                         print 'Items asignados'
-                        msgbox = wx.MessageBox('!Menu creado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                        msgbox = wx.MessageBox(u'!Menu creado!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                         self.Close(True)
                     else:
                         servicio.delMenu(self.text_ctrl_3.GetValue())
-                        msgbox = wx.MessageBox('¡No se pudo crear menu!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                        msgbox = wx.MessageBox(u'¡No se pudo crear menu!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
                 else:
-                    msgbox = wx.MessageBox('¡No se pudo crear el menu, cambie el nombre!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                    msgbox = wx.MessageBox(u'¡No se pudo crear el menu, cambie el nombre!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
             else:
                 # editando menu
                 if servicio.updateMenu(self.checkbox_1.GetValue(), self.text_ctrl_2.GetValue(), self.text_ctrl_3.GetValue(), self.text_ctrl_descripcion.GetValue(), fechaini, fechafin, self.img):
                     # asignando items
                     if servicio.addItemMenuP(self.primerosModAdd, self.text_ctrl_3.GetValue()) and servicio.addItemMenuS(self.segundosModAdd, self.text_ctrl_3.GetValue()) and servicio.addItemMenuD(self.postresModAdd, self.text_ctrl_3.GetValue()) and servicio.delItemMenuP(self.primerosModDel, self.text_ctrl_3.GetValue()) and servicio.delItemMenuS(self.segundosModDel, self.text_ctrl_3.GetValue()) and servicio.delItemMenuD(self.postresModDel, self.text_ctrl_3.GetValue()):
                         print 'Items asignados'
-                        msgbox = wx.MessageBox('!Menu editado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                        msgbox = wx.MessageBox(u'!Menu editado!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                         self.Close(True)
                     else:
                         servicio.delMenu(self.text_ctrl_3.GetValue())
-                        msgbox = wx.MessageBox('¡No se pudo editar los items del menu!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                        msgbox = wx.MessageBox(u'¡No se pudo editar los items del menu!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
                 else:
-                    msgbox = wx.MessageBox('¡No se pudo editar el menu!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                    msgbox = wx.MessageBox(u'¡No se pudo editar el menu!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         else:
-            msgbox = wx.MessageBox('¡Rellena los campos!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'¡Rellena los campos!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     # muestra selector de archivos nativo para seleccionar la imagen que queremos y genera el base64 de la misma
     def load_img(self, event):  # wxGlade: crear_menu.<event_handler>
         print "load_img"
         img = self.img
-        openFileDialog = wx.FileDialog(self, "Selecionar imagen del menu", "", "", "pictures (*.jpeg,*.jpg,*.png)|*.jpeg;*.jpg;*.png", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        openFileDialog = wx.FileDialog(self, u"Selecionar imagen del menu", "", "", "pictures (*.jpeg,*.jpg,*.png)|*.jpeg;*.jpg;*.png", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
 
         if openFileDialog.ShowModal() == wx.ID_CANCEL:
             return     # the user changed idea...
@@ -768,10 +769,10 @@ class crear_menu(wx.Frame):
         with open(openFileDialog.GetPath(), "rb") as imageFile:
             img = base64.b64encode(imageFile.read())
         if img!=self.img:
-            msgbox = wx.MessageBox('!Imágen guardada!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'!Imágen guardada!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
             self.img = img
         else:
-            msgbox = wx.MessageBox('¡La imágen no se guardo, o elegiste la misma que ya estaba guardada!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'¡La imágen no se guardo, o elegiste la misma que ya estaba guardada!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     # Añade un item a la lista de los primeros
@@ -1045,13 +1046,13 @@ class crear_item(wx.Frame):
         if len(self.text_ctrl_9.GetValue()) and len(self.text_ctrl_8.GetValue()) and len(self.text_ctrl_4.GetValue()):
             if servicio.updateItem(self.itemMod['_data']['nombre'],self.checkbox_2.GetValue(), self.text_ctrl_9.GetValue(), self.text_ctrl_8.GetValue(), self.text_ctrl_4.GetValue(), self.img):
                 print 'item modificado'
-                msgbox = wx.MessageBox('!Item guardado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                msgbox = wx.MessageBox(u'!Item guardado!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
             else:
                 print 'no se modifico!'
-                msgbox = wx.MessageBox('¡El item no se pudo guardar!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                msgbox = wx.MessageBox(u'¡El item no se pudo guardar!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
             self.Close(True)
         else:
-            msgbox = wx.MessageBox('¡Rellena los campos!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'¡Rellena los campos!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     def searchItem(self,iditem, items):
@@ -1061,7 +1062,7 @@ class crear_item(wx.Frame):
 
     def __set_properties(self):
         # begin wxGlade: crear_item.__set_properties
-        self.SetTitle(_("Item"))
+        self.SetTitle(_(u"Item"))
         self.text_ctrl_4.SetMinSize((200, 100))
         self.checkbox_2.SetValue(1)
         # end wxGlade
@@ -1114,7 +1115,7 @@ class crear_item(wx.Frame):
     def load_img_item(self, event):  # wxGlade: crear_item.<event_handler>
         print "load_img_item"
         img = self.img
-        openFileDialog = wx.FileDialog(self, "Selecionar imagen del artículo", "", "", "pictures (*.jpeg,*.jpg,*.png)|*.jpeg;*.jpg;*.png", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        openFileDialog = wx.FileDialog(self, u"Selecionar imagen del artículo", "", "", "pictures (*.jpeg,*.jpg,*.png)|*.jpeg;*.jpg;*.png", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
 
         if openFileDialog.ShowModal() == wx.ID_CANCEL:
             return     # the user changed idea...
@@ -1124,10 +1125,10 @@ class crear_item(wx.Frame):
         with open(openFileDialog.GetPath(), "rb") as imageFile:
             img = base64.b64encode(imageFile.read())
         if img!=self.img:
-            msgbox = wx.MessageBox('!Imágen guardada!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'!Imágen guardada!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
             self.img = img
         else:
-            msgbox = wx.MessageBox('¡La imágen no se guardo, o elegiste la misma que ya estaba guardada!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'¡La imágen no se guardo, o elegiste la misma que ya estaba guardada!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     def crear_item_go(self, event):  # wxGlade: crear_item.<event_handler>
@@ -1135,13 +1136,13 @@ class crear_item(wx.Frame):
         if len(self.text_ctrl_9.GetValue()) and len(self.text_ctrl_8.GetValue()) and len(self.text_ctrl_4.GetValue()):
             if servicio.createItem(self.checkbox_2.GetValue(), self.text_ctrl_9.GetValue(), self.text_ctrl_8.GetValue(), self.text_ctrl_4.GetValue(), self.img, 0, 0, 0, 0):
                 print 'item creado'
-                msgbox = wx.MessageBox('!Item creado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                msgbox = wx.MessageBox(u'!Item creado!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
             else:
                 print 'no se creo!'
-                msgbox = wx.MessageBox('¡El item no se pudo crear!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                msgbox = wx.MessageBox(u'¡El item no se pudo crear!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
             self.Close(True)
         else:
-            msgbox = wx.MessageBox('¡Rellena los campos!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'¡Rellena los campos!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
 # end of class crear_item
@@ -1159,23 +1160,23 @@ class crear_oferta(wx.Frame):
         wx.Frame.__init__(self, parent, *args, **kwds)
         self.calendar_ctrl_4 = wx.calendar.CalendarCtrl(self, wx.ID_ANY, style=wx.calendar.CAL_MONDAY_FIRST)
         #self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.sizer_35_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Nombre"))
+        self.sizer_35_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Nombre"))
         self.text_ctrl_5 = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.sizer_26_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Duración en dias"))
+        self.sizer_26_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Duración en dias"))
         self.text_ctrl_6 = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.sizer_27_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Precio"))
+        self.sizer_27_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Precio"))
         self.checkbox_3 = wx.CheckBox(self, wx.ID_ANY, "")
-        self.sizer_28_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Activo"))
-        self.button_15 = wx.Button(self, wx.ID_ANY, _("img"))
-        self.button_16 = wx.Button(self, wx.ID_ANY, _("Guardar"))
+        self.sizer_28_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Activo"))
+        self.button_15 = wx.Button(self, wx.ID_ANY, _(u"img"))
+        self.button_16 = wx.Button(self, wx.ID_ANY, _(u"Guardar"))
         self.list_ctrl_5 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
-        self.sizer_29_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Items"))
-        self.button_17 = wx.Button(self, wx.ID_ANY, _("<<"))
-        self.button_18 = wx.Button(self, wx.ID_ANY, _(">>"))
-        self.button_crear_item = wx.Button(self, wx.ID_ANY, _("Crear item"))
+        self.sizer_29_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Items"))
+        self.button_17 = wx.Button(self, wx.ID_ANY, _(u"<<"))
+        self.button_18 = wx.Button(self, wx.ID_ANY, _(u">>"))
+        self.button_crear_item = wx.Button(self, wx.ID_ANY, _(u"Crear item"))
         self.list_ctrl_4 = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         self.text_ctrl_descripcion = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_MULTILINE)
-        self.sizer_descripcion_staticbox = wx.StaticBox(self, wx.ID_ANY, _("Descripción"))
+        self.sizer_descripcion_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Descripción"))
         if oferta!=-1:
             self.text_ctrl_10 = wx.TextCtrl(self, wx.ID_ANY, "", style=wx.TE_READONLY,size=(200,-1))
         else:
@@ -1183,22 +1184,22 @@ class crear_oferta(wx.Frame):
 
         self.createMenu()
 
-        self.list_ctrl_4.InsertColumn(0,"ID")
+        self.list_ctrl_4.InsertColumn(0,u"ID")
         self.list_ctrl_4.SetColumnWidth(0,0)
-        self.list_ctrl_4.InsertColumn(1,"Nombre")
+        self.list_ctrl_4.InsertColumn(1,u"Nombre")
         self.list_ctrl_4.SetColumnWidth(1,100)
-        self.list_ctrl_4.InsertColumn(2,"Precio")
+        self.list_ctrl_4.InsertColumn(2,u"Precio")
         self.list_ctrl_4.SetColumnWidth(2,60)
-        self.list_ctrl_4.InsertColumn(3,"Disponible")
+        self.list_ctrl_4.InsertColumn(3,u"Disponible")
         self.list_ctrl_4.SetColumnWidth(3,45)
 
-        self.list_ctrl_5.InsertColumn(0,"ID")
+        self.list_ctrl_5.InsertColumn(0,u"ID")
         self.list_ctrl_5.SetColumnWidth(0,0)
-        self.list_ctrl_5.InsertColumn(1,"Nombre")
+        self.list_ctrl_5.InsertColumn(1,u"Nombre")
         self.list_ctrl_5.SetColumnWidth(1,100)
-        self.list_ctrl_5.InsertColumn(2,"Precio")
+        self.list_ctrl_5.InsertColumn(2,u"Precio")
         self.list_ctrl_5.SetColumnWidth(2,60)
-        self.list_ctrl_5.InsertColumn(3,"Disponible")
+        self.list_ctrl_5.InsertColumn(3,u"Disponible")
         self.list_ctrl_5.SetColumnWidth(3,45)
 
         for data in servicio.Items:
@@ -1408,7 +1409,7 @@ class crear_oferta(wx.Frame):
                 self.list_ctrl_4.SetStringItem(pos,3,str(data['_data']['disponible']))
         else:
             print 'ERROR al borrar el item'
-            msgbox = wx.MessageBox('¡No se pudo borrar el item!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'¡No se pudo borrar el item!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     # muestra el la ventana de editar item con los datos del item que estamos editando
@@ -1473,7 +1474,7 @@ class crear_oferta(wx.Frame):
     def load_img_oferta(self, event):  # wxGlade: crear_oferta.<event_handler>
         print "load_img"
         img = self.img
-        openFileDialog = wx.FileDialog(self, "Selecionar imagen del menu", "", "", "pictures (*.jpeg,*.jpg,*.png)|*.jpeg;*.jpg;*.png", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
+        openFileDialog = wx.FileDialog(self, u"Selecionar imagen del menu", "", "", "pictures (*.jpeg,*.jpg,*.png)|*.jpeg;*.jpg;*.png", wx.FD_OPEN | wx.FD_FILE_MUST_EXIST)
 
         if openFileDialog.ShowModal() == wx.ID_CANCEL:
             return     # the user changed idea...
@@ -1483,10 +1484,10 @@ class crear_oferta(wx.Frame):
         with open(openFileDialog.GetPath(), "rb") as imageFile:
             img = base64.b64encode(imageFile.read())
         if img!=self.img:
-            msgbox = wx.MessageBox('!Imágen guardada!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'!Imágen guardada!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
             self.img = img
         else:
-            msgbox = wx.MessageBox('¡La imágen no se guardo, o elegiste la misma que ya estaba guardada!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'¡La imágen no se guardo, o elegiste la misma que ya estaba guardada!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     def guardar_oferta(self, event):  # wxGlade: crear_oferta.<event_handler>
@@ -1507,28 +1508,28 @@ class crear_oferta(wx.Frame):
                     # asignando items
                     if servicio.addItemOferta(self.items, self.text_ctrl_10.GetValue()):
                         print 'Items asignados'
-                        msgbox = wx.MessageBox('!Oferta creada!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                        msgbox = wx.MessageBox(u'!Oferta creada!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                         self.Close(True)
                     else:
                         servicio.delOferta(self.text_ctrl_10.GetValue())
-                        msgbox = wx.MessageBox('¡No se pudo crear la oferta!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                        msgbox = wx.MessageBox(u'¡No se pudo crear la oferta!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
                 else:
-                    msgbox = wx.MessageBox('¡No se pudo crear la oferta, cambie el nombre!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                    msgbox = wx.MessageBox(u'¡No se pudo crear la oferta, cambie el nombre!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
             else:
                 # editando menu
                 if servicio.updateOferta(self.checkbox_3.GetValue(), self.text_ctrl_6.GetValue(), self.text_ctrl_10.GetValue(), self.text_ctrl_descripcion.GetValue(), fechaini, fechafin, self.img):
                     # asignando items
                     if servicio.addItemOferta(self.itemsModAdd, self.text_ctrl_10.GetValue()) and servicio.delItemOferta(self.itemsModDel, self.text_ctrl_10.GetValue()):
                         print 'Items asignados'
-                        msgbox = wx.MessageBox('!Oferta editado!', 'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
+                        msgbox = wx.MessageBox(u'!Oferta editado!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                         self.Close(True)
                     else:
                         servicio.delOferta(self.text_ctrl_10.GetValue())
-                        msgbox = wx.MessageBox('¡No se pudo editar los items de la oferta!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                        msgbox = wx.MessageBox(u'¡No se pudo editar los items de la oferta!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
                 else:
-                    msgbox = wx.MessageBox('¡No se pudo editar la oferta!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+                    msgbox = wx.MessageBox(u'¡No se pudo editar la oferta!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         else:
-            msgbox = wx.MessageBox('¡Rellena los campos!', 'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
+            msgbox = wx.MessageBox(u'¡Rellena los campos!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
         event.Skip()
 
     def item_selec2(self, event):  # wxGlade: crear_oferta.<event_handler>
