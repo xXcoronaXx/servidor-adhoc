@@ -37,7 +37,7 @@ def main():
 	configura = ControladorPyro()
 	#print Pyro4.config.dump()
 
-	daemon = Pyro4.Daemon(host=DIRECCION_PYRO)
+	daemon = Pyro4.Daemon(host=DIRECCION_PYRO_LOCAL)
 	#daemon = Pyro4.Daemon(host="192.168.0.18", port=5150);
 	uri = daemon.register(configura)
 	ns = Pyro4.locateNS(host=DIRECCION_PYRO)
