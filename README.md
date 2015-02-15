@@ -29,9 +29,15 @@ Para arrancar el servidor REST.
 
 	python service.py
 
-Para arrancar el cliente para la gestion del servicio (modo texto).
+Para arrancar el cliente para la gestion del servicio (modo texto, desactualizado).
 
 	python clientePyro.py
+
+Para cargar la interfaz grafica nos cambiamos a su directorio y ejecutamos.
+
+	python InterfazServidor.py
+
+En los archivos setting.py estan los parametros de configuracion de los programas.
 
 Para ver si esta corriendo el navegador las direcciones del servicio REST son del tipo:
 
