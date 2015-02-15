@@ -14,7 +14,7 @@ import serpent
 from Models import *
 from peewee import *
 
-from seting import *
+from setting import *
 from webservice import *
 
 class ControladorPyro(object):

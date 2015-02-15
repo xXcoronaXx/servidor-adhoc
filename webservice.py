@@ -9,7 +9,7 @@ from datetime import date
 from Models import *
 from peewee import *
 
-from seting import *
+from setting import *
 
 class Item(object):
 	id = int

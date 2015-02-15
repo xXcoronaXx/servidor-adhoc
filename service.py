@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 from webservice import *
 from admin import *
-from seting import *
+from setting import *
 
 def main():
 	# Create a database instance that will manage the connection and
