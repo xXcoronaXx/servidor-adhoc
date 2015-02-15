@@ -275,10 +275,10 @@ class listar_servidores(wx.Frame):
         wx.Frame.__init__(self,parent, *args, **kwds)
         self.list_ctrl_servidores = wx.ListCtrl(self, wx.ID_ANY, style=wx.LC_REPORT | wx.SUNKEN_BORDER, size=(200,-1))
         self.sizer_dir_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"Direccion servidor de nombrado"))
-        self.text_ctrl_dir = wx.TextCtrl(self, wx.ID_ANY, "")
+        self.text_ctrl_dir = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_READONLY)
         self.sizer_key_staticbox = wx.StaticBox(self, wx.ID_ANY, _(u"KEY"))
-        self.text_ctrl_key = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.button_guardar = wx.Button(self, wx.ID_ANY, _(u"Guardar"))
+        self.text_ctrl_key = wx.TextCtrl(self, wx.ID_ANY, style=wx.TE_READONLY)
+        #self.button_guardar = wx.Button(self, wx.ID_ANY, _(u"Guardar"))
 
         self.list_ctrl_servidores.InsertColumn(0,u"Servidor")
         self.list_ctrl_servidores.SetColumnWidth(0,200)
@@ -295,7 +295,7 @@ class listar_servidores(wx.Frame):
             pass
         # centramos la ventana en la pantalla
         self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.servidor_selec, self.list_ctrl_servidores)
-        self.Bind(wx.EVT_BUTTON, self.cargar_servidores, self.button_guardar)
+        #self.Bind(wx.EVT_BUTTON, self.cargar_servidores, self.button_guardar)
         self.Center()
 
     def __set_properties(self):
@@ -317,7 +317,7 @@ class listar_servidores(wx.Frame):
         sizer_2.Add(self.text_ctrl_key, 1, wx.EXPAND, 0)
         sizer.Add(sizer_1, 0, wx.EXPAND, 0)
         sizer.Add(sizer_2, 0, wx.EXPAND, 0)
-        sizer.Add(self.button_guardar, 0, wx.EXPAND, 0)
+        #sizer.Add(self.button_guardar, 0, wx.EXPAND, 0)
         sizer.Add(self.list_ctrl_servidores, 0, 0, 0)
         self.SetSizer(sizer)
         self.Layout()
