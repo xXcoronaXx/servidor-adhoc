@@ -7,7 +7,9 @@ Esta habilitada la seguridad HMAC de Pyro4, por lo tanto hay que asegurarse de q
 
 	export PYRO_HMAC_KEY='the_same_string_for_server_and_client'
 
-En seting.py, estan las constantes de configuración del servicio REST, en ServicioPyro.py estan las correspondientes para el cliente.
+IMPORTANTE : todos los scripts estan configurados teniendo en cuenta que la direccion de nuestro interfaz eth0 es 192.168.1.115. Si es otra, por favor revisa los archivos configura.sh, setting.py y start.sh.
+
+En seting.py, estan las constantes de configuración del servicio REST, en interfaz/settging.py estan las correspondientes para el cliente.
 
 Instalación de requerimientos
 =============================
@@ -19,8 +21,8 @@ Para instalar la libreria gráfica la descargamos e instalamos de:
 
 	http://www.wxpython.org/download.php
 
-Arrancar servidor y cliente
-===========================
+Arrancar servidor y cliente (manual)
+====================================
 Para arrancar el servidor de nombrado.
 
 	python -m Pyro4.naming (--host localhost)
@@ -41,9 +43,9 @@ En los archivos setting.py estan los parametros de configuracion de los programa
 
 Para ver si esta corriendo el navegador las direcciones del servicio REST son del tipo:
 
-	http://localhost:8080/ws/getMenus.json
-	http://localhost:8080/ws/getMenu.json
-	http://localhost:8080/ws/getItems.json
+	http://localhost/ws/getMenus.json
+	http://localhost/ws/getMenu.json
+	http://localhost/ws/getItems.json
 	...
 
 Si no tienes ningun menu creado obviamente te devolvera una lista vacia.
