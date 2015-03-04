@@ -99,6 +99,7 @@ class Oferta(Base):
 	disponible = bool
 	precio = float
 	descripcion = unicode
+	nombre = unicode
 	items = [Item]
 	fecha_ini = date
 	fecha_fin = date
@@ -124,6 +125,8 @@ class Oferta(Base):
 			self.fecha_ini = fecha_ini
 		if fecha_fin:
 			self.fecha_fin = fecha_fin
+		if nombre:
+			self.nombre = nombre
 		if descripcion:
 			self.descripcion = descripcion
 		if items:
@@ -140,7 +143,7 @@ class ControladorWS(WSRoot):
 	def getMenu(self):
 		print "Menu WS"
 		try:
-			menu = Menu_db.select()[0]
+			menu = Menu_db.select().where( Menu_db.disponible == True ).order_by(Oferta_db.id.desc())[0]
 			p = [] #primeros
 			s = [] #segundos
 			d = [] #postres
@@ -159,9 +162,10 @@ class ControladorWS(WSRoot):
 	@expose([Menu])
 	def getMenus(self):
 		print "Menus WS"
+		hoy = date.today()
 		try:
 			menus = [] #arrays de menus
-			m = Menu_db.select()
+			m = Menu_db.select().where( Menu_db.fecha_ini <= hoy ).where( Menu_db.fecha_fin >= hoy ).where( Menu_db.disponible == True )
 			for x in m:
 				print x.nombre
 				p = [] #primeros
@@ -184,7 +188,7 @@ class ControladorWS(WSRoot):
 		print 'Items WS'
 		try:
 			items = []
-			for x in Item_db.select():
+			for x in Item_db.select().where( Item_db.disponible == True ):
 				items.append( Item( x.id, x.disponible, float(x.precio), x.nombre, x.descripcion, x.imagen, x.modified ) )
 			return items
 		except Exception, e:
@@ -200,7 +204,7 @@ class ControladorWS(WSRoot):
 	def getOferta(self):
 		print "Oferta WS"
 		try:
-			oferta = Oferta_db.select()[0]
+			oferta = Oferta_db.select().where( Oferta_db.disponible == True ).order_by(Oferta_db.id.desc())[0]
 			i = [] # items de la oferta
 			for y in Item_db.select().where( Item_db.ofertas==oferta ):
 				i.append( Item( y.id, y.disponible, float(y.precio), y.nombre, y.descripcion, y.imagen, y.modified ) )
@@ -212,9 +216,10 @@ class ControladorWS(WSRoot):
 	@expose([Oferta])
 	def getOfertas(self):
 		print "Ofertas WS"
+		hoy = date.today()
 		ofertas = []
 		try:
-			o = Oferta_db.select()
+			o = Oferta_db.select().where( Oferta_db.fecha_ini <= hoy ).where( Oferta_db.fecha_fin >= hoy ).where( Oferta_db.disponible == True )
 			i = [] # items de la oferta
 			for x in o:
 				for y in Item_db.select().where( Item_db.ofertas==x ):
