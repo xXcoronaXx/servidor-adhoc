@@ -17,7 +17,7 @@ cd ..
 cd servidor-adhoc/
 echo '** Arrancando servicio REST ** '
 sudo python service.py &
-sleep 2
+sleep 3
 echo '** Configurando Iptables... **'
 sudo sysctl net.ipv4.ip_forward=1
 sudo iptables -t nat -A PREROUTING -d 192.168.1.115 -p tcp --dport 80 -j DNAT --to-destination 192.168.0.1:80
