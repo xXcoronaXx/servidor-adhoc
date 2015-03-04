@@ -23,7 +23,7 @@ Para instalar la libreria gráfica la descargamos e instalamos de:
 
 Arrancar servidor en Raspberry pi con Raspbian (Automatico)
 ===========================================================
-Primero necesitamos una ip fija (eth0) para nuestra Raspberry pi, nosotros usaremos la 192.168.1.115. Tendremos dos doungle compatibles con nuestro sistema, uno wifi y otro bluetooth.
+Primero necesitamos una ip fija (eth0) para nuestra Raspberry pi, nosotros usaremos la 192.168.1.115. Tendremos dos doungle compatibles con nuestro sistema, uno wifi y otro bluetooth. Para que funcione el tethering es importante que la red tenga un servidor dhcp correctamente configurado.
 
 Ahora nos descargamos el proyecto.
 
