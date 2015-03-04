@@ -21,6 +21,25 @@ Para instalar la libreria gráfica la descargamos e instalamos de:
 
 	http://www.wxpython.org/download.php
 
+Arrancar servidor en Raspberry pi con Raspbian (Automatico)
+===========================================================
+Primero necesitamos una ip fija (eth0) para nuestra Raspberry pi, nosotros usaremos la 192.168.1.115. Tendremos dos doungle compatibles con nuestro sistema, uno wifi y otro bluetooth.
+
+Ahora nos descargamos el proyecto.
+
+	git clone https://github.com/xXcoronaXx/servidor-adhoc.git
+
+Luego ejecutamos el script de configuracion
+
+	cd servidor-adhoc/
+	sudo sh configura.sh
+
+Una vez hecho esto deberemos de ver la red wifi disponible "Pi". Para arrancar el servicio en segundo plano ejecutamos:
+
+	sudo sh start.sh
+
+Con esto tambien se activará el bluetooth con el nombre "Pi". El servicio estará disponible en la direccion 192.168.0.1 en la red wifi y 192.168.1.115 para el bluetooth y para el resto de la red.
+
 Arrancar servidor y cliente (manual)
 ====================================
 Para arrancar el servidor de nombrado.
