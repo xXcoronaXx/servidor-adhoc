@@ -6,7 +6,7 @@ import Pyro4
 
 import time
 from datetime import date
-#from Models import *
+import datetime as datetime
 
 
 import base64
@@ -25,6 +25,7 @@ class ServicioPyro(object):
 		self.servicio = 0
 		self.dir = direccion
 		self.key = key
+		hoy = date.today()
 		#fin de variables
 		try:
 			print 'Conectando ...'
@@ -33,10 +34,11 @@ class ServicioPyro(object):
 			self.Online = self.servicio.online()
 			self.servicioActual = objeto
 			print 'Conectado al servicio !'
-			self.Menus = serpent.loads(self.servicio.getMenus())
-			self.Ofertas = serpent.loads(self.servicio.getOfertas())
+			self.Menus = serpent.loads(self.servicio.getMenus( str(hoy) ))
+			self.Ofertas = serpent.loads(self.servicio.getOfertas( str(hoy) ))
 			self.Items = serpent.loads(self.servicio.getItems())
 		except Exception, e:
+			print e
 			self.servicioActual = 'Desconectado'
 			pass 	# para que cree el objeto vacio si no encuentra el servicio
 
@@ -50,19 +52,19 @@ class ServicioPyro(object):
 			self.dir = direccion
 			self.key = key
 			print 'Conectado al servicio !'
-			self.Menus = serpent.loads(self.servicio.getMenus())
-			self.Ofertas = serpent.loads(self.servicio.getOfertas())
+			self.Menus = serpent.loads(self.servicio.getMenus( str(hoy) ))
+			self.Ofertas = serpent.loads(self.servicio.getOfertas( str(hoy) ))
 			self.Items = serpent.loads(self.servicio.getItems())
 			return True
 		except Exception, e:
 			self.servicioActual = 'Desconectado'
 			return False
 	
-	def updateMenus(self):
-		self.Menus = serpent.loads(self.servicio.getMenus())
+	def updateMenus(self, fecha):
+		self.Menus = serpent.loads(self.servicio.getMenus( fecha ))
 
-	def updateOfertas(self):
-		self.Ofertas = serpent.loads(self.servicio.getOfertas())
+	def updateOfertas(self, fecha):
+		self.Ofertas = serpent.loads(self.servicio.getOfertas( fecha ))
 
 	def updateItems(self):
 		self.Items = serpent.loads(self.servicio.getItems())

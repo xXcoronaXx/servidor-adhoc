@@ -68,6 +68,8 @@ class MyFrame(wx.Frame):
         self.createContextMenu()
         self.list_ctrl_2.Bind(wx.EVT_LIST_ITEM_RIGHT_CLICK, self.showPopupMenu2)
         self.createContextMenu2()   # creamos el context menu que aparecera con el boton derecho
+        self.calendar_ctrl_1.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED,self.dia_menu)
+        self.calendar_ctrl_2.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED,self.dia_oferta)
 
         self.Bind(wx.EVT_BUTTON, self.crear_menu, self.button_1)
         self.Bind(wx.EVT_BUTTON, self.crear_oferta, self.button_3)
@@ -107,6 +109,28 @@ class MyFrame(wx.Frame):
         self.SetSizer(sizer_1)
         self.Layout()
         # end wxGlade
+
+    def dia_menu(self, event):
+        fecha = self.calendar_ctrl_1.GetDate().FormatISODate()
+        fecha = datetime.datetime.strptime(fecha, "%Y-%m-%d")
+        servicio.updateMenus( str(fecha.date()) )            # actualizamos los items del servidor
+        self.list_ctrl_1.DeleteAllItems()
+        for data in servicio.Menus:
+            pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
+            self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
+            self.list_ctrl_1.SetStringItem(pos,2,str(data['disponible']))
+        event.Skip()
+
+    def dia_oferta(self, event):
+        fecha = self.calendar_ctrl_2.GetDate().FormatISODate()
+        fecha = datetime.datetime.strptime(fecha, "%Y-%m-%d")
+        servicio.updateOfertas( str(fecha.date()) )          # actualizamos los items del servidor
+        self.list_ctrl_2.DeleteAllItems() # limpiamos la lista
+        for data in servicio.Ofertas:
+            pos = self.list_ctrl_2.InsertStringItem(0,data['nombre'])
+            self.list_ctrl_2.SetStringItem(pos,1,str(data['precio']))
+            self.list_ctrl_2.SetStringItem(pos,2,str(data['disponible']))
+        event.Skip()
 
     # lista los servidores existentes en el servidor de nombrado
     def listar_servidores(self, event):
@@ -168,7 +192,9 @@ class MyFrame(wx.Frame):
                 print 'Menu borrado!'
                 msgbox = wx.MessageBox(u'!Menu borrado!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                 # Actualizamos la lista de menus
-                servicio.updateMenus()
+                fecha = self.calendar_ctrl_1.GetDate().FormatISODate()
+                fecha = datetime.datetime.strptime(fecha, "%Y-%m-%d")
+                servicio.updateMenus( str(fecha.date()) )
                 self.list_ctrl_1.DeleteAllItems()
                 for data in servicio.Menus:
                     pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
@@ -200,7 +226,9 @@ class MyFrame(wx.Frame):
                 print 'Oferta borrada!'
                 msgbox = wx.MessageBox(u'!Oferta borrada!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                 # Actualizamos la lista de ofertas
-                servicio.updateOfertas()
+                fecha = self.calendar_ctrl_2.GetDate().FormatISODate()
+                fecha = datetime.datetime.strptime(fecha, "%Y-%m-%d")
+                servicio.updateOfertas( str(fecha.date()) )
                 self.list_ctrl_2.DeleteAllItems()
                 for data in servicio.Ofertas:
                     pos = self.list_ctrl_2.InsertStringItem(0,data['nombre'])
@@ -233,7 +261,9 @@ class MyFrame(wx.Frame):
     def on_close_crear_menu(self, event):
         print 'on_close_crear_menu'
         self.list_ctrl_1.DeleteAllItems() # limpiamos la lista
-        servicio.updateMenus()            # actualizamos los items del servidor
+        fecha = self.calendar_ctrl_1.GetDate().FormatISODate()
+        fecha = datetime.datetime.strptime(fecha, "%Y-%m-%d")
+        servicio.updateMenus( str(fecha.date()) )            # actualizamos los items del servidor
         for data in servicio.Menus:
             pos = self.list_ctrl_1.InsertStringItem(0,data['nombre'])
             self.list_ctrl_1.SetStringItem(pos,1,str(data['precio']))
@@ -244,7 +274,9 @@ class MyFrame(wx.Frame):
     def on_close_crear_oferta(self, event):
         print 'on_close_crear_oferta'
         self.list_ctrl_2.DeleteAllItems() # limpiamos la lista
-        servicio.updateOfertas()          # actualizamos los items del servidor
+        fecha = self.calendar_ctrl_2.GetDate().FormatISODate()
+        fecha = datetime.datetime.strptime(fecha, "%Y-%m-%d")
+        servicio.updateOfertas( str(fecha.date()) )          # actualizamos los items del servidor
         for data in servicio.Ofertas:
             pos = self.list_ctrl_2.InsertStringItem(0,data['nombre'])
             self.list_ctrl_2.SetStringItem(pos,1,str(data['precio']))

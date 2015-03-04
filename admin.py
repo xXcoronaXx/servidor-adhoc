@@ -279,11 +279,13 @@ class ControladorPyro(object):
 			return False
 
 	#devuelve un array de menus
-	def getMenus(self):
+	def getMenus(self, fecha):
 		try:
 			print "Menus pyro"
+			fecha = str(fecha).split('-')
+			fecha = date(int(fecha[0]),int(fecha[1]),int(fecha[2]))
 			menus = []
-			for x in Menu_db.select():
+			for x in Menu_db.select().where( Menu_db.fecha_ini <= fecha  ).where( Menu_db.fecha_fin >= fecha ):
 				p = [] #primeros
 				s = [] #segundos
 				d = [] #postres
@@ -344,11 +346,13 @@ class ControladorPyro(object):
 			return False
 
 	#devuelve un array de ofertas
-	def getOfertas(self):
+	def getOfertas(self, fecha):
 		try:
 			print "Ofertas pyro"
+			fecha = str(fecha).split('-')
+			fecha = date(int(fecha[0]),int(fecha[1]),int(fecha[2]))
 			ofertas = []
-			for x in Oferta_db.select():
+			for x in Oferta_db.select().where( Oferta_db.fecha_ini <= fecha  ).where( Oferta_db.fecha_fin >= fecha ):
 				i = [] #items
 				m = {}
 				m['nombre'] = x.nombre
