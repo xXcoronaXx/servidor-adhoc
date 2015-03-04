@@ -34,7 +34,7 @@ sudo sysctl net.ipv4.ip_forward=1
 sudo iptables -t nat -A PREROUTING -d 192.168.1.115 -p tcp --dport 80 -j DNAT --to-destination 192.168.0.1:80
 sudo iptables -t nat -A POSTROUTING -j MASQUERADE
 
-sudo apt-get install iptables-persistent
+#sudo apt-get install iptables-persistent
 
 cd ..
 git clone https://github.com/ykasidit/ecodroidlink.git
