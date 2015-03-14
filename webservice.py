@@ -143,7 +143,7 @@ class ControladorWS(WSRoot):
 	def getMenu(self):
 		print "Menu WS"
 		try:
-			menu = Menu_db.select().where( Menu_db.disponible == True ).order_by(Oferta_db.id.desc())[0]
+			menu = Menu_db.select().where( Menu_db.disponible == True ).order_by(Menu_db.id.desc())[0]
 			p = [] #primeros
 			s = [] #segundos
 			d = [] #postres
@@ -188,7 +188,7 @@ class ControladorWS(WSRoot):
 		print 'Items WS'
 		try:
 			items = []
-			for x in Item_db.select().where( Item_db.disponible == True ):
+			for x in Item_db.select().where( Item_db.disponible == True ).where(Item_db.primeros==0).where(Item_db.segundos==0).where(Item_db.postres==0).where(Item_db.ofertas==0):
 				items.append( Item( x.id, x.disponible, float(x.precio), x.nombre, x.descripcion, x.imagen, x.modified ) )
 			return items
 		except Exception, e:
