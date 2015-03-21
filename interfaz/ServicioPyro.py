@@ -25,7 +25,7 @@ class ServicioPyro(object):
 		self.servicio = 0
 		self.dir = direccion
 		self.key = key
-		hoy = date.today()
+		self.hoy = date.today()
 		#fin de variables
 		try:
 			print 'Conectando ...'
@@ -34,8 +34,8 @@ class ServicioPyro(object):
 			self.Online = self.servicio.online()
 			self.servicioActual = objeto
 			print 'Conectado al servicio !'
-			self.Menus = serpent.loads(self.servicio.getMenus( str(hoy) ))
-			self.Ofertas = serpent.loads(self.servicio.getOfertas( str(hoy) ))
+			self.Menus = serpent.loads(self.servicio.getMenus( str(self.hoy) ))
+			self.Ofertas = serpent.loads(self.servicio.getOfertas( str(self.hoy) ))
 			self.Items = serpent.loads(self.servicio.getItems())
 		except Exception, e:
 			print e
@@ -46,17 +46,18 @@ class ServicioPyro(object):
 		try:
 			print 'Conectando ...'
 			Pyro4.config.HMAC_KEY=key
+			self.key = key
+			self.dir = direccion
 			self.servicio = Pyro4.Proxy('PYRONAME:'+objeto+direccion)
 			self.Online = self.servicio.online()
 			self.servicioActual = objeto
-			self.dir = direccion
-			self.key = key
 			print 'Conectado al servicio !'
-			self.Menus = serpent.loads(self.servicio.getMenus( str(hoy) ))
-			self.Ofertas = serpent.loads(self.servicio.getOfertas( str(hoy) ))
+			self.Menus = serpent.loads(self.servicio.getMenus( str(self.hoy) ))
+			self.Ofertas = serpent.loads(self.servicio.getOfertas( str(self.hoy) ))
 			self.Items = serpent.loads(self.servicio.getItems())
 			return True
 		except Exception, e:
+			print e
 			self.servicioActual = 'Desconectado'
 			return False
 	
