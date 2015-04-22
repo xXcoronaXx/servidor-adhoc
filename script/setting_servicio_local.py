@@ -13,3 +13,9 @@ WEBPATH = '/ws'
 PROTOCOL = 'restjson'
 DIRECCION_WS = 'localhost'
 PUERTO_WS = 80
+
+# Configuracion Caster
+DIRECCION_BLUETOOTH = "localhost"
+MENSAJE = "Servidor de publicidad de restaurante"
+PUERTO_DIFUSION = 5555
+TIEMPO_ANUNCIOS = 30
