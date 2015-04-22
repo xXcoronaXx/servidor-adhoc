@@ -16,8 +16,8 @@ class BroadCaster(object):
 		self.UDP_PORT = PUERTO_DIFUSION
 		self.sock1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		self.sock1.bind(('192.168.1.255',0))
-		self.sock2.bind(('192.168.0.255',0))
+		self.sock1.bind(('192.168.1.115',0))
+		self.sock2.bind(('192.168.0.1',0))
 		print "Caster creado"
 		print "UDP target IP: broadcast ", self.UDP_IP
 		print "UDP target port:", self.UDP_PORT
@@ -26,6 +26,7 @@ class BroadCaster(object):
 	def run(self):
 		def broadcast(self):
 			while True:
+				print '* * Enviando * *'
 				self.sock1.sendto(self.MESSAGE, (self.UDP_IP, self.UDP_PORT))
 				self.sock2.sendto(self.MESSAGE, (self.UDP_IP, self.UDP_PORT))
 				time.sleep( TIEMPO_ANUNCIOS )
