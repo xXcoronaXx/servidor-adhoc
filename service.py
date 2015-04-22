@@ -14,7 +14,10 @@ class BroadCaster(object):
 		self.MESSAGE = json.dumps(MESSAGE)
 		self.UDP_IP = "" # si no indicamos dirección lo envia a difusión
 		self.UDP_PORT = PUERTO_DIFUSION
-		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		self.sock1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		self.sock1.bind(('192.168.1.255',0))
+		self.sock2.bind(('192.168.0.255',0))
 		print "Caster creado"
 		print "UDP target IP: broadcast ", self.UDP_IP
 		print "UDP target port:", self.UDP_PORT
@@ -23,7 +26,8 @@ class BroadCaster(object):
 	def run(self):
 		def broadcast(self):
 			while True:
-				self.sock.sendto(self.MESSAGE, (self.UDP_IP, self.UDP_PORT))
+				self.sock1.sendto(self.MESSAGE, (self.UDP_IP, self.UDP_PORT))
+				self.sock2.sendto(self.MESSAGE, (self.UDP_IP, self.UDP_PORT))
 				time.sleep( TIEMPO_ANUNCIOS )
 		# manejo de hilos
 		thread = threading.Thread(target=broadcast(self))
