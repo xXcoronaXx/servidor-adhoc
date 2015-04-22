@@ -12,7 +12,7 @@ class BroadCaster(object):
 	def __init__(self, MESSAGE):
 		super(BroadCaster, self).__init__()
 		self.MESSAGE = json.dumps(MESSAGE)
-		self.UDP_IP = "" # si no indicamos dirección lo envia a difusión
+		self.UDP_IP = "192.168.1.255" # si no indicamos dirección lo envia a difusión
 		self.UDP_PORT = PUERTO_DIFUSION
 		self.sock1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		#self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
