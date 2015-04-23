@@ -23,9 +23,8 @@ class BroadCaster(object):
 			self.sock2.bind(('192.168.0.1',0))
 			self.sock2.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 			self.sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-			pass
 		except Exception, e:
-			raise
+			pass
 		print "Caster creado"
 		print "UDP target IP: ", self.UDP_IP
 		print "UDP target port:", self.UDP_PORT
@@ -34,12 +33,11 @@ class BroadCaster(object):
 	def run(self):
 		def broadcast(self):
 			while True:
-				print '* * Enviando * *'
 				self.sock1.sendto(self.MESSAGE, (self.UDP_IP, self.UDP_PORT))
 				try:
-					self.sock2.sendto(self.MESSAGE, ('192.168.0.255', self.UDP_PORT))
+					self.sock2.sendto(self.MESSAGE, ('192.168.0.255', self.UDP_PORT)) #*
 				except Exception, e:
-					raise e
+					pass
 				time.sleep( TIEMPO_ANUNCIOS )
 		# manejo de hilos
 		thread = threading.Thread(target=broadcast(self))
