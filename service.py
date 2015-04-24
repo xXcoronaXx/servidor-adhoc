@@ -7,42 +7,62 @@ import json
 import socket
 import time
 
-class BroadCaster(object):
-	"""BroadCaster, emite MESSAGE en formato JSON a difusion al puerto 5555"""
-	def __init__(self, MESSAGE):
-		super(BroadCaster, self).__init__()
-		self.MESSAGE = json.dumps(MESSAGE)
-		self.UDP_IP = '<broadcast>' 
-		self.UDP_PORT = PUERTO_DIFUSION
-		self.sock1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		self.sock1.bind(('',0))
-		self.sock1.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-		self.sock1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		try:
-			self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-			self.sock2.bind(('192.168.0.1',0))
-			self.sock2.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-			self.sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		except Exception, e:
-			pass
-		print "Caster creado"
-		print "UDP target IP: ", self.UDP_IP
-		print "UDP target port:", self.UDP_PORT
-		print "message:", self.MESSAGE
+# class BroadCaster(object):
+# 	"""BroadCaster, emite MESSAGE en formato JSON a difusion al puerto 5555"""
+# 	def __init__(self, MESSAGE):
+# 		super(BroadCaster, self).__init__()
+# 		self.MESSAGE = json.dumps(MESSAGE)
+# 		self.UDP_IP = '<broadcast>' 
+# 		self.UDP_PORT = PUERTO_DIFUSION
+# 		self.sock1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+# 		self.sock1.bind(('',0))
+# 		self.sock1.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+# 		self.sock1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+# 		try:
+# 			self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+# 			self.sock2.bind(('192.168.0.1',0))
+# 			self.sock2.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+# 			self.sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+# 		except Exception, e:
+# 			pass
+# 		print "Caster creado"
+# 		print "UDP target IP: ", self.UDP_IP
+# 		print "UDP target port:", self.UDP_PORT
+# 		print "message:", self.MESSAGE
 	
-	def run(self):
-		def broadcast(self):
-			while True:
-				self.sock1.sendto(self.MESSAGE, (self.UDP_IP, self.UDP_PORT))
-				try:
-					self.sock2.sendto(self.MESSAGE, ('192.168.0.255', self.UDP_PORT)) #*
-				except Exception, e:
-					pass
-				time.sleep( TIEMPO_ANUNCIOS )
-		# manejo de hilos
-		thread = threading.Thread(target=broadcast(self))
-		thread.setDaemon(True)
-		thread.start()
+
+# 	def run(self):
+# 		def broadcast(self):
+# 			# while True:
+# 			print '**'
+# 			self.sock1.sendto(self.MESSAGE, (self.UDP_IP, self.UDP_PORT))
+# 			try:
+# 				self.sock2.sendto(self.MESSAGE, ('192.168.0.255', self.UDP_PORT)) #*
+# 			except Exception, e:
+# 				pass
+# 				# time.sleep( TIEMPO_ANUNCIOS )
+# 		# manejo de hilos
+# 		thread = threading.Timer(2,broadcast(self))
+# 		#thread.setDaemon(True)
+# 		thread.start()
+
+
+def broadcast():
+	threading.Timer( TIEMPO_ANUNCIOS ,broadcast).start()
+	print '**'
+	MESSAGE = json.dumps({'Nombre': OBJETO_PYRO, 'IP': DIRECCION_WS+':'+str(PUERTO_WS), 'IP_2':DIRECCION_BLUETOOTH ,'Mensaje': MENSAJE})
+	UDP_IP = '<broadcast>' 
+	UDP_PORT = PUERTO_DIFUSION
+	sock1 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	sock1.bind(('',0))
+	sock1.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+	sock1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+	sock1.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+	try:
+		sock1.bind(('192.168.0.1',0))
+		sock1.sendto(MESSAGE, ('192.168.0.255', UDP_PORT))
+	except Exception, e:
+		print e
 
 def main():
 	# Create a database instance that will manage the connection and
@@ -89,8 +109,8 @@ def main():
 	
 	# arrancamos hilo para anuncio del servidor
 	data = {'Nombre': OBJETO_PYRO, 'IP': DIRECCION_WS+':'+str(PUERTO_WS), 'IP_2':DIRECCION_BLUETOOTH ,'Mensaje': MENSAJE}
-	caster = BroadCaster(data)
-	caster.run()
+	#caster = BroadCaster(data)
+	broadcast()
 	
 	print 'Pyro4 ready !'
 	daemon.requestLoop() 
