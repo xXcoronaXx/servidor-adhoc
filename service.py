@@ -49,7 +49,6 @@ import time
 
 def broadcast():
 	threading.Timer( TIEMPO_ANUNCIOS ,broadcast).start()
-	print '**'
 	MESSAGE = json.dumps({'Nombre': OBJETO_PYRO, 'IP': DIRECCION_WS+':'+str(PUERTO_WS), 'IP_2':DIRECCION_BLUETOOTH ,'Mensaje': MENSAJE})
 	UDP_IP = '<broadcast>' 
 	UDP_PORT = PUERTO_DIFUSION
