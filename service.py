@@ -58,9 +58,14 @@ def broadcast():
 	sock1.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 	sock1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 	sock1.sendto(MESSAGE, (UDP_IP, UDP_PORT))
+	sock1.close()
 	try:
-		sock1.bind(('192.168.0.1',0))
-		sock1.sendto(MESSAGE, ('192.168.0.255', UDP_PORT))
+		sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		sock2.bind(('192.168.0.1',0))
+		sock2.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+		sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		sock2.sendto(MESSAGE, ('192.168.0.255', UDP_PORT))
+		sock2.close()
 	except Exception, e:
 		print e
 
@@ -108,8 +113,6 @@ def main():
 	configura.run()
 	
 	# arrancamos hilo para anuncio del servidor
-	data = {'Nombre': OBJETO_PYRO, 'IP': DIRECCION_WS+':'+str(PUERTO_WS), 'IP_2':DIRECCION_BLUETOOTH ,'Mensaje': MENSAJE}
-	#caster = BroadCaster(data)
 	broadcast()
 	
 	print 'Pyro4 ready !'
