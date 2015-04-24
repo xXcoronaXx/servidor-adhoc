@@ -17,5 +17,5 @@ PUERTO_WS = 80
 # Configuracion Caster
 DIRECCION_BLUETOOTH = "192.168.1.115:80"
 MENSAJE = "Servidor de publicidad de restaurante"
-PUERTO_DIFUSION = 5555
+PUERTO_DIFUSION = 44444
 TIEMPO_ANUNCIOS = 30
