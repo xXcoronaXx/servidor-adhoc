@@ -779,7 +779,7 @@ class crear_menu(wx.Frame):
                         msgbox = wx.MessageBox(u'!Menu editado!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                         self.Close(True)
                     else:
-                        servicio.delMenu(self.text_ctrl_3.GetValue())
+                        #servicio.delMenu(self.text_ctrl_3.GetValue())
                         msgbox = wx.MessageBox(u'¡No se pudo editar los items del menu!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
                 else:
                     msgbox = wx.MessageBox(u'¡No se pudo editar el menu!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
@@ -1556,7 +1556,7 @@ class crear_oferta(wx.Frame):
                         msgbox = wx.MessageBox(u'!Oferta editado!', u'Información', wx.ICON_INFORMATION | wx.STAY_ON_TOP)
                         self.Close(True)
                     else:
-                        servicio.delOferta(self.text_ctrl_10.GetValue())
+                        #servicio.delOferta(self.text_ctrl_10.GetValue())
                         msgbox = wx.MessageBox(u'¡No se pudo editar los items de la oferta!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)
                 else:
                     msgbox = wx.MessageBox(u'¡No se pudo editar la oferta!', u'Alerta', wx.ICON_EXCLAMATION | wx.STAY_ON_TOP)

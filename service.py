@@ -58,15 +58,15 @@ def broadcast():
 	sock1.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 	sock1.sendto(MESSAGE, (UDP_IP, UDP_PORT))
 	sock1.close()
-	try:
-		sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		sock2.bind(('192.168.0.1',0))
-		sock2.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-		sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		sock2.sendto(MESSAGE, ('192.168.0.255', UDP_PORT))
-		sock2.close()
-	except Exception, e:
-		print e
+	# try:
+	# 	sock2 = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	# 	sock2.bind(('192.168.0.1',0))
+	# 	sock2.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+	# 	sock2.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+	# 	sock2.sendto(MESSAGE, ('192.168.0.255', UDP_PORT))
+	# 	sock2.close()
+	# except Exception, e:
+	# 	print e
 
 def main():
 	# Create a database instance that will manage the connection and
